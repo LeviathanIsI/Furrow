@@ -9,7 +9,13 @@
       "Bash(./gradlew assembleDebug:*)",
       "Bash(./gradlew dependencies:*)",
       "Bash(python:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(\"D:/Users/Josh/AndroidStudioProjects/Furrow/app/src/main/java/com/furrow/app/data/local/entity/PlantVariety.kt\":*)",
+      "Bash(\"D:/Users/Josh/AndroidStudioProjects/Furrow/app/src/main/java/com/furrow/app/data/local/dao/PlantVarietyDao.kt\":*)",
+      "Bash(./gradlew compileDebugKotlin:*)",
+      "Bash(python3:*)",
+      "Bash(done)",
+      "Bash(find:*)"
     ]
   }
 }

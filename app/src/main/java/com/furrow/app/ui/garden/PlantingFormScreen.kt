@@ -1,13 +1,18 @@
 package com.furrow.app.ui.garden
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,8 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,20 +34,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.AppButtonPrimary
+import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.AppSectionHeader
+import com.furrow.app.ui.components.AppTextField
+import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
-import com.furrow.app.ui.components.FormCard
-import com.furrow.app.ui.components.FormSectionHeader
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.SearchableSelector
-import com.furrow.app.ui.components.StickyBottomButton
-import com.furrow.app.ui.theme.FurrowBackground
-import kotlin.math.roundToInt
+import com.furrow.app.ui.components.StatusPill
+import com.furrow.app.ui.theme.AppSpacing
+import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.Charcoal
+import com.furrow.app.ui.theme.GardenGlow
+import com.furrow.app.ui.theme.StatusBad
+import com.furrow.app.ui.theme.StatusGood
+import com.furrow.app.ui.theme.StatusWarn
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
+import com.furrow.app.ui.theme.TextTertiary
+import com.furrow.app.ui.theme.Void
+import java.time.Instant
+import java.time.ZoneId
 
 private enum class PlantBadge(val label: String) {
     RECOMMENDED("Recommended"),
@@ -58,16 +77,20 @@ fun PlantingFormScreen(
     bedId: Long,
     editId: Long = 0L,
     onBack: () -> Unit,
-    viewModel: GardenViewModel = hiltViewModel(),
+    viewModel: BedDetailViewModel = hiltViewModel(),
 ) {
     val isEditMode = editId > 0L
     var plantName by remember { mutableStateOf("") }
     var plantQuery by remember { mutableStateOf("") }
     var variety by remember { mutableStateOf("") }
+    var varietyId by remember { mutableStateOf<Long?>(null) }
+    var varietyQuery by remember { mutableStateOf("") }
+    var selectedPlantId by remember { mutableStateOf<Long?>(null) }
     var datePlanted by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var source by remember { mutableStateOf("seed") }
     var status by remember { mutableStateOf("growing") }
     var notes by remember { mutableStateOf("") }
+    var seedsPlanted by remember { mutableStateOf("") }
     var showAddCustomPlant by remember { mutableStateOf(false) }
     var customPlantInitialName by remember { mutableStateOf("") }
     var plantToEdit by remember { mutableStateOf<PlantInfo?>(null) }
@@ -80,10 +103,13 @@ fun PlantingFormScreen(
                 plantName = it.plantName
                 plantQuery = it.plantName
                 variety = it.variety ?: ""
+                varietyQuery = it.variety ?: ""
+                varietyId = it.varietyId
                 datePlanted = it.datePlanted
                 source = it.source
                 status = it.status
                 notes = it.notes ?: ""
+                seedsPlanted = it.seedsPlanted?.toString() ?: ""
             }
         }
     }
@@ -129,131 +155,236 @@ fun PlantingFormScreen(
             )
     }
 
-    Scaffold(
+    LaunchedEffect(plantName, allPlants) {
+        val match = allPlants.firstOrNull { it.name == plantName }
+        selectedPlantId = match?.id
+    }
+
+    val varietiesByPlantId by viewModel.varietiesByPlantId.collectAsState()
+    val plantVarieties = remember(selectedPlantId, varietiesByPlantId) {
+        selectedPlantId?.let { varietiesByPlantId[it] } ?: emptyList()
+    }
+    val filteredVarieties = remember(plantVarieties, varietyQuery) {
+        val query = varietyQuery.lowercase()
+        if (query.isEmpty()) plantVarieties
+        else plantVarieties.filter { it.name.lowercase().contains(query) }
+    }
+
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
+
+    AppScaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (isEditMode) "Edit Planting" else "Add Planting") },
+                title = {
+                    Text(
+                        if (isEditMode) "Edit Planting" else "Add Planting",
+                        color = TextPrimary,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
-        bottomBar = {
-            StickyBottomButton(
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = AppSpacing.lg),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // ── Section: Plant Info ──
+            GardenSectionHeader("PLANT INFO")
+
+            SearchableSelector(
+                query = plantQuery,
+                onQueryChange = {
+                    plantQuery = it
+                    plantName = it
+                },
+                items = filteredPlants,
+                onItemSelected = { plant ->
+                    plantName = plant.name
+                    plantQuery = plant.name
+                    selectedPlantId = plant.id
+                    variety = ""
+                    varietyQuery = ""
+                    varietyId = null
+                },
+                label = "Plant Name",
+                nameSelector = { it.name },
+                isCustom = { it.isCustom },
+                onAddCustom = { name ->
+                    customPlantInitialName = name
+                    showAddCustomPlant = true
+                },
+                onEditCustom = { plant ->
+                    plantToEdit = plant
+                },
+                onDeleteCustom = { plant ->
+                    plantToDelete = plant
+                },
+                itemContent = { plant ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            plant.name,
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TextPrimary,
+                        )
+                        PlantRecommendationBadge(badgeFor(plant))
+                    }
+                },
+            )
+
+            if (plantVarieties.isNotEmpty()) {
+                SearchableSelector(
+                    query = varietyQuery,
+                    onQueryChange = {
+                        varietyQuery = it
+                        variety = it
+                        varietyId = null
+                    },
+                    items = filteredVarieties,
+                    onItemSelected = { v ->
+                        variety = v.name
+                        varietyQuery = v.name
+                        varietyId = v.id
+                    },
+                    label = "Variety (optional)",
+                    nameSelector = { it.name },
+                    isCustom = { it.isCustom },
+                    onAddCustom = { name ->
+                        variety = name
+                        varietyQuery = name
+                        varietyId = null
+                    },
+                    itemContent = { v ->
+                        Column {
+                            Text(v.name, style = MaterialTheme.typography.bodyLarge, color = TextPrimary)
+                            if (v.daysToHarvestMin != null || v.daysToHarvestMax != null) {
+                                val dtm = listOfNotNull(
+                                    v.daysToHarvestMin,
+                                    v.daysToHarvestMax,
+                                ).joinToString("-")
+                                Text(
+                                    "${dtm}d" + (v.description?.let { " \u2022 $it" } ?: ""),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextSecondary,
+                                    maxLines = 1,
+                                )
+                            }
+                        }
+                    },
+                )
+            } else {
+                AppTextField(
+                    value = variety,
+                    onValueChange = { variety = it; varietyId = null },
+                    label = { Text("Variety (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                )
+            }
+
+            DropdownSelector(
+                label = "Source",
+                options = listOf("seed", "transplant", "cutting"),
+                selected = source,
+                onSelect = { source = it },
+                accentColor = GardenGlow,
+            )
+
+            if (source == "seed") {
+                AppTextField(
+                    value = seedsPlanted,
+                    onValueChange = { seedsPlanted = it.filter { c -> c.isDigit() } },
+                    label = { Text("Seeds Planted (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                )
+            }
+
+            // ── Section: Status ──
+            GardenSectionHeader("STATUS")
+
+            DateFieldWithToggle(
+                label = "Date Planted",
+                dateMillis = datePlanted,
+                onDateChange = { datePlanted = it },
+                useTodayDefault = !isEditMode,
+                accentColor = GardenGlow,
+            )
+
+            DropdownSelector(
+                label = "Status",
+                options = listOf("growing", "producing", "finished", "failed"),
+                selected = status,
+                onSelect = { status = it },
+                accentColor = GardenGlow,
+            )
+
+            AppTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Notes") },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+                colors = fieldColors,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ── Save Button ──
+            AppButtonPrimary(
                 text = "Save Planting",
-                enabled = plantName.isNotBlank(),
                 onClick = {
+                    val matchedPlant = allPlants.firstOrNull { it.name == plantName.trim() }
+                    val expectedGermDate = if (source == "seed" && matchedPlant?.germinationDaysMin != null) {
+                        val plantedInstant = Instant.ofEpochMilli(datePlanted)
+                            .atZone(ZoneId.systemDefault()).toLocalDate()
+                        val expectedDate = plantedInstant.plusDays(matchedPlant.germinationDaysMin.toLong())
+                        expectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    } else null
+
                     val planting = Planting(
                         id = if (isEditMode) editId else 0,
                         bedId = bedId,
                         plantName = plantName.trim(),
                         variety = variety.ifBlank { null },
+                        varietyId = varietyId,
                         datePlanted = datePlanted,
                         source = source,
                         status = status,
                         notes = notes.ifBlank { null },
+                        seedsPlanted = if (source == "seed") seedsPlanted.toIntOrNull() else null,
+                        expectedGerminationDate = expectedGermDate,
                     )
                     if (isEditMode) viewModel.updatePlanting(planting) else viewModel.addPlanting(planting)
                     onBack()
                 },
-            )
-        }
-    ) { padding ->
-        FurrowBackground(modifier = Modifier.fillMaxSize().padding(padding)) {
-            androidx.compose.foundation.layout.Column(
+                enabled = plantName.isNotBlank(),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                FormSectionHeader(title = "Plant Info")
-                FormCard {
-                    SearchableSelector(
-                        query = plantQuery,
-                        onQueryChange = {
-                            plantQuery = it
-                            plantName = it
-                        },
-                        items = filteredPlants,
-                        onItemSelected = { plant ->
-                            plantName = plant.name
-                            plantQuery = plant.name
-                        },
-                        label = "Plant Name",
-                        nameSelector = { it.name },
-                        isCustom = { it.isCustom },
-                        onAddCustom = { name ->
-                            customPlantInitialName = name
-                            showAddCustomPlant = true
-                        },
-                        onEditCustom = { plant ->
-                            plantToEdit = plant
-                        },
-                        onDeleteCustom = { plant ->
-                            plantToDelete = plant
-                        },
-                        itemContent = { plant ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    plant.name,
-                                    modifier = Modifier.weight(1f),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                                PlantRecommendationBadge(badgeFor(plant))
-                            }
-                        },
-                    )
-                    OutlinedTextField(
-                        value = variety,
-                        onValueChange = { variety = it },
-                        label = { Text("Variety (optional)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                    )
-                    DropdownSelector(
-                        label = "Source",
-                        options = listOf("seed", "transplant", "cutting"),
-                        selected = source,
-                        onSelect = { source = it },
-                    )
-                }
+                    .fillMaxWidth(),
+                glowEnabled = true,
+            )
 
-                FormSectionHeader(title = "Status")
-                FormCard {
-                    DateFieldWithToggle(
-                        label = "Date Planted",
-                        dateMillis = datePlanted,
-                        onDateChange = { datePlanted = it },
-                        useTodayDefault = !isEditMode,
-                    )
-                    DropdownSelector(
-                        label = "Status",
-                        options = listOf("growing", "producing", "finished", "failed"),
-                        selected = status,
-                        onSelect = { status = it },
-                    )
-                }
-
-                OutlinedTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = { Text("Notes (optional)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 
@@ -296,23 +427,22 @@ fun PlantingFormScreen(
 }
 
 @Composable
+private fun GardenSectionHeader(title: String) {
+    AppSectionHeader(title = title)
+}
+
+@Composable
 private fun PlantRecommendationBadge(badge: PlantBadge) {
     val color = when (badge) {
-        PlantBadge.RECOMMENDED -> MaterialTheme.colorScheme.primary
-        PlantBadge.CAN_GROW -> MaterialTheme.colorScheme.tertiary
-        PlantBadge.NOT_RECOMMENDED -> MaterialTheme.colorScheme.error
+        PlantBadge.RECOMMENDED -> StatusGood
+        PlantBadge.CAN_GROW -> StatusWarn
+        PlantBadge.NOT_RECOMMENDED -> StatusBad
     }
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = color.copy(alpha = 0.12f),
-    ) {
-        Text(
-            badge.label,
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
-    }
+    StatusPill(
+        text = badge.label,
+        active = badge == PlantBadge.RECOMMENDED,
+        error = badge == PlantBadge.NOT_RECOMMENDED,
+    )
 }
 
 @Composable
@@ -336,11 +466,14 @@ private fun AddCustomPlantSheet(
     var incompatible by remember { mutableStateOf(existingPlant?.incompatiblePlants ?: "") }
     var plantNotes by remember { mutableStateOf(existingPlant?.notes ?: "") }
 
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
+
     FurrowBottomSheet(
         onDismiss = onDismiss,
         title = if (existingPlant != null) "Edit Custom Plant" else "Add Custom Plant",
         confirmText = "Save",
         confirmEnabled = name.isNotBlank(),
+        glowColor = GardenGlow,
         onConfirm = {
             if (name.isNotBlank()) {
                 onSave(
@@ -365,49 +498,55 @@ private fun AddCustomPlantSheet(
             }
         },
         content = {
-            OutlinedTextField(
+            AppTextField(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
             )
             DropdownSelector(
                 label = "Category",
                 options = listOf("vegetable", "fruit", "herb", "berry", "legume", "grain"),
                 selected = category,
                 onSelect = { category = it },
+                accentColor = GardenGlow,
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
+                AppTextField(
                     value = minZone,
                     onValueChange = { minZone = it.filter { c -> c.isDigit() } },
                     label = { Text("Min Zone") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
                 )
-                OutlinedTextField(
+                AppTextField(
                     value = maxZone,
                     onValueChange = { maxZone = it.filter { c -> c.isDigit() } },
                     label = { Text("Max Zone") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
+            Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
+                AppTextField(
                     value = daysMin,
                     onValueChange = { daysMin = it.filter { c -> c.isDigit() } },
                     label = { Text("Days Min") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
                 )
-                OutlinedTextField(
+                AppTextField(
                     value = daysMax,
                     onValueChange = { daysMax = it.filter { c -> c.isDigit() } },
                     label = { Text("Days Max") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
                 )
             }
             DropdownSelector(
@@ -415,33 +554,38 @@ private fun AddCustomPlantSheet(
                 options = listOf("full sun", "partial sun", "partial shade", "full shade"),
                 selected = sun,
                 onSelect = { sun = it },
+                accentColor = GardenGlow,
             )
             DropdownSelector(
                 label = "Water Frequency",
                 options = listOf("low", "moderate", "high"),
                 selected = water,
                 onSelect = { water = it },
+                accentColor = GardenGlow,
             )
-            OutlinedTextField(
+            AppTextField(
                 value = companions,
                 onValueChange = { companions = it },
                 label = { Text("Companion Plants") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
             )
-            OutlinedTextField(
+            AppTextField(
                 value = incompatible,
                 onValueChange = { incompatible = it },
                 label = { Text("Incompatible Plants") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
             )
-            OutlinedTextField(
+            AppTextField(
                 value = plantNotes,
                 onValueChange = { plantNotes = it },
                 label = { Text("Notes (optional)") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
+                colors = fieldColors,
             )
         },
     )

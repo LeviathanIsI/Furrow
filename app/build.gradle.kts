@@ -65,6 +65,12 @@ dependencies {
     // Navigation
     implementation(libs.navigation.compose)
 
+    // WorkManager
+    implementation(libs.androidx.work.runtime)
+
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

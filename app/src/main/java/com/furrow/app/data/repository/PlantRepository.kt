@@ -1,7 +1,9 @@
 package com.furrow.app.data.repository
 
 import com.furrow.app.data.local.dao.PlantInfoDao
+import com.furrow.app.data.local.dao.PlantVarietyDao
 import com.furrow.app.data.local.entity.PlantInfo
+import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.PlantingWindow
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -10,6 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class PlantRepository @Inject constructor(
     private val plantInfoDao: PlantInfoDao,
+    private val plantVarietyDao: PlantVarietyDao,
 ) {
     fun getAllPlants(): Flow<List<PlantInfo>> = plantInfoDao.getAllPlants()
 
@@ -33,4 +36,17 @@ class PlantRepository @Inject constructor(
     suspend fun updatePlant(plant: PlantInfo) = plantInfoDao.update(plant)
 
     suspend fun deletePlant(plant: PlantInfo) = plantInfoDao.delete(plant)
+
+    // -- Varieties --
+
+    fun getVarietiesForPlant(plantId: Long): Flow<List<PlantVariety>> =
+        plantVarietyDao.getByPlantId(plantId)
+
+    fun getAllVarieties(): Flow<List<PlantVariety>> = plantVarietyDao.getAll()
+
+    suspend fun insertVariety(variety: PlantVariety): Long = plantVarietyDao.insert(variety)
+
+    suspend fun updateVariety(variety: PlantVariety) = plantVarietyDao.update(variety)
+
+    suspend fun deleteVariety(variety: PlantVariety) = plantVarietyDao.delete(variety)
 }

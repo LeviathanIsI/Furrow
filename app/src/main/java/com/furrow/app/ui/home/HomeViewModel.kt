@@ -2,8 +2,8 @@ package com.furrow.app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furrow.app.data.local.entity.ChickenBreedInfo
 import com.furrow.app.data.local.entity.PlantInfo
+import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.PlantingWindow
 import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.BeeRepository
@@ -189,12 +189,15 @@ class HomeViewModel @Inject constructor(
         val oldestGrowingName: String?,
         val oldestGrowingDays: Long?,
         val bedCount: Int,
+        val readyToHarvestCount: Int,
     )
 
     val gardenInsights: StateFlow<GardenInsights> = combine(
         gardenRepository.getActivePlantings(),
         gardenRepository.getActiveBeds(),
-    ) { plantings, beds ->
+        plantRepository.getAllPlants(),
+        plantRepository.getAllVarieties(),
+    ) { plantings, beds, plants, varieties ->
         val producing = plantings.count { it.status == "producing" }
         val growing = plantings.count { it.status == "growing" }
 
@@ -209,6 +212,19 @@ class HomeViewModel @Inject constructor(
             )
         }
 
+        // Compute ready-to-harvest count
+        val plantMap = plants.associateBy { it.name }
+        val varietyMap = varieties.associateBy { it.id }
+        val readyCount = plantings.count { planting ->
+            if (planting.status !in listOf("growing", "producing")) return@count false
+            val info = plantMap[planting.plantName] ?: return@count false
+            val variety = planting.varietyId?.let { varietyMap[it] }
+            val daysMin = variety?.daysToHarvestMin ?: info.daysToHarvestMin
+            val plantedDate = Instant.ofEpochMilli(planting.datePlanted).atZone(zone).toLocalDate()
+            val earliest = plantedDate.plusDays(daysMin.toLong())
+            !today.isBefore(earliest)
+        }
+
         GardenInsights(
             activePlantings = plantings.size,
             producingCount = producing,
@@ -216,11 +232,12 @@ class HomeViewModel @Inject constructor(
             oldestGrowingName = oldestGrowing?.plantName,
             oldestGrowingDays = oldestDays,
             bedCount = beds.size,
+            readyToHarvestCount = readyCount,
         )
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        GardenInsights(0, 0, 0, null, null, 0),
+        GardenInsights(0, 0, 0, null, null, 0, 0),
     )
 }
 

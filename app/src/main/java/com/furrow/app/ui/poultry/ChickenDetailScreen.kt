@@ -1,7 +1,7 @@
 package com.furrow.app.ui.poultry
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,21 +11,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,16 +37,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.ui.bees.DropdownSelector
-import com.furrow.app.ui.bees.formatDate
 import com.furrow.app.ui.components.DeleteConfirmationDialog
-import com.furrow.app.ui.components.FormCard
-import com.furrow.app.ui.components.FormSectionHeader
-import com.furrow.app.ui.theme.FurrowBackground
-import com.furrow.app.ui.theme.FurrowCardDefaults
+import com.furrow.app.ui.components.GlowCard
+import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.Charcoal
+import com.furrow.app.ui.theme.PoultryGlow
+import com.furrow.app.ui.theme.StatusBad
+import com.furrow.app.ui.theme.StatusGood
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
+import com.furrow.app.ui.theme.TextTertiary
+import com.furrow.app.ui.theme.Void
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+private val zone: ZoneId = ZoneId.systemDefault()
+private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,167 +77,197 @@ fun ChickenDetailScreen(
     var notes by remember(c) { mutableStateOf(c?.notes ?: "") }
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = Charcoal,
+        focusedContainerColor = Charcoal,
+        unfocusedBorderColor = BorderSubtle,
+        focusedBorderColor = PoultryGlow,
+        unfocusedLabelColor = TextTertiary,
+        focusedLabelColor = PoultryGlow,
+        cursorColor = PoultryGlow,
+        unfocusedTextColor = TextPrimary,
+        focusedTextColor = TextPrimary,
+    )
+
     Scaffold(
+        containerColor = Void,
         topBar = {
             TopAppBar(
-                title = { Text(c?.name ?: c?.breed ?: "Chicken") },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = Void,
                 ),
             )
         },
-        bottomBar = {
-            if (c != null) {
-                Column {
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = {
-                                    viewModel.updateChicken(
-                                        c.copy(
-                                            name = name.ifBlank { null },
-                                            breed = breed.trim(),
-                                            status = status,
-                                            notes = notes.ifBlank { null },
-                                        )
-                                    )
-                                    onBack()
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp),
-                                enabled = breed.isNotBlank(),
-                            ) {
-                                Text("Save Changes")
-                            }
-                            OutlinedButton(
-                                onClick = { showDeleteDialog = true },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.error,
-                                ),
-                            ) {
-                                Text("Delete")
-                            }
-                        }
-                    }
-                }
-            }
-        }
     ) { padding ->
-        FurrowBackground(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (c == null) {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
+        if (c == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("Loading...", color = TextTertiary)
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                // ── Header Card ──
+                GlowCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    glowColor = PoultryGlow,
+                    glowIntensity = 0.10f,
                 ) {
-                    Text("Loading...", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    // Header card
-                    ElevatedCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(FurrowCardDefaults.elevatedCardBorder, MaterialTheme.shapes.medium),
-                        colors = FurrowCardDefaults.elevatedCardColors,
-                        elevation = FurrowCardDefaults.elevatedCardElevation,
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                c.name ?: c.breed,
-                                style = MaterialTheme.typography.headlineSmall,
-                            )
-                            if (c.name != null) {
-                                Text(
-                                    c.breed,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                val (statusLabel, statusColor) = when (c.status) {
-                                    "active" -> "Active" to MaterialTheme.colorScheme.primary
-                                    "deceased" -> "Deceased" to MaterialTheme.colorScheme.error
-                                    else -> c.status.replaceFirstChar { it.uppercase() } to MaterialTheme.colorScheme.onSurfaceVariant
-                                }
-                                Text(
-                                    statusLabel,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = statusColor,
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                "Acquired: ${formatDate(c.dateAcquired)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            c.dateOfBirth?.let {
-                                Text(
-                                    "Born: ${formatDate(it)}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
-                    }
-
-                    // Editable form
-                    FormSectionHeader(title = "Details")
-                    FormCard {
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            label = { Text("Name (optional)") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                        )
-                        OutlinedTextField(
-                            value = breed,
-                            onValueChange = { breed = it },
-                            label = { Text("Breed") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                        )
-                        DropdownSelector(
-                            label = "Status",
-                            options = listOf("active", "deceased", "rehomed", "processed"),
-                            selected = status,
-                            onSelect = { status = it },
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = notes,
-                        onValueChange = { notes = it },
-                        label = { Text("Notes") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3,
+                    Text(
+                        c.name ?: c.breed,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = TextPrimary,
                     )
-
-                    Spacer(modifier = Modifier.height(16.dp))
+                    if (c.name != null) {
+                        Text(
+                            c.breed,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSecondary,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val statusColor = when (c.status) {
+                            "active" -> StatusGood
+                            "deceased" -> StatusBad
+                            else -> TextSecondary
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = statusColor.copy(alpha = 0.12f),
+                        ) {
+                            Text(
+                                c.status.replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.labelSmall,
+                                color = statusColor,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            )
+                        }
+                        Text(
+                            "Acquired ${formatDate(c.dateAcquired)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextSecondary,
+                        )
+                    }
+                    c.dateOfBirth?.let {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            "Born ${formatDate(it)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextTertiary,
+                        )
+                    }
                 }
+
+                // ── Details Section ──
+                FormSectionHeader("Details")
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+
+                OutlinedTextField(
+                    value = breed,
+                    onValueChange = { breed = it },
+                    label = { Text("Breed") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+
+                DropdownSelector(
+                    label = "Status",
+                    options = listOf("active", "deceased", "rehomed", "processed"),
+                    selected = status,
+                    onSelect = { status = it },
+                    accentColor = PoultryGlow,
+                )
+
+                // ── Notes Section ──
+                FormSectionHeader("Notes")
+
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Notes") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // ── Save Button ──
+                Button(
+                    onClick = {
+                        viewModel.updateChicken(
+                            c.copy(
+                                name = name.ifBlank { null },
+                                breed = breed.trim(),
+                                status = status,
+                                notes = notes.ifBlank { null },
+                            ),
+                        )
+                        onBack()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PoultryGlow,
+                        contentColor = Void,
+                    ),
+                    enabled = breed.isNotBlank(),
+                ) {
+                    Text("Save Changes")
+                }
+
+                // ── Delete Button ──
+                OutlinedButton(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.dp, StatusBad),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusBad),
+                ) {
+                    Text("Delete")
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -237,4 +283,27 @@ fun ChickenDetailScreen(
             onDismiss = { showDeleteDialog = false },
         )
     }
+}
+
+@Composable
+private fun FormSectionHeader(title: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(3.dp, 16.dp)
+                .background(PoultryGlow, RoundedCornerShape(2.dp)),
+        )
+        Text(
+            title.uppercase(),
+            style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.5.sp),
+            color = TextTertiary,
+        )
+    }
+}
+
+private fun formatDate(millis: Long): String {
+    return Instant.ofEpochMilli(millis).atZone(zone).toLocalDate().format(dateFormatter)
 }

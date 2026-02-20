@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.furrow.app.ui.theme.BeeGlow
+import com.furrow.app.ui.theme.TextSecondary
 
 @Composable
 fun BeesScreen() {
@@ -20,18 +22,18 @@ fun BeesScreen() {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = "Bees",
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = BeeGlow,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Manage your hives and inspections",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = TextSecondary,
         )
     }
 }

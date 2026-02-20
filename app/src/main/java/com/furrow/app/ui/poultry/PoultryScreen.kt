@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.furrow.app.ui.theme.PoultryGlow
+import com.furrow.app.ui.theme.TextSecondary
 
 @Composable
 fun PoultryScreen() {
@@ -20,18 +22,18 @@ fun PoultryScreen() {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = "Poultry",
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
+            color = PoultryGlow,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Track your flock and egg production",
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = TextSecondary,
         )
     }
 }

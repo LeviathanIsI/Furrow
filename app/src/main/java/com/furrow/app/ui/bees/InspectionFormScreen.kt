@@ -3,8 +3,10 @@ package com.furrow.app.ui.bees
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,17 +14,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,17 +45,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.ui.components.DateFieldWithToggle
-import com.furrow.app.ui.components.FormCard
 import com.furrow.app.ui.components.NumberStepper
-import com.furrow.app.ui.components.StickyBottomButton
 import com.furrow.app.ui.components.ToggleRow
-import com.furrow.app.ui.theme.FurrowBackground
+import com.furrow.app.ui.theme.BeeGlow
+import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.Charcoal
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextTertiary
+import com.furrow.app.ui.theme.Void
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +87,6 @@ fun InspectionFormScreen(
     var weatherTemp by remember { mutableIntStateOf(70) }
     var weatherCondition by remember { mutableStateOf("sunny") }
 
-    // Load existing inspection for edit mode
     if (isEditMode) {
         val existingInspection by viewModel.getInspectionById(editId).collectAsState(initial = null)
         LaunchedEffect(existingInspection) {
@@ -103,29 +112,199 @@ fun InspectionFormScreen(
         }
     }
 
-    // Section expand states — Colony Status open by default
     var colonyExpanded by remember { mutableStateOf(true) }
     var resourcesExpanded by remember { mutableStateOf(false) }
     var healthExpanded by remember { mutableStateOf(false) }
     var notesExpanded by remember { mutableStateOf(false) }
 
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = Charcoal,
+        unfocusedContainerColor = Charcoal,
+        focusedBorderColor = BeeGlow,
+        unfocusedBorderColor = BorderSubtle,
+        focusedLabelColor = BeeGlow,
+        unfocusedLabelColor = TextTertiary,
+        focusedTextColor = TextPrimary,
+        unfocusedTextColor = TextPrimary,
+        cursorColor = BeeGlow,
+    )
+
     Scaffold(
+        containerColor = Void,
         topBar = {
             TopAppBar(
-                title = { Text(if (isEditMode) "Edit Inspection" else "Add Inspection") },
+                title = {
+                    Text(
+                        if (isEditMode) "Edit Inspection" else "Add Inspection",
+                        color = TextPrimary,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TextPrimary,
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
-        bottomBar = {
-            StickyBottomButton(
-                text = "Save Inspection",
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            DateFieldWithToggle(
+                label = "Date",
+                dateMillis = date,
+                onDateChange = { date = it },
+                useTodayDefault = !isEditMode,
+            )
+
+            // ── Colony Status ──
+            CollapsibleSection(
+                title = "Colony Status",
+                expanded = colonyExpanded,
+                onToggle = { colonyExpanded = !colonyExpanded },
+            ) {
+                ToggleRow("Queen Seen", queenSeen) { queenSeen = it }
+                ToggleRow("Queen Cells", queenCells) { queenCells = it }
+                ToggleRow("Eggs / Larvae", eggsLarvae) { eggsLarvae = it }
+                DropdownSelector(
+                    label = "Temperament",
+                    options = listOf("calm", "nervous", "aggressive"),
+                    selected = temperament,
+                    onSelect = { temperament = it },
+                )
+                DropdownSelector(
+                    label = "Brood Pattern",
+                    options = listOf("solid", "spotty", "none"),
+                    selected = broodPattern,
+                    onSelect = { broodPattern = it },
+                )
+            }
+
+            // ── Resources ──
+            CollapsibleSection(
+                title = "Resources",
+                expanded = resourcesExpanded,
+                onToggle = { resourcesExpanded = !resourcesExpanded },
+            ) {
+                DropdownSelector(
+                    label = "Honey Stores",
+                    options = listOf("heavy", "moderate", "light", "none"),
+                    selected = honeyStores,
+                    onSelect = { honeyStores = it },
+                )
+                DropdownSelector(
+                    label = "Pollen Stores",
+                    options = listOf("heavy", "moderate", "light", "none"),
+                    selected = pollenStores,
+                    onSelect = { pollenStores = it },
+                )
+                NumberStepper(
+                    value = frameCount,
+                    onValueChange = { frameCount = it },
+                    minValue = 0,
+                    maxValue = 99,
+                    label = "Frame Count",
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    NumberStepper(
+                        value = addedSupers,
+                        onValueChange = { addedSupers = it },
+                        minValue = 0,
+                        maxValue = 20,
+                        label = "Supers Added",
+                    )
+                    NumberStepper(
+                        value = removedSupers,
+                        onValueChange = { removedSupers = it },
+                        minValue = 0,
+                        maxValue = 20,
+                        label = "Supers Removed",
+                    )
+                }
+            }
+
+            // ── Health ──
+            CollapsibleSection(
+                title = "Health",
+                expanded = healthExpanded,
+                onToggle = { healthExpanded = !healthExpanded },
+            ) {
+                OutlinedTextField(
+                    value = pestsSigns,
+                    onValueChange = { pestsSigns = it },
+                    label = { Text("Pest Signs") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                OutlinedTextField(
+                    value = diseasesSigns,
+                    onValueChange = { diseasesSigns = it },
+                    label = { Text("Disease Signs") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+            }
+
+            // ── Notes & Weather ──
+            CollapsibleSection(
+                title = "Notes & Weather",
+                expanded = notesExpanded,
+                onToggle = { notesExpanded = !notesExpanded },
+            ) {
+                NumberStepper(
+                    value = weatherTemp,
+                    onValueChange = { weatherTemp = it },
+                    minValue = -20,
+                    maxValue = 120,
+                    label = "Temp (\u00B0F)",
+                )
+                DropdownSelector(
+                    label = "Weather",
+                    options = listOf("sunny", "cloudy", "overcast", "rainy", "windy"),
+                    selected = weatherCondition,
+                    onSelect = { weatherCondition = it },
+                )
+                OutlinedTextField(
+                    value = feeding,
+                    onValueChange = { feeding = it },
+                    label = { Text("Feeding") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                OutlinedTextField(
+                    value = notes,
+                    onValueChange = { notes = it },
+                    label = { Text("Notes") },
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 3,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // ── Save Button ──
+            Button(
                 onClick = {
                     val inspection = Inspection(
                         id = if (isEditMode) editId else 0,
@@ -151,164 +330,19 @@ fun InspectionFormScreen(
                     if (isEditMode) viewModel.updateInspection(inspection) else viewModel.addInspection(inspection)
                     onBack()
                 },
-            )
-        }
-    ) { padding ->
-        FurrowBackground(modifier = Modifier.fillMaxSize().padding(padding)) {
-            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BeeGlow,
+                    contentColor = Void,
+                ),
             ) {
-                DateFieldWithToggle(
-                    label = "Date",
-                    dateMillis = date,
-                    onDateChange = { date = it },
-                    useTodayDefault = !isEditMode,
-                )
-
-                // Section 1: Colony Status
-                CollapsibleSection(
-                    title = "Colony Status",
-                    accentColor = MaterialTheme.colorScheme.primary,
-                    expanded = colonyExpanded,
-                    onToggle = { colonyExpanded = !colonyExpanded },
-                ) {
-                    FormCard {
-                        ToggleRow("Queen Seen", queenSeen) { queenSeen = it }
-                        ToggleRow("Queen Cells", queenCells) { queenCells = it }
-                        ToggleRow("Eggs / Larvae", eggsLarvae) { eggsLarvae = it }
-                        DropdownSelector(
-                            label = "Temperament",
-                            options = listOf("calm", "nervous", "aggressive"),
-                            selected = temperament,
-                            onSelect = { temperament = it },
-                        )
-                        DropdownSelector(
-                            label = "Brood Pattern",
-                            options = listOf("solid", "spotty", "none"),
-                            selected = broodPattern,
-                            onSelect = { broodPattern = it },
-                        )
-                    }
-                }
-
-                // Section 2: Resources
-                CollapsibleSection(
-                    title = "Resources",
-                    accentColor = MaterialTheme.colorScheme.secondary,
-                    expanded = resourcesExpanded,
-                    onToggle = { resourcesExpanded = !resourcesExpanded },
-                ) {
-                    FormCard {
-                        DropdownSelector(
-                            label = "Honey Stores",
-                            options = listOf("heavy", "moderate", "light", "none"),
-                            selected = honeyStores,
-                            onSelect = { honeyStores = it },
-                        )
-                        DropdownSelector(
-                            label = "Pollen Stores",
-                            options = listOf("heavy", "moderate", "light", "none"),
-                            selected = pollenStores,
-                            onSelect = { pollenStores = it },
-                        )
-                        NumberStepper(
-                            value = frameCount,
-                            onValueChange = { frameCount = it },
-                            minValue = 0,
-                            maxValue = 99,
-                            label = "Frame Count",
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                        ) {
-                            NumberStepper(
-                                value = addedSupers,
-                                onValueChange = { addedSupers = it },
-                                minValue = 0,
-                                maxValue = 20,
-                                label = "Supers Added",
-                            )
-                            NumberStepper(
-                                value = removedSupers,
-                                onValueChange = { removedSupers = it },
-                                minValue = 0,
-                                maxValue = 20,
-                                label = "Supers Removed",
-                            )
-                        }
-                    }
-                }
-
-                // Section 3: Health
-                CollapsibleSection(
-                    title = "Health",
-                    accentColor = MaterialTheme.colorScheme.error,
-                    expanded = healthExpanded,
-                    onToggle = { healthExpanded = !healthExpanded },
-                ) {
-                    FormCard {
-                        OutlinedTextField(
-                            value = pestsSigns,
-                            onValueChange = { pestsSigns = it },
-                            label = { Text("Pest Signs") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                        )
-                        OutlinedTextField(
-                            value = diseasesSigns,
-                            onValueChange = { diseasesSigns = it },
-                            label = { Text("Disease Signs") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                        )
-                    }
-                }
-
-                // Section 4: Notes
-                CollapsibleSection(
-                    title = "Notes",
-                    accentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    expanded = notesExpanded,
-                    onToggle = { notesExpanded = !notesExpanded },
-                ) {
-                    FormCard {
-                        NumberStepper(
-                            value = weatherTemp,
-                            onValueChange = { weatherTemp = it },
-                            minValue = -20,
-                            maxValue = 120,
-                            label = "Temp (\u00B0F)",
-                        )
-                        DropdownSelector(
-                            label = "Weather",
-                            options = listOf("sunny", "cloudy", "overcast", "rainy", "windy"),
-                            selected = weatherCondition,
-                            onSelect = { weatherCondition = it },
-                        )
-                        OutlinedTextField(
-                            value = feeding,
-                            onValueChange = { feeding = it },
-                            label = { Text("Feeding") },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                        )
-                        OutlinedTextField(
-                            value = notes,
-                            onValueChange = { notes = it },
-                            label = { Text("Notes") },
-                            modifier = Modifier.fillMaxWidth(),
-                            minLines = 3,
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Text("Save Inspection")
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -316,7 +350,6 @@ fun InspectionFormScreen(
 @Composable
 private fun CollapsibleSection(
     title: String,
-    accentColor: Color,
     expanded: Boolean,
     onToggle: () -> Unit,
     content: @Composable () -> Unit,
@@ -330,15 +363,25 @@ private fun CollapsibleSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = title.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.5.sp),
-                color = accentColor,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(3.dp, 16.dp)
+                        .background(BeeGlow, RoundedCornerShape(2.dp)),
+                )
+                Text(
+                    title.uppercase(),
+                    style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.5.sp),
+                    color = TextTertiary,
+                )
+            }
             Icon(
                 if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                 contentDescription = if (expanded) "Collapse" else "Expand",
-                tint = accentColor,
+                tint = BeeGlow,
             )
         }
         AnimatedVisibility(
@@ -346,7 +389,12 @@ private fun CollapsibleSection(
             enter = expandVertically(),
             exit = shrinkVertically(),
         ) {
-            content()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(top = 4.dp),
+            ) {
+                content()
+            }
         }
     }
 }

@@ -1,10 +1,16 @@
 package com.furrow.app.data.repository
 
+import com.furrow.app.data.local.dao.FertilizerLogDao
 import com.furrow.app.data.local.dao.GardenBedDao
+import com.furrow.app.data.local.dao.PestDiseaseLogDao
 import com.furrow.app.data.local.dao.PlantingDao
+import com.furrow.app.data.local.dao.WateringLogDao
+import com.furrow.app.data.local.entity.FertilizerLog
 import com.furrow.app.data.local.entity.GardenBed
 import com.furrow.app.data.local.entity.HarvestLog
+import com.furrow.app.data.local.entity.PestDiseaseLog
 import com.furrow.app.data.local.entity.Planting
+import com.furrow.app.data.local.entity.WateringLog
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,6 +19,9 @@ import javax.inject.Singleton
 class GardenRepository @Inject constructor(
     private val gardenBedDao: GardenBedDao,
     private val plantingDao: PlantingDao,
+    private val wateringLogDao: WateringLogDao,
+    private val fertilizerLogDao: FertilizerLogDao,
+    private val pestDiseaseLogDao: PestDiseaseLogDao,
 ) {
     // --- Garden Beds ---
 
@@ -79,4 +88,53 @@ class GardenRepository @Inject constructor(
 
     fun getHarvestsForDateRange(startMillis: Long, endMillis: Long): Flow<List<HarvestLog>> =
         plantingDao.getHarvestsForDateRange(startMillis, endMillis)
+
+    // --- Watering Logs ---
+
+    fun getWateringLogsForBed(bedId: Long): Flow<List<WateringLog>> =
+        wateringLogDao.getForBed(bedId)
+
+    fun getLastWateredPerBed() = wateringLogDao.getLastWateredPerBed()
+
+    suspend fun insertWateringLog(log: WateringLog): Long =
+        wateringLogDao.insert(log)
+
+    suspend fun updateWateringLog(log: WateringLog) =
+        wateringLogDao.update(log)
+
+    suspend fun deleteWateringLog(log: WateringLog) =
+        wateringLogDao.delete(log)
+
+    // --- Fertilizer Logs ---
+
+    fun getFertilizerLogsForBed(bedId: Long): Flow<List<FertilizerLog>> =
+        fertilizerLogDao.getForBed(bedId)
+
+    suspend fun insertFertilizerLog(log: FertilizerLog): Long =
+        fertilizerLogDao.insert(log)
+
+    suspend fun updateFertilizerLog(log: FertilizerLog) =
+        fertilizerLogDao.update(log)
+
+    suspend fun deleteFertilizerLog(log: FertilizerLog) =
+        fertilizerLogDao.delete(log)
+
+    // --- Pest & Disease Logs ---
+
+    fun getPestLogsForBed(bedId: Long): Flow<List<PestDiseaseLog>> =
+        pestDiseaseLogDao.getForBed(bedId)
+
+    fun getPestLogsForPlanting(plantingId: Long): Flow<List<PestDiseaseLog>> =
+        pestDiseaseLogDao.getForPlanting(plantingId)
+
+    fun getActivePestCountPerPlanting() = pestDiseaseLogDao.getActiveCountPerPlanting()
+
+    suspend fun insertPestLog(log: PestDiseaseLog): Long =
+        pestDiseaseLogDao.insert(log)
+
+    suspend fun updatePestLog(log: PestDiseaseLog) =
+        pestDiseaseLogDao.update(log)
+
+    suspend fun deletePestLog(log: PestDiseaseLog) =
+        pestDiseaseLogDao.delete(log)
 }

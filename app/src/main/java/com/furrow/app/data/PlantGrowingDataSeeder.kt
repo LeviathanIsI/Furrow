@@ -1,0 +1,1202 @@
+package com.furrow.app.data
+
+import androidx.sqlite.db.SupportSQLiteDatabase
+
+object PlantGrowingDataSeeder {
+
+    fun seedGrowingData(db: SupportSQLiteDatabase) {
+        seedBatch1(db)
+        seedBatch2(db)
+        seedBatch3(db)
+        seedBatch4(db)
+    }
+
+    private fun u(
+        db: SupportSQLiteDatabase, name: String,
+        waterInchesPerWeek: Float? = null, fertilizerNeeds: String? = null,
+        fertilizerType: String? = null, fertilizerFrequency: String? = null,
+        mulchRecommended: Boolean = false, stakingRequired: Boolean = false,
+        pruningNotes: String? = null, thinningNotes: String? = null,
+        minTempF: Int? = null, maxTempF: Int? = null,
+        heatTips: String? = null, coldTips: String? = null,
+        indoorStartWeeksBefore: Int? = null, minSoilTempF: Int? = null,
+        seedSoakHours: Int? = null, scarification: Boolean = false,
+        startNotes: String? = null,
+        harvestIndicators: String? = null, harvestFrequency: String? = null,
+        yieldPerPlant: String? = null, storageNotes: String? = null,
+        successionPlantingDays: Int? = null, canSuccessionPlant: Boolean = false,
+        rotationGroup: String? = null, rotationNotes: String? = null,
+        commonPests: String? = null, commonDiseases: String? = null,
+        pestNotes: String? = null,
+    ) {
+        val setClauses = mutableListOf<String>()
+        val args = mutableListOf<Any?>()
+
+        fun addIfNotNull(col: String, value: Any?) {
+            if (value != null) {
+                setClauses.add("$col = ?")
+                args.add(value)
+            }
+        }
+        fun addBool(col: String, value: Boolean) {
+            if (value) {
+                setClauses.add("$col = ?")
+                args.add(1)
+            }
+        }
+
+        addIfNotNull("waterInchesPerWeek", waterInchesPerWeek)
+        addIfNotNull("fertilizerNeeds", fertilizerNeeds)
+        addIfNotNull("fertilizerType", fertilizerType)
+        addIfNotNull("fertilizerFrequency", fertilizerFrequency)
+        addBool("mulchRecommended", mulchRecommended)
+        addBool("stakingRequired", stakingRequired)
+        addIfNotNull("pruningNotes", pruningNotes)
+        addIfNotNull("thinningNotes", thinningNotes)
+        addIfNotNull("minTempF", minTempF)
+        addIfNotNull("maxTempF", maxTempF)
+        addIfNotNull("heatTips", heatTips)
+        addIfNotNull("coldTips", coldTips)
+        addIfNotNull("indoorStartWeeksBefore", indoorStartWeeksBefore)
+        addIfNotNull("minSoilTempF", minSoilTempF)
+        addIfNotNull("seedSoakHours", seedSoakHours)
+        addBool("scarification", scarification)
+        addIfNotNull("startNotes", startNotes)
+        addIfNotNull("harvestIndicators", harvestIndicators)
+        addIfNotNull("harvestFrequency", harvestFrequency)
+        addIfNotNull("yieldPerPlant", yieldPerPlant)
+        addIfNotNull("storageNotes", storageNotes)
+        addIfNotNull("successionPlantingDays", successionPlantingDays)
+        addBool("canSuccessionPlant", canSuccessionPlant)
+        addIfNotNull("rotationGroup", rotationGroup)
+        addIfNotNull("rotationNotes", rotationNotes)
+        addIfNotNull("commonPests", commonPests)
+        addIfNotNull("commonDiseases", commonDiseases)
+        addIfNotNull("pestNotes", pestNotes)
+
+        if (setClauses.isNotEmpty()) {
+            args.add(name)
+            db.execSQL(
+                "UPDATE plant_info SET ${setClauses.joinToString(", ")} WHERE name = ?",
+                args.toTypedArray(),
+            )
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  BATCH 1 — Warm-season vegetables, squash, melons, beans
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedBatch1(db: SupportSQLiteDatabase) {
+
+        // ── Tomatoes ──
+
+        u(db, "Tomato (determinate)",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after fruit set",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Minimal pruning needed; remove lower leaves touching soil to prevent splash-borne disease",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossom drop above 90\u00B0F; provide afternoon shade cloth and increase watering",
+            coldTips = "Cover with row cover or harvest green before first frost; dies at 32\u00B0F",
+            indoorStartWeeksBefore = 6, minSoilTempF = 60,
+            startNotes = "Harden off transplants for 7-10 days before planting out",
+            harvestIndicators = "Firm fruit with full color; slight give when gently squeezed; pulls easily from vine",
+            harvestFrequency = "Every 1-2 days at peak",
+            yieldPerPlant = "10-15 lbs", storageNotes = "Store at room temperature stem-side down; do not refrigerate until fully ripe",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years before planting nightshades in same spot",
+            commonPests = "Tomato hornworm, aphids, whiteflies, flea beetles, stink bugs",
+            commonDiseases = "Early blight, late blight, septoria leaf spot, blossom end rot, fusarium wilt",
+            pestNotes = "Hand-pick hornworms; use BT for heavy infestations; blossom end rot is calcium/watering issue not a pest",
+        )
+
+        u(db, "Tomato (indeterminate)",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after fruit set",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Remove suckers below first flower cluster; prune to 1-2 main stems for largest fruit; top plant 30 days before first frost",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossom drop above 90\u00B0F; provide afternoon shade cloth and deep mulch",
+            coldTips = "Cover with row cover or harvest green before first frost; dies at 32\u00B0F",
+            indoorStartWeeksBefore = 8, minSoilTempF = 60,
+            startNotes = "Start 6-8 weeks before last frost; pot up once before transplanting; bury stem deep at planting",
+            harvestIndicators = "Full color development; slight give when squeezed; twists easily off vine",
+            harvestFrequency = "Every 1-2 days at peak; continuous until frost",
+            yieldPerPlant = "15-25 lbs", storageNotes = "Store at room temperature; refrigerate only fully ripe fruit you cannot eat within 2 days",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years before replanting nightshades in same spot",
+            commonPests = "Tomato hornworm, aphids, whiteflies, flea beetles, stink bugs, spider mites",
+            commonDiseases = "Early blight, late blight, septoria leaf spot, blossom end rot, fusarium wilt, verticillium wilt",
+            pestNotes = "Hand-pick hornworms; companion plant with basil to deter aphids; rotate crops to break disease cycles",
+        )
+
+        u(db, "Cherry Tomato",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after fruit set",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Remove lower suckers; can be grown as single or multi-stem; very vigorous growers",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "More heat tolerant than large-fruited types; still provide consistent water to prevent cracking",
+            coldTips = "Harvest all fruit before frost; green cherries ripen well on countertop",
+            indoorStartWeeksBefore = 6, minSoilTempF = 60,
+            startNotes = "Very vigorous; give plenty of cage or trellis space; most are indeterminate",
+            harvestIndicators = "Full color; fruit releases from stem with light tug; taste test for sweetness",
+            harvestFrequency = "Daily at peak; fruit splits if left too long",
+            yieldPerPlant = "8-12 lbs", storageNotes = "Best eaten fresh; store at room temperature 3-5 days; prone to splitting if overwatered",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Tomato hornworm, aphids, whiteflies, birds",
+            commonDiseases = "Early blight, late blight, septoria leaf spot, cracking from uneven watering",
+            pestNotes = "Bird netting may be needed; consistent watering prevents splitting",
+        )
+
+        u(db, "Roma Tomato",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after fruit set",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Mostly determinate; minimal pruning; remove lower foliage for air circulation",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Provide shade cloth above 95\u00B0F; deep mulch to keep roots cool",
+            coldTips = "Harvest before frost; green romas ripen slowly indoors",
+            indoorStartWeeksBefore = 6, minSoilTempF = 60,
+            startNotes = "Classic paste tomato; determinate habit means concentrated harvest for canning",
+            harvestIndicators = "Deep red color; firm flesh; slight give when squeezed; pulls easily from stem",
+            harvestFrequency = "Every 2-3 days; most fruit ripens within 2-3 week window",
+            yieldPerPlant = "15-20 lbs", storageNotes = "Ideal for canning and sauce; store fresh at room temperature up to 1 week",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Tomato hornworm, aphids, flea beetles",
+            commonDiseases = "Early blight, fusarium wilt, blossom end rot, bacterial speck",
+            pestNotes = "VFN resistant varieties available; calcium-consistent watering prevents blossom end rot",
+        )
+
+        // ── Peppers ──
+
+        u(db, "Pepper (sweet)",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch first flowers to encourage branching; remove any fruit touching the ground",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossom drop above 90\u00B0F; shade cloth helps; keep soil consistently moist",
+            coldTips = "Very frost sensitive; harvest all peppers before first frost or cover plants",
+            indoorStartWeeksBefore = 8, minSoilTempF = 65,
+            startNotes = "Slow to germinate; use heat mat at 80-85\u00B0F; transplant after soil is thoroughly warm",
+            harvestIndicators = "Full size reached; color change from green to red/yellow/orange indicates full ripeness and sweetness",
+            harvestFrequency = "Every 3-5 days; leaving fruit on plant slows new production",
+            yieldPerPlant = "5-10 peppers", storageNotes = "Refrigerate in crisper drawer 1-2 weeks; freeze chopped for long-term storage",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, pepper maggot, European corn borer, flea beetles",
+            commonDiseases = "Bacterial leaf spot, anthracnose, phytophthora blight, blossom end rot",
+            pestNotes = "Avoid overhead watering to reduce bacterial leaf spot; mulch to prevent soil splash",
+        )
+
+        u(db, "Pepper (hot)",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch early flowers to encourage branching; stress (less water) can increase heat level",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "More heat tolerant than sweet peppers; still provide consistent moisture",
+            coldTips = "Harvest before frost; can be dried for storage; some hot peppers can overwinter indoors",
+            indoorStartWeeksBefore = 10, minSoilTempF = 65,
+            startNotes = "Superhots need 10-12 weeks indoors; use heat mat; very slow germination",
+            harvestIndicators = "Full color change indicates peak heat and flavor; most turn red, orange, or yellow when ripe",
+            harvestFrequency = "Every 3-5 days; regular harvest encourages more fruit",
+            yieldPerPlant = "20-50 small peppers or 10-20 larger ones", storageNotes = "Dry, freeze, or pickle; fresh peppers keep 1-2 weeks refrigerated",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, pepper weevil, thrips, spider mites",
+            commonDiseases = "Bacterial leaf spot, anthracnose, mosaic virus, phytophthora",
+            pestNotes = "Wear gloves when handling superhot peppers; neem oil for aphids and mites",
+        )
+
+        u(db, "Jalapeno",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch first flowers; benefits from topping at 12 inches to encourage bushy growth",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Tolerates heat well; corking (white lines on skin) increases with heat stress and indicates spiciness",
+            coldTips = "Harvest before frost; green jalapenos are fully usable; red ones are riper and sweeter",
+            indoorStartWeeksBefore = 8, minSoilTempF = 65,
+            startNotes = "Start indoors 8-10 weeks before last frost; needs warm soil to thrive",
+            harvestIndicators = "Firm, glossy, 3-4 inches long; corking lines indicate maturity; red if left longer for chipotle use",
+            harvestFrequency = "Every 3-5 days; prolific producer",
+            yieldPerPlant = "25-35 peppers", storageNotes = "Refrigerate 1-2 weeks; smoke-dry for chipotle; pickle or freeze for long-term",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, pepper maggot, hornworms",
+            commonDiseases = "Bacterial leaf spot, mosaic virus, blossom end rot",
+            pestNotes = "Generally vigorous and problem-resistant; avoid overhead watering",
+        )
+
+        u(db, "Habanero",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch growing tip at 12 inches for bushier plant; remove early flowers",
+            minTempF = 35, maxTempF = 100,
+            heatTips = "Thrives in heat; needs long hot season for full production; very heat tolerant",
+            coldTips = "Very frost sensitive; harvest all before frost; can overwinter indoors as houseplant",
+            indoorStartWeeksBefore = 10, minSoilTempF = 70,
+            startNotes = "Very slow germination (14-28 days); use heat mat at 85\u00B0F; needs long season",
+            harvestIndicators = "Full color change to orange/red; slightly soft when ripe; strong fruity aroma",
+            harvestFrequency = "Every 5-7 days; slower to produce than milder peppers",
+            yieldPerPlant = "30-50 peppers", storageNotes = "Dry or freeze; makes excellent hot sauce; refrigerate fresh 1-2 weeks",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, spider mites, thrips",
+            commonDiseases = "Bacterial leaf spot, mosaic virus, anthracnose",
+            pestNotes = "Capsaicin naturally deters many pests; wear gloves when harvesting",
+        )
+
+        u(db, "Cayenne",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch early flowers; plants can get top-heavy when loaded with fruit; may need light staking",
+            stakingRequired = true,
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Thrives in heat; long hot summers produce best yields",
+            coldTips = "Harvest before frost; dries very well for powder or flakes",
+            indoorStartWeeksBefore = 8, minSoilTempF = 65,
+            startNotes = "Start indoors 8-10 weeks before last frost; germinates in 10-14 days with heat mat",
+            harvestIndicators = "Bright red color; 4-6 inches long; firm and slightly waxy; easy snap from stem",
+            harvestFrequency = "Every 5-7 days; prolific once producing",
+            yieldPerPlant = "20-40 peppers", storageNotes = "Excellent for drying; string into ristras; grind into cayenne powder; refrigerate fresh 1-2 weeks",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, pepper weevil, hornworms",
+            commonDiseases = "Bacterial leaf spot, anthracnose, mosaic virus",
+            pestNotes = "Generally pest resistant; capsaicin deters many insects",
+        )
+
+        u(db, "Banana Pepper",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after flowering",
+            mulchRecommended = true,
+            pruningNotes = "Pinch first flowers; generally self-supporting but may need light staking when heavy with fruit",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Produces well in moderate heat; may slow in extreme heat above 95\u00B0F",
+            coldTips = "Frost sensitive; harvest all before first frost",
+            indoorStartWeeksBefore = 8, minSoilTempF = 60,
+            startNotes = "Easy to grow; good beginner pepper; very productive plants",
+            harvestIndicators = "6-8 inches long; pale yellow-green to yellow; harvest at any stage; red when fully ripe",
+            harvestFrequency = "Every 3-5 days; very prolific",
+            yieldPerPlant = "25-40 peppers", storageNotes = "Ideal for pickling; refrigerate fresh 1-2 weeks; freeze or can for long-term",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Aphids, flea beetles, pepper maggot",
+            commonDiseases = "Bacterial leaf spot, blossom end rot, anthracnose",
+            pestNotes = "Reliable and low-maintenance; avoid overhead irrigation",
+        )
+
+        // ── Cucurbits ──
+
+        u(db, "Cucumber",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "at planting and when vines begin to run",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Train on trellis for straight fruit and better air circulation; pinch lateral branches beyond first fruit",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Bitter fruit develops in extreme heat; keep consistently watered and mulched",
+            coldTips = "Very frost sensitive; do not plant until soil is warm and all frost danger has passed",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; if starting indoors use peat pots to avoid root disturbance",
+            harvestIndicators = "Firm, dark green, 6-8 inches for slicing; harvest before yellowing; check daily",
+            harvestFrequency = "Daily to every other day at peak; overripe fruit signals plant to stop producing",
+            yieldPerPlant = "10-20 cucumbers", storageNotes = "Refrigerate unwashed up to 1 week; do not store near ethylene-producing fruits",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years before replanting cucurbits in same spot",
+            commonPests = "Cucumber beetles, aphids, squash vine borer, spider mites",
+            commonDiseases = "Powdery mildew, downy mildew, bacterial wilt, mosaic virus",
+            pestNotes = "Cucumber beetles transmit bacterial wilt; use row covers until flowering; hand-pick beetles",
+        )
+
+        u(db, "Pickling Cucumber",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "at planting and when vines begin to run",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Trellis for cleaner fruit; pinch runners to keep energy on fruit production",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Keep consistently moist; bitter fruit in heat stress; mulch heavily",
+            coldTips = "Frost kills; plant after all danger of frost has passed",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; harvest small (2-4 inches) for best pickling quality",
+            harvestIndicators = "2-4 inches for gherkins, 4-6 inches for dills; firm and uniformly green",
+            harvestFrequency = "Daily; fruit grows quickly and oversized cukes are seedy",
+            yieldPerPlant = "15-25 cucumbers", storageNotes = "Pickle within 24 hours of harvest for best crunch; refrigerate fresh up to 1 week",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Cucumber beetles, aphids, squash vine borer",
+            commonDiseases = "Powdery mildew, downy mildew, bacterial wilt, angular leaf spot",
+            pestNotes = "Row covers until flowering to exclude cucumber beetles; hand-pick adults",
+        )
+
+        u(db, "Zucchini",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 3-4 weeks; side-dress when fruiting",
+            mulchRecommended = true,
+            pruningNotes = "Remove oldest leaves touching the ground for air circulation; cut rather than pull",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Tolerates heat well; water deeply in hot weather; harvest early morning",
+            coldTips = "Frost kills; plant after last frost; can extend with row cover in fall",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; very fast growing; 1-2 plants are enough for most families",
+            harvestIndicators = "6-8 inches long; tender skin you can dent with a fingernail; glossy appearance",
+            harvestFrequency = "Every 1-2 days at peak; fruit doubles in size overnight in warm weather",
+            yieldPerPlant = "6-10 lbs", storageNotes = "Refrigerate 1-2 weeks; shred and freeze for baking; does not store long-term",
+            successionPlantingDays = 28, canSuccessionPlant = true,
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles, aphids",
+            commonDiseases = "Powdery mildew, blossom end rot, bacterial wilt",
+            pestNotes = "Wrap stem base with foil to deter vine borers; hand-pick squash bug eggs (copper-colored, on leaf undersides)",
+        )
+
+        u(db, "Yellow Squash",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 3-4 weeks; side-dress when fruiting",
+            mulchRecommended = true,
+            pruningNotes = "Remove oldest leaves for air circulation; trim any leaves showing powdery mildew",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Tolerates heat; keep well-watered; harvest small for best flavor",
+            coldTips = "Frost sensitive; plant after last frost date",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; crookneck and straightneck types available",
+            harvestIndicators = "4-7 inches long; skin tender enough to dent with fingernail; bright yellow",
+            harvestFrequency = "Every 1-2 days; oversized squash become tough and seedy",
+            yieldPerPlant = "5-8 lbs", storageNotes = "Refrigerate up to 1 week; does not store long-term; can slice and freeze",
+            successionPlantingDays = 28, canSuccessionPlant = true,
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt, blossom end rot",
+            pestNotes = "Same pest management as zucchini; companion plant with nasturtiums to deter squash bugs",
+        )
+
+        u(db, "Patty Pan Squash",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 3-4 weeks",
+            mulchRecommended = true,
+            pruningNotes = "Remove lower leaves for air circulation; compact bush habit needs less pruning",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Heat tolerant; keep well watered; harvest small",
+            coldTips = "Frost sensitive; plant after last frost",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; fun scalloped shape; best harvested very young",
+            harvestIndicators = "2-4 inches across for best flavor; skin should be tender enough to pierce with thumbnail",
+            harvestFrequency = "Every 1-2 days; grows quickly",
+            yieldPerPlant = "5-8 lbs", storageNotes = "Refrigerate up to 1 week; best eaten fresh; does not store well long-term",
+            successionPlantingDays = 28, canSuccessionPlant = true,
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "Bush habit makes pest inspection easier; hand-pick squash bugs",
+        )
+
+        // ── Winter Squash ──
+
+        u(db, "Winter Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines begin to run",
+            mulchRecommended = true,
+            pruningNotes = "Pinch growing tips after 3-4 fruit set to direct energy into ripening; remove small late-season fruit",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Provide consistent water during fruit development; mulch to retain soil moisture",
+            coldTips = "Harvest before hard frost; light frost kills vines but cured fruit is fine",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; needs long season; give vines plenty of room to sprawl",
+            harvestIndicators = "Hard rind that resists fingernail pressure; stem turns brown and dry; dull skin color",
+            harvestFrequency = "Single harvest when fully mature; leave 2 inches of stem attached",
+            yieldPerPlant = "3-5 squash", storageNotes = "Cure in sun 10-14 days then store in cool dry place 55-60\u00B0F; lasts 2-6 months depending on variety",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, downy mildew, bacterial wilt",
+            pestNotes = "Plant a trap crop of blue hubbard squash; inject BT into vine borers; remove and destroy affected vines",
+        )
+
+        u(db, "Butternut Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 3-4 fruit per vine; pinch growing tips after fruit set",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Consistent watering during fruit development prevents misshapen fruit",
+            coldTips = "Harvest before hard frost; cure for long storage",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow or start indoors in peat pots; needs 100+ days of warm weather",
+            harvestIndicators = "Tan skin with no green striping; hard rind; dry corky stem; sounds hollow when tapped",
+            harvestFrequency = "Single harvest at maturity; cut stem with pruners leaving 2-inch handle",
+            yieldPerPlant = "3-5 squash (8-15 lbs total)", storageNotes = "Cure 10-14 days in warm spot then store at 50-55\u00B0F; keeps 3-6 months; flavor improves in storage",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "More vine borer resistant than other squash due to solid stems; still monitor base of vine",
+        )
+
+        u(db, "Acorn Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 4-5 fruit per vine; pinch tips after adequate fruit set",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Consistent moisture prevents poor fruit development",
+            coldTips = "Harvest before hard frost; handle carefully to avoid bruising",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; semi-bush varieties available for small spaces",
+            harvestIndicators = "Dark green skin with orange patch on ground side; hard rind; dull appearance",
+            harvestFrequency = "Single harvest when mature; leave 1-2 inches of stem",
+            yieldPerPlant = "4-6 squash", storageNotes = "Cure 1 week in warm spot; store at 50-55\u00B0F; keeps 1-3 months; shorter storage life than butternut",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt, anthracnose",
+            pestNotes = "Inspect vine base regularly for borer frass; hand-pick squash bug eggs",
+        )
+
+        u(db, "Spaghetti Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 3-4 fruit per vine; pinch tips after fruit set to focus energy",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Tolerates heat; keep watered during fruit sizing",
+            coldTips = "Harvest before hard frost; immature fruit will not develop spaghetti strands",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; vines spread 8-12 feet; plan space accordingly",
+            harvestIndicators = "Deep golden yellow color; hard rind; dry stem; sounds hollow when tapped",
+            harvestFrequency = "Single harvest at full maturity; do not harvest green",
+            yieldPerPlant = "3-5 squash", storageNotes = "Cure 1-2 weeks; store at 50-55\u00B0F; keeps 2-3 months",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "Standard cucurbit pest management; row covers until flowering",
+        )
+
+        u(db, "Kabocha Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 2-3 fruit per vine for larger squash; pinch growing tips after fruit set",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Consistent moisture during fruit sizing; mulch heavily",
+            coldTips = "Harvest before hard frost; needs full season of warm weather",
+            indoorStartWeeksBefore = 4, minSoilTempF = 65,
+            startNotes = "Start indoors in short-season areas; needs 95-110 days of warm weather",
+            harvestIndicators = "Deep green or orange rind depending on variety; hard rind; dry stem; dull skin finish",
+            harvestFrequency = "Single harvest at full maturity",
+            yieldPerPlant = "2-4 squash", storageNotes = "Cure 2 weeks in warm spot; store at 50-55\u00B0F; keeps 3-5 months; very sweet dense flesh",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "Standard cucurbit pest management; more vigorous than many winter squash",
+        )
+
+        u(db, "Delicata Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Can limit fruit for larger squash; thin skin makes edible-skin squash",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Consistent moisture; heat tolerant once established",
+            coldTips = "Harvest before hard frost; thinner skin means shorter storage than other winter squash",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow or transplant; compact semi-bush vines; good for smaller gardens",
+            harvestIndicators = "Cream colored with green stripes; hard rind; orange ground spot; dry stem",
+            harvestFrequency = "Single harvest when mature",
+            yieldPerPlant = "5-8 squash", storageNotes = "Cure 1 week; store at 50-55\u00B0F; keeps 1-2 months; shorter storage life due to thin skin; eat early",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "Smaller plant makes inspection easier; generally same pests as other cucurbits",
+        )
+
+        u(db, "Hubbard Squash",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 2-3 fruit per vine; these can get very large; pinch tips after fruit set",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Deep watering during fruit development; enormous vines need space and water",
+            coldTips = "Harvest before hard frost; very long season needed; start early in short-season areas",
+            indoorStartWeeksBefore = 4, minSoilTempF = 60,
+            startNotes = "Start indoors in short-season areas; vines can spread 15-20 feet; plan accordingly",
+            harvestIndicators = "Very hard warty rind; blue-gray or orange depending on variety; dry stem; heavy weight",
+            harvestFrequency = "Single harvest at full maturity; use loppers to cut thick stem",
+            yieldPerPlant = "2-4 squash (10-40 lbs each)", storageNotes = "Cure 2 weeks; store at 50-55\u00B0F; keeps 4-6 months; one of the best keepers; excellent for pies",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles",
+            commonDiseases = "Powdery mildew, bacterial wilt",
+            pestNotes = "Often used as a trap crop for vine borers to protect other squash; very vigorous vines",
+        )
+
+        u(db, "Pumpkin",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting, when vines run, and when fruit sets",
+            mulchRecommended = true,
+            pruningNotes = "For large pumpkins limit to 1-2 fruit per vine; pinch tips after fruit set; remove secondary vines",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Deep watering critical during fruit expansion; mulch heavily; avoid wetting foliage",
+            coldTips = "Light frost kills vines but mature fruit survives; harvest before hard freeze",
+            indoorStartWeeksBefore = 3, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; time planting so harvest is before first frost; needs lots of space",
+            harvestIndicators = "Deep solid color; hard rind; dry woody stem; sounds hollow when tapped; resists fingernail pressure",
+            harvestFrequency = "Single harvest at maturity; cut stem with pruners leaving 4-6 inch handle",
+            yieldPerPlant = "2-5 pumpkins depending on variety", storageNotes = "Cure in sun 10 days; store at 50-55\u00B0F; keeps 2-3 months; avoid carrying by stem",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, squash bugs, cucumber beetles, aphids",
+            commonDiseases = "Powdery mildew, downy mildew, bacterial wilt, anthracnose",
+            pestNotes = "Wrap stem base with foil or nylon to deter vine borers; apply kaolin clay to deter beetles",
+        )
+
+        // ── Melons ──
+
+        u(db, "Watermelon",
+            waterInchesPerWeek = 2.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when fruit sets; reduce nitrogen once vines run",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 2-3 fruit per vine for large melons; pinch tips after fruit set",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Loves heat; needs hot days and warm nights; consistent deep watering prevents hollow heart",
+            coldTips = "Very frost sensitive; needs long warm season; start indoors in short-season areas",
+            indoorStartWeeksBefore = 4, minSoilTempF = 70,
+            startNotes = "Direct sow in warm climates; start indoors 3-4 weeks early in short seasons; use black plastic mulch to warm soil",
+            harvestIndicators = "Curly tendril near fruit stem dries and turns brown; belly spot turns cream to yellow; dull thump when knocked",
+            harvestFrequency = "Check every few days once tendril begins drying; single harvest per fruit",
+            yieldPerPlant = "2-4 melons (15-30 lbs each)", storageNotes = "Store whole at room temperature up to 2 weeks; refrigerate cut melon; eat within 3-5 days once cut",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Aphids, cucumber beetles, spider mites, whiteflies",
+            commonDiseases = "Fusarium wilt, anthracnose, powdery mildew, gummy stem blight",
+            pestNotes = "Use row covers until flowering; resistant varieties available for fusarium wilt",
+        )
+
+        u(db, "Cantaloupe",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when fruit sets",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 3-4 fruit per vine; pinch tips after adequate fruit set",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Loves heat; reduce watering slightly as fruit approaches maturity for sweeter flavor",
+            coldTips = "Very frost sensitive; needs long warm season; use row covers to extend season",
+            indoorStartWeeksBefore = 4, minSoilTempF = 65,
+            startNotes = "Start indoors in short-season areas; use peat pots; black plastic mulch helps warm soil",
+            harvestIndicators = "Netting becomes raised and pronounced; stem slips easily from fruit (half-slip to full-slip); sweet melon aroma",
+            harvestFrequency = "Check daily when first melons approach ripeness; fruit does not ripen off vine",
+            yieldPerPlant = "2-4 melons", storageNotes = "Refrigerate ripe melons; eat within 3-5 days; uncut melons keep 5-7 days at room temperature",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Aphids, cucumber beetles, spider mites, melon worm",
+            commonDiseases = "Powdery mildew, fusarium wilt, alternaria leaf spot, gummy stem blight",
+            pestNotes = "Row covers until flowering; choose disease-resistant varieties; avoid overhead watering",
+        )
+
+        u(db, "Honeydew",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting and when fruit sets",
+            mulchRecommended = true,
+            pruningNotes = "Limit to 3-4 fruit per vine; pinch tips to focus energy on ripening fruit",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Needs more heat than cantaloupe; best in hot climates with long growing seasons",
+            coldTips = "Very frost sensitive; needs longer season than cantaloupe; start indoors in northern zones",
+            indoorStartWeeksBefore = 4, minSoilTempF = 65,
+            startNotes = "Needs 100-110 day season of warm weather; use black plastic mulch and row covers",
+            harvestIndicators = "Skin turns creamy white to pale yellow; blossom end gives slightly to pressure; waxy rather than fuzzy feel",
+            harvestFrequency = "Check daily at maturity; does not slip from vine like cantaloupe; must be cut",
+            yieldPerPlant = "2-3 melons", storageNotes = "Store at room temperature until ripe; refrigerate ripe melons; eat within 3-5 days of cutting",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Aphids, cucumber beetles, spider mites",
+            commonDiseases = "Powdery mildew, fusarium wilt, alternaria leaf spot",
+            pestNotes = "Same management as cantaloupe; needs hot long season for reliable production",
+        )
+
+        // ── Nightshades (non-pepper, non-tomato) ──
+
+        u(db, "Eggplant",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "every 2-3 weeks after transplanting",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Pinch growing tip at 12 inches for bushier growth; remove lower suckers; limit to 5-6 fruit for large varieties",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Loves heat; grows best at 80-90\u00B0F; blossoms drop above 95\u00B0F",
+            coldTips = "Very frost sensitive; needs warm nights above 55\u00B0F to set fruit; do not rush transplanting",
+            indoorStartWeeksBefore = 8, minSoilTempF = 65,
+            startNotes = "Start indoors 8-10 weeks before last frost; use heat mat; very slow early growth",
+            harvestIndicators = "Glossy skin; firm flesh that springs back when pressed; seeds inside still white; dull skin means overripe",
+            harvestFrequency = "Every 3-5 days; cut rather than pull from plant; leave 1 inch of stem",
+            yieldPerPlant = "4-8 eggplants", storageNotes = "Use within 1 week; store at 50\u00B0F if possible; refrigeration causes chill damage and browning",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Flea beetles, Colorado potato beetle, aphids, spider mites",
+            commonDiseases = "Verticillium wilt, phytophthora blight, early blight, anthracnose",
+            pestNotes = "Flea beetles are the primary pest; use row covers on transplants; kaolin clay spray helps",
+        )
+
+        u(db, "Tomatillo",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "at planting and monthly",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Can be sprawling; cage or stake for easier harvest; remove lower branches for air flow",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Very heat tolerant; thrives in hot conditions; drought tolerant once established",
+            coldTips = "Frost sensitive; harvest before first frost; green fruit usable even if not fully mature",
+            indoorStartWeeksBefore = 6, minSoilTempF = 60,
+            startNotes = "Need at least 2 plants for cross-pollination; self-incompatible; direct sow or transplant",
+            harvestIndicators = "Husk splits open and fruit fills husk completely; fruit is firm and bright green to yellow-green",
+            harvestFrequency = "Every 3-5 days; prolific producer; check under paper husks",
+            yieldPerPlant = "2-4 lbs", storageNotes = "Store in husks at room temperature 1-2 weeks; refrigerate in husks up to 3 weeks; freeze for salsa verde",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Tomato hornworm, flea beetles, aphids",
+            commonDiseases = "Early blight, bacterial leaf spot, mosaic virus",
+            pestNotes = "Generally pest resistant; self-seeds readily and may become weedy; hand-pick hornworms",
+        )
+
+        u(db, "Ground Cherry",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting; light feed monthly",
+            mulchRecommended = true,
+            pruningNotes = "Sprawling habit; can cage for tidier growth; drops ripe fruit on ground",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Tolerates moderate heat; prefers slightly cooler conditions than tomatoes",
+            coldTips = "Frost sensitive; harvest fallen fruit before hard freeze",
+            indoorStartWeeksBefore = 6, minSoilTempF = 55,
+            startNotes = "Start indoors 6-8 weeks before last frost; tiny seeds; slow early growth; self-seeds freely",
+            harvestIndicators = "Fruit falls from plant when ripe; husk turns papery and tan; berry inside is golden-orange",
+            harvestFrequency = "Gather fallen fruit every 1-2 days; fruit ripens over long period",
+            yieldPerPlant = "1-2 lbs of small berries", storageNotes = "Store in husks at room temperature 2-4 weeks; refrigerate in husks up to 6 weeks; make jam or eat fresh",
+            rotationGroup = "nightshade", rotationNotes = "Rotate with non-nightshades; wait 3-4 years",
+            commonPests = "Flea beetles, aphids, whiteflies",
+            commonDiseases = "Early blight, septoria leaf spot",
+            pestNotes = "Generally low-pest; self-seeds and may volunteer in future years",
+        )
+
+        // ── Warm-season others ──
+
+        u(db, "Okra",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "side-dress every 3-4 weeks during growing season",
+            mulchRecommended = true,
+            pruningNotes = "Cut lower leaves as they yellow; can cut main stem in half mid-season to rejuvenate production in long seasons",
+            minTempF = 32, maxTempF = 110,
+            heatTips = "Thrives in extreme heat; one of the best crops for hot climates; slows below 75\u00B0F",
+            coldTips = "Very frost sensitive; needs warm soil and warm nights to produce; do not rush planting",
+            indoorStartWeeksBefore = 4, minSoilTempF = 65,
+            seedSoakHours = 12,
+            startNotes = "Soak seeds 12-24 hours or nick seed coat before planting; needs warm soil to germinate",
+            harvestIndicators = "Pods 2-4 inches long; tender and snap easily; harvest before pods become woody and fibrous",
+            harvestFrequency = "Every 1-2 days; pods grow very quickly in hot weather; missed pods become tough",
+            yieldPerPlant = "4-6 lbs", storageNotes = "Refrigerate 2-3 days; best used fresh; freeze blanched pods; excellent for pickling or dehydrating",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "other", rotationNotes = "Not closely related to common garden families; good rotation crop for any bed",
+            commonPests = "Aphids, corn earworm, stink bugs, Japanese beetles, ants",
+            commonDiseases = "Fusarium wilt, southern blight, root-knot nematodes, powdery mildew",
+            pestNotes = "Ants farm aphids on okra; control ants to control aphids; wear gloves as spines can irritate skin",
+        )
+
+        u(db, "Sweet Potato",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; excess nitrogen produces vines not tubers",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; vines sprawl as ground cover; can trim vines that escape the bed",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Thrives in heat; grows best with hot days and warm nights; ideal summer crop",
+            coldTips = "Very frost sensitive; even light frost kills vines and can damage tubers; harvest before frost",
+            indoorStartWeeksBefore = 8, minSoilTempF = 65,
+            startNotes = "Grow slips from grocery store sweet potato 8-12 weeks before planting; plant slips not seeds; needs 90-150 days",
+            harvestIndicators = "Dig test tuber after 90 days; harvest when desired size reached; leaves yellowing in fall signals maturity",
+            harvestFrequency = "Single harvest; dig carefully with fork to avoid damaging tubers",
+            yieldPerPlant = "3-6 lbs of tubers", storageNotes = "Cure at 80-85\u00B0F and high humidity for 10 days; then store at 55-60\u00B0F; lasts 4-6 months; do not refrigerate",
+            rotationGroup = "root", rotationNotes = "Morning glory family; not related to nightshades or other common vegetables; rotate to prevent nematode buildup",
+            commonPests = "Sweet potato weevil, wireworms, voles, flea beetles, whiteflies",
+            commonDiseases = "Black rot, fusarium wilt, scurf, root-knot nematodes",
+            pestNotes = "Practice crop rotation for nematodes; use certified disease-free slips; destroy debris after harvest",
+        )
+
+        u(db, "Corn",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "High nitrogen (46-0-0 or 21-0-0)", fertilizerFrequency = "at planting, when knee high, and when tasseling",
+            mulchRecommended = true,
+            thinningNotes = "Thin to 8-12 inches apart; do not transplant thinned plants",
+            minTempF = 28, maxTempF = 95,
+            heatTips = "Needs adequate water during tasseling and silking; drought at pollination causes poor ear fill",
+            coldTips = "Frost sensitive; young corn tolerates light frost but is damaged by hard freeze",
+            indoorStartWeeksBefore = 2, minSoilTempF = 60,
+            startNotes = "Direct sow preferred; plant in blocks of at least 4 rows for wind pollination; avoid isolated rows",
+            harvestIndicators = "Silks brown and dry; ear feels full and plump; pierce kernel and look for milky juice not watery",
+            harvestFrequency = "Check daily once silks brown; sweet corn loses sugar rapidly after harvest",
+            yieldPerPlant = "1-2 ears per stalk", storageNotes = "Eat or process immediately; sugar converts to starch within hours; refrigerate husked ears and eat within 2 days",
+            successionPlantingDays = 14, canSuccessionPlant = true,
+            rotationGroup = "grass", rotationNotes = "Heavy nitrogen feeder; follow with nitrogen-fixing legumes; good before beans or peas",
+            commonPests = "Corn earworm, European corn borer, fall armyworm, aphids, raccoons, birds",
+            commonDiseases = "Corn smut, common rust, northern leaf blight, stalk rot",
+            pestNotes = "Apply BT or mineral oil to silks for earworm; plant early to avoid earworm peak; raccoon damage is common near harvest",
+        )
+
+        // ── Beans & Legumes ──
+
+        u(db, "Bush Beans",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; beans fix their own nitrogen",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; compact bush habit",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossoms drop in extreme heat above 90\u00B0F; plant for spring and fall harvests in hot climates",
+            coldTips = "Frost sensitive; do not plant until soil is warm; light frost kills plants",
+            minSoilTempF = 60,
+            startNotes = "Direct sow only; do not transplant; inoculate seeds with rhizobium for best nitrogen fixation",
+            harvestIndicators = "Pods snap cleanly; seeds inside are small; harvest before pods bulge with mature seeds",
+            harvestFrequency = "Every 2-3 days; regular picking extends harvest; tough pods signal plant to stop producing",
+            yieldPerPlant = "0.5-1 lb per plant", storageNotes = "Refrigerate up to 1 week; blanch and freeze for long-term; can for shelf-stable storage",
+            successionPlantingDays = 14, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen in soil; excellent to plant before heavy feeders like corn or squash",
+            commonPests = "Mexican bean beetle, aphids, bean leaf beetle, Japanese beetles",
+            commonDiseases = "Bean rust, bacterial blight, white mold, anthracnose, mosaic virus",
+            pestNotes = "Do not work in bean patch when foliage is wet to avoid spreading disease; hand-pick Mexican bean beetles",
+        )
+
+        u(db, "Pole Beans",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; beans fix their own nitrogen",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Guide vines to trellis; pinch tips when they reach top of support to encourage lateral branching",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossoms may drop above 90\u00B0F; afternoon shade helps in extreme heat",
+            coldTips = "Frost sensitive; do not plant until soil is warm",
+            minSoilTempF = 60,
+            startNotes = "Direct sow only; provide 6-8 foot trellis, teepee, or fence; takes longer to start producing than bush beans",
+            harvestIndicators = "Pods snap cleanly; harvest when pencil-thin; seeds not yet bulging",
+            harvestFrequency = "Every 2-3 days; continuous harvest over 6-8 weeks; regular picking is essential",
+            yieldPerPlant = "1-2 lbs per plant", storageNotes = "Refrigerate up to 1 week; blanch and freeze; dry for shell beans",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen in soil; excellent before heavy feeders",
+            commonPests = "Mexican bean beetle, aphids, bean leaf beetle, Japanese beetles",
+            commonDiseases = "Bean rust, bacterial blight, white mold, anthracnose",
+            pestNotes = "Trellis improves air circulation reducing disease; hand-pick beetles; avoid wet foliage work",
+        )
+
+        u(db, "Lima Beans",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only",
+            mulchRecommended = true,
+            pruningNotes = "No pruning for bush types; pole types need trellis and guidance",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Blossom drop above 90\u00B0F is common; need warm nights above 60\u00B0F to set pods",
+            coldTips = "More cold sensitive than snap beans; needs warm soil and air temperatures to produce",
+            minSoilTempF = 65,
+            startNotes = "Direct sow only; plant 1-2 weeks after last frost when soil is thoroughly warm; do not soak seeds",
+            harvestIndicators = "Pods plump with visible bean outlines; bright green pods for fresh limas; dry on vine for dry beans",
+            harvestFrequency = "Every 3-5 days for fresh limas; once for dry harvest",
+            yieldPerPlant = "0.5-1 lb shelled beans", storageNotes = "Shell and refrigerate fresh limas 1 week; blanch and freeze; dry beans store 1+ year in cool dry place",
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; excellent before heavy feeders like corn or squash",
+            commonPests = "Mexican bean beetle, aphids, stink bugs, bean leaf beetle",
+            commonDiseases = "Downy mildew, bacterial blight, root rot, anthracnose",
+            pestNotes = "Very sensitive to cold wet soil causing seed rot; plant in well-drained soil when warm",
+        )
+
+        u(db, "Southern Peas",
+            waterInchesPerWeek = 0.75f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; fix their own nitrogen",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; bush to semi-vining habit depending on variety",
+            minTempF = 32, maxTempF = 110,
+            heatTips = "Thrive in extreme heat; one of the best legumes for hot climates; produce when other beans fail",
+            coldTips = "Very frost sensitive; need warm soil and air; plant well after last frost",
+            minSoilTempF = 65,
+            startNotes = "Direct sow only; includes black-eyed peas, crowder peas, cream peas; inoculate with cowpea rhizobium",
+            harvestIndicators = "Pods change color from green to yellow/purple; shell when pods are plump but still slightly green for fresh; dry on vine for storage",
+            harvestFrequency = "Every 3-5 days for fresh shelling; once for dry harvest",
+            yieldPerPlant = "0.25-0.5 lb shelled peas", storageNotes = "Shell fresh and refrigerate 1 week; freeze blanched; dry beans store 1+ year",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Excellent nitrogen fixer and soil builder; great summer cover crop in hot climates",
+            commonPests = "Cowpea curculio, aphids, stink bugs",
+            commonDiseases = "Root-knot nematodes, fusarium wilt, mosaic virus, cercospora leaf spot",
+            pestNotes = "Very heat and drought tolerant; fewer pest problems than other beans in southern gardens",
+        )
+
+        u(db, "Snap Peas",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; peas fix their own nitrogen",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Provide trellis or netting for climbing types; pinch tips after first flush for bushier plants",
+            minTempF = 20, maxTempF = 80,
+            heatTips = "Production stops above 80\u00B0F; plant early spring or fall; provide shade to extend season",
+            coldTips = "Very frost tolerant; can plant 4-6 weeks before last frost; survives temperatures to 20\u00B0F",
+            minSoilTempF = 40,
+            startNotes = "Direct sow in early spring or fall; inoculate with pea rhizobium; can plant as soon as soil is workable",
+            harvestIndicators = "Pods plump and round; peas visible through pod; eat pod and all; harvest before starchy stage",
+            harvestFrequency = "Every 1-2 days; regular picking extends harvest",
+            yieldPerPlant = "0.5-1 lb", storageNotes = "Eat fresh for best flavor; refrigerate 3-5 days; blanch and freeze; sugar converts to starch quickly",
+            successionPlantingDays = 14, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; excellent before heavy feeders; good early-season crop before warm-season transplants",
+            commonPests = "Aphids, pea weevil, thrips",
+            commonDiseases = "Powdery mildew, fusarium wilt, pea enation virus, root rot",
+            pestNotes = "Good air circulation reduces mildew; choose resistant varieties; avoid overhead watering",
+        )
+
+        u(db, "Snow Peas",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Provide trellis; pinch tips for bushier growth; harvest tendrils for stir-fry",
+            minTempF = 20, maxTempF = 80,
+            heatTips = "Bolts in heat; strictly a cool-season crop; plant early spring or fall",
+            coldTips = "Very frost tolerant; plant 4-6 weeks before last frost; survives light freezes",
+            minSoilTempF = 40,
+            startNotes = "Direct sow in early spring; one of the first crops to plant; prefers cool growing conditions",
+            harvestIndicators = "Flat pods with tiny peas barely visible; harvest before peas swell; pods should be crisp and translucent",
+            harvestFrequency = "Every 1-2 days; regular picking extends harvest significantly",
+            yieldPerPlant = "0.5-1 lb", storageNotes = "Use immediately for best crunch; refrigerate 3-5 days; blanch and freeze; excellent for stir-fry",
+            successionPlantingDays = 14, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; excellent before heavy feeders; good early-season crop",
+            commonPests = "Aphids, pea weevil, thrips",
+            commonDiseases = "Powdery mildew, fusarium wilt, root rot",
+            pestNotes = "Same management as snap peas; choose mildew-resistant varieties; good air circulation important",
+        )
+
+        u(db, "Edamame",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; soybeans fix nitrogen",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; bushy compact habit",
+            minTempF = 32, maxTempF = 95,
+            heatTips = "Tolerates heat well; needs warm weather to mature; most varieties need 90-120 days",
+            coldTips = "Frost sensitive; plant after last frost; needs warm soil to germinate",
+            minSoilTempF = 60,
+            startNotes = "Direct sow only; inoculate with soybean-specific rhizobium; plant in blocks for better pollination",
+            harvestIndicators = "Pods plump with visible bean outlines; beans fill 80-90% of pod; bright green color; harvest all at once before yellowing",
+            harvestFrequency = "Single harvest window of 1-2 weeks; entire plant can be pulled",
+            yieldPerPlant = "0.25-0.5 lb shelled beans", storageNotes = "Boil or steam pods within hours of harvest; freeze blanched; fresh edamame is very perishable",
+            rotationGroup = "legume", rotationNotes = "Excellent nitrogen fixer; good rotation with heavy feeders",
+            commonPests = "Stink bugs, bean leaf beetle, aphids, Japanese beetles, rabbits",
+            commonDiseases = "Soybean rust, bacterial blight, root rot, mosaic virus",
+            pestNotes = "Rabbits and deer love edamame; fencing may be necessary; stink bugs can cause flat pods",
+        )
+
+        u(db, "Peanut",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "Calcium-rich (gypsum)", fertilizerFrequency = "apply gypsum at flowering time to help peg and pod development",
+            mulchRecommended = false,
+            pruningNotes = "No pruning; do not mulch heavily as pegs need to penetrate soil; keep soil loose around plants",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Thrives in heat; needs long hot season of 120-150 days; ideal in southern climates",
+            coldTips = "Very frost sensitive; needs warm soil and long warm season; not practical in short-season areas",
+            minSoilTempF = 65,
+            startNotes = "Direct sow raw unroasted peanuts 1-2 inches deep; needs loose sandy soil; do not compact soil around plants",
+            harvestIndicators = "Leaves yellow and plant begins to decline; dig test plant and check pod maturity; shells have dark veining",
+            harvestFrequency = "Single harvest; pull entire plant; shake off soil; dry in sun 1-2 weeks",
+            yieldPerPlant = "30-50 peanuts per plant", storageNotes = "Dry on plant for 1-2 weeks; cure in warm airy location; store in shell in cool dry place for months; roast before eating",
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; do not follow with other legumes; avoid fields with previous soilborne disease",
+            commonPests = "Aphids, thrips, lesser cornstalk borer, voles, birds",
+            commonDiseases = "Leaf spot, white mold, aflatoxin (from Aspergillus fungus), root rot",
+            pestNotes = "Good drainage and crop rotation prevent most diseases; dry thoroughly to prevent aflatoxin contamination",
+        )
+
+        u(db, "Fava Bean",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; fix their own nitrogen",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Pinch top 4-6 inches of growing tip when lowest pods set to deter black aphids and direct energy to beans",
+            minTempF = 15, maxTempF = 75,
+            heatTips = "Cannot tolerate heat; production stops above 75\u00B0F; strictly cool-season crop",
+            coldTips = "Very frost tolerant; can overwinter in mild climates; plant in fall for spring harvest in zones 7+",
+            minSoilTempF = 40,
+            startNotes = "Direct sow in early spring or fall; one of the most cold-hardy legumes; inoculate with specific fava rhizobium",
+            harvestIndicators = "Pods plump and slightly drooping; beans visible through pod; harvest young for fresh eating or dry on vine for storage",
+            harvestFrequency = "Every 3-5 days for fresh; single harvest for dry beans",
+            yieldPerPlant = "0.5-1 lb shelled beans", storageNotes = "Shell and blanch to remove skin; freeze for long-term; dry beans store 1+ year; young pods can be eaten whole",
+            rotationGroup = "legume", rotationNotes = "Excellent nitrogen fixer and cover crop; great winter cover in mild climates; good before heavy feeders",
+            commonPests = "Black bean aphids, bean weevil, thrips",
+            commonDiseases = "Chocolate spot (Botrytis), rust, root rot",
+            pestNotes = "Pinch growing tips to remove aphid colonies; good air circulation prevents chocolate spot; do not crowd plants",
+        )
+
+        u(db, "Chickpea",
+            waterInchesPerWeek = 0.75f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; fix their own nitrogen",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; bushy self-supporting plants",
+            minTempF = 28, maxTempF = 90,
+            heatTips = "Tolerates moderate heat but prefers cool conditions; drought tolerant once established",
+            coldTips = "Tolerates light frost; plant early spring; young plants handle cooler weather than mature ones",
+            minSoilTempF = 50,
+            startNotes = "Direct sow 2-4 weeks before last frost; needs 90-100 day season; prefers drier climates",
+            harvestIndicators = "Pods yellow and dry on plant; beans rattle in pods; harvest when mostly dry",
+            harvestFrequency = "Single harvest when pods are dry; pull entire plant and hang to finish drying",
+            yieldPerPlant = "2-4 oz of dried chickpeas", storageNotes = "Dry thoroughly; store in airtight container in cool dry place for 1+ year; soak before cooking",
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; good rotation with heavy feeders; avoid planting after other legumes",
+            commonPests = "Aphids, pod borer, leaf miner",
+            commonDiseases = "Ascochyta blight, fusarium wilt, root rot, blight",
+            pestNotes = "Needs good drainage; avoid overhead watering; disease-resistant varieties are essential; not suited to humid climates",
+        )
+
+        u(db, "Lentil",
+            waterInchesPerWeek = 0.5f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; lentils fix their own nitrogen",
+            mulchRecommended = true,
+            pruningNotes = "No pruning needed; small bushy plants; may need light support from pea netting",
+            minTempF = 20, maxTempF = 85,
+            heatTips = "Prefers cool weather; heat causes poor pod set; strictly a cool-season crop",
+            coldTips = "Tolerates frost; plant very early spring as soon as soil can be worked",
+            minSoilTempF = 40,
+            startNotes = "Direct sow in early spring; plant densely like a field crop; prefers dryer climates; not suited to humid regions",
+            harvestIndicators = "Lower pods dry and rattle; upper pods still slightly green; harvest when 80% of pods are brown",
+            harvestFrequency = "Single harvest; pull or cut entire plants; dry on tarp or hang in bundles",
+            yieldPerPlant = "1-3 oz dried lentils per plant (plant densely for meaningful harvest)", storageNotes = "Dry thoroughly; thresh to remove from pods; store in airtight container for 1+ year; no soaking needed to cook",
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; good rotation crop; avoid planting after other legumes",
+            commonPests = "Aphids, seed weevil, thrips",
+            commonDiseases = "Ascochyta blight, anthracnose, root rot, stemphylium blight",
+            pestNotes = "Good drainage essential; not recommended for humid or wet-summer climates; choose resistant varieties",
+        )
+
+        u(db, "Winged Bean",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; fix their own nitrogen",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Vigorous climber; needs strong 6-8 foot trellis; pinch tips to encourage branching",
+            minTempF = 50, maxTempF = 100,
+            heatTips = "Tropical plant that thrives in heat and humidity; ideal for southern gardens",
+            coldTips = "Killed by frost; needs long warm season; does not tolerate cool nights below 50\u00B0F",
+            minSoilTempF = 70,
+            seedSoakHours = 12,
+            startNotes = "Soak seeds 12-24 hours before planting; day-length sensitive (flowers when days shorten); start indoors in northern areas",
+            harvestIndicators = "Harvest pods at 2-3 inches for tender eating; all parts edible including leaves, flowers, and tubers",
+            harvestFrequency = "Every 2-3 days for young tender pods",
+            yieldPerPlant = "1-2 lbs pods plus tubers", storageNotes = "Use fresh pods within 2-3 days; tubers store like potatoes; blanch and freeze pods for long-term",
+            rotationGroup = "legume", rotationNotes = "Tropical legume; excellent nitrogen fixer; good rotation with heavy feeders",
+            commonPests = "Aphids, bean fly, pod borer",
+            commonDiseases = "Powdery mildew, leaf spot, root rot",
+            pestNotes = "Generally pest-free in suitable climates; needs long season and warmth to produce well",
+        )
+
+        u(db, "Yard Long Bean",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "low",
+            fertilizerType = "5-10-10 low nitrogen", fertilizerFrequency = "at planting only; fix their own nitrogen",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Vigorous climber; needs sturdy 6-8 foot trellis; guide vines to support",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Thrives in heat; more heat tolerant than regular green beans; excellent for hot summer gardens",
+            coldTips = "Frost kills; plant after all frost danger; needs warm soil and warm nights",
+            minSoilTempF = 65,
+            startNotes = "Direct sow after soil is warm; also called asparagus bean or Chinese long bean; provide strong trellis",
+            harvestIndicators = "Harvest at 12-18 inches long before seeds swell; pods should be crisp and snap easily; longer pods become tough",
+            harvestFrequency = "Every 2-3 days; prolific when regularly picked",
+            yieldPerPlant = "1-2 lbs", storageNotes = "Use within 2-3 days; refrigerate in plastic bag; blanch and freeze for long-term; excellent in stir-fry",
+            successionPlantingDays = 21, canSuccessionPlant = true,
+            rotationGroup = "legume", rotationNotes = "Fix nitrogen; good rotation with heavy feeders; actually a cowpea relative not a true bean",
+            commonPests = "Aphids, bean beetle, stink bugs",
+            commonDiseases = "Rust, powdery mildew, mosaic virus",
+            pestNotes = "Very productive and relatively pest-free; heat and humidity tolerance is excellent",
+        )
+
+        // ── Exotic cucurbits ──
+
+        u(db, "Bitter Melon",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 2-3 weeks during growing season",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Train on sturdy trellis; prune lateral branches to improve air circulation; pinch tips to encourage fruiting",
+            minTempF = 50, maxTempF = 100,
+            heatTips = "Tropical vine that loves heat and humidity; thrives where it is hot and wet",
+            coldTips = "Killed by frost; needs very warm conditions; do not plant until well after last frost",
+            indoorStartWeeksBefore = 4, minSoilTempF = 70,
+            seedSoakHours = 24, scarification = true,
+            startNotes = "Soak seeds 24 hours and nick seed coat; start indoors in short-season areas; very vigorous once established",
+            harvestIndicators = "Harvest green and firm at 4-6 inches; fruit turns orange and splits when overripe revealing red seeds",
+            harvestFrequency = "Every 2-3 days; fruit matures quickly in hot weather",
+            yieldPerPlant = "10-15 fruit", storageNotes = "Refrigerate 3-5 days; slice and freeze for cooking; use before turning yellow-orange",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Fruit fly, aphids, red pumpkin beetle",
+            commonDiseases = "Powdery mildew, downy mildew, fusarium wilt",
+            pestNotes = "Fruit fly bags can protect individual fruit; generally vigorous and pest-resistant in warm climates",
+        )
+
+        u(db, "Luffa",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 2-3 weeks during growing season",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Needs very strong trellis or arbor; extremely vigorous; prune lateral branches; limit fruit for sponge quality",
+            minTempF = 50, maxTempF = 100,
+            heatTips = "Tropical vine; needs long hot season of 150+ days; thrives in heat",
+            coldTips = "Killed by frost; needs very long growing season; start indoors in most areas",
+            indoorStartWeeksBefore = 6, minSoilTempF = 70,
+            seedSoakHours = 24,
+            startNotes = "Soak seeds 24 hours; start indoors 6-8 weeks early; very long season needed (150-200 days); heavy vine needs sturdy support",
+            harvestIndicators = "For eating: harvest young at 6-8 inches when tender; for sponges: leave on vine until skin turns brown and dry, lightweight",
+            harvestFrequency = "For eating: every 2-3 days; for sponges: single late-season harvest",
+            yieldPerPlant = "5-10 sponges or 15-20 edible fruit", storageNotes = "Peel dry fruit, shake out seeds, soak and bleach sponges; young fruit eaten like zucchini, use within 3 days",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Aphids, cucumber beetles, squash bugs",
+            commonDiseases = "Powdery mildew, downy mildew",
+            pestNotes = "Very vigorous vine that outgrows most pests; needs extremely strong support structure",
+        )
+
+        u(db, "Chayote",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "monthly during growing season",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Vigorous vine; needs strong trellis, arbor, or fence; can grow 30+ feet; prune to manage size",
+            minTempF = 32, maxTempF = 100,
+            heatTips = "Tropical vine that loves heat; very productive in warm humid climates",
+            coldTips = "Root survives to zone 7 if heavily mulched; top growth killed by frost; perennial in warm climates",
+            indoorStartWeeksBefore = 6, minSoilTempF = 65,
+            startNotes = "Plant entire fruit on its side halfway buried; sprout will emerge from seed still inside fruit; perennial in zones 8+",
+            harvestIndicators = "Fruit 4-6 inches long; light green and firm; harvest before skin hardens; young fruit most tender",
+            harvestFrequency = "Every 3-5 days in peak season; extremely prolific",
+            yieldPerPlant = "50-100 fruit in long season", storageNotes = "Refrigerate 2-3 weeks; entire plant is edible including shoots, leaves, and tuberous root; cook like summer squash",
+            rotationGroup = "cucurbit", rotationNotes = "Perennial in warm climates; in annual culture rotate like other cucurbits",
+            commonPests = "Aphids, cucumber beetles, snails, slugs",
+            commonDiseases = "Powdery mildew, root rot in wet soil",
+            pestNotes = "Very few pest problems; extremely vigorous and productive; can become invasive in tropical climates",
+        )
+
+        u(db, "Calabash",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 2-3 weeks during growing season",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Train on very strong arbor or trellis; heavy fruit may need sling support; vigorous vine",
+            minTempF = 50, maxTempF = 100,
+            heatTips = "Tropical vine; thrives in hot humid conditions; needs long warm season",
+            coldTips = "Killed by frost; needs 120+ days of warm weather; start indoors in northern areas",
+            indoorStartWeeksBefore = 4, minSoilTempF = 65,
+            seedSoakHours = 24,
+            startNotes = "Soak seeds 24 hours; also called bottle gourd or lagenaria; for eating harvest very young; for crafts leave to dry on vine",
+            harvestIndicators = "For eating: harvest at 6-8 inches when skin can be dented with thumbnail; for gourds: leave until completely dry and brown",
+            harvestFrequency = "For eating: every 2-3 days; for gourds: single late-season harvest",
+            yieldPerPlant = "5-15 gourds depending on variety", storageNotes = "Young fruit: refrigerate 1 week; dried gourds: clean and seal for crafts; store indefinitely when dry",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Squash vine borer, aphids, cucumber beetles",
+            commonDiseases = "Powdery mildew, anthracnose, gummy stem blight",
+            pestNotes = "Very vigorous; needs strong support for heavy fruit; fruit for crafts needs long season to fully dry on vine",
+        )
+
+        u(db, "Snake Gourd",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 2-3 weeks during growing season",
+            mulchRecommended = true, stakingRequired = true,
+            pruningNotes = "Must grow on tall trellis for straight fruit; hanging fruit can reach 3-5 feet long; prune laterals",
+            minTempF = 50, maxTempF = 100,
+            heatTips = "Tropical vine; thrives in heat and humidity; needs long warm season",
+            coldTips = "Killed by any frost; needs warm nights above 60\u00B0F; start indoors in most climates",
+            indoorStartWeeksBefore = 6, minSoilTempF = 70,
+            seedSoakHours = 24, scarification = true,
+            startNotes = "Nick hard seed coat and soak 24 hours; night-blooming flowers pollinated by moths; may need hand pollination",
+            harvestIndicators = "Harvest young at 12-18 inches for eating; light green and firm; older fruit becomes bitter and seedy",
+            harvestFrequency = "Every 2-3 days; grows very quickly in hot weather",
+            yieldPerPlant = "10-15 gourds", storageNotes = "Use fresh within 2-3 days; does not store well; young fruit cooked like zucchini in Asian cuisines",
+            rotationGroup = "cucurbit", rotationNotes = "Rotate with non-cucurbits; wait 2-3 years",
+            commonPests = "Fruit fly, aphids, red pumpkin beetle",
+            commonDiseases = "Powdery mildew, downy mildew",
+            pestNotes = "Hang small weights on developing fruit to keep them straight; night-blooming so hand-pollinate if no moths present",
+        )
+
+        // ── Brassicas ──
+
+        u(db, "Broccoli Rabe",
+            waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate",
+            fertilizerType = "High nitrogen (10-5-5)", fertilizerFrequency = "at planting and 3 weeks after transplanting",
+            mulchRecommended = true,
+            pruningNotes = "Harvest main head first; side shoots continue producing for weeks; cut stems with 4-6 inches of leaf",
+            minTempF = 20, maxTempF = 80,
+            heatTips = "Bolts quickly in heat; strictly cool-season crop; bolt-resistant varieties available",
+            coldTips = "Very frost tolerant; flavor improves after light frost; survives into the 20s\u00B0F",
+            indoorStartWeeksBefore = 4, minSoilTempF = 40,
+            startNotes = "Direct sow or transplant in early spring or fall; fast growing (40-60 days); bolt-prone in long days",
+            harvestIndicators = "Cut when flower buds are tight and just beginning to show yellow; before flowers fully open",
+            harvestFrequency = "Main head first, then side shoots every 3-5 days for 2-4 weeks",
+            yieldPerPlant = "0.5-1 lb total including side shoots", storageNotes = "Refrigerate unwashed in plastic bag 3-5 days; blanch and freeze for long-term; wilts quickly at room temperature",
+            successionPlantingDays = 14, canSuccessionPlant = true,
+            rotationGroup = "brassica", rotationNotes = "Rotate with non-brassicas; wait 3-4 years to prevent clubroot buildup",
+            commonPests = "Flea beetles, cabbage worms, aphids, harlequin bugs",
+            commonDiseases = "Clubroot, downy mildew, black rot, alternaria leaf spot",
+            pestNotes = "Row covers prevent flea beetles and cabbage worms; fast crop that often matures before heavy pest pressure",
+        )
+
+        u(db, "Romanesco",
+            waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy",
+            fertilizerType = "10-10-10 balanced", fertilizerFrequency = "every 2-3 weeks; side-dress with nitrogen at head formation",
+            mulchRecommended = true,
+            pruningNotes = "Remove lower yellowing leaves; single harvest crop; heads are fractal spirals that must be harvested at peak",
+            minTempF = 25, maxTempF = 80,
+            heatTips = "Will not form proper heads in heat above 80\u00B0F; strictly cool-season; time planting carefully for fall harvest",
+            coldTips = "Tolerates light frost; flavor improves with cold; protect from hard freezes below 25\u00B0F",
+            indoorStartWeeksBefore = 6, minSoilTempF = 45,
+            startNotes = "Start indoors for fall harvest; tricky to grow well; needs consistent cool temperatures during head formation; easier than cauliflower",
+            harvestIndicators = "Tight chartreuse spiral points; head 4-6 inches across; harvest before florets separate or discolor",
+            harvestFrequency = "Single harvest; cut head leaving a few wrapper leaves for protection",
+            yieldPerPlant = "1 head (0.5-1.5 lbs)", storageNotes = "Refrigerate in plastic bag up to 1 week; use promptly for best flavor; freezes well after blanching",
+            rotationGroup = "brassica", rotationNotes = "Rotate with non-brassicas; wait 3-4 years; heavy feeder; follow with legumes",
+            commonPests = "Cabbage worms, aphids, cabbage looper, flea beetles, harlequin bugs",
+            commonDiseases = "Clubroot, downy mildew, black rot, ring spot",
+            pestNotes = "Row covers are essential; BT for caterpillars; check regularly for hidden pests in spiral crevices",
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  BATCH 2 — (placeholder for cool-season vegetables, roots, alliums)
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedBatch2(db: SupportSQLiteDatabase) {
+        // Cool-season vegetables, roots, alliums, leafy greens
+        u(db, "Lettuce (leaf)", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "Bolts in heat; provide afternoon shade", coldTips = "Tolerates light frost; use row cover below 25F", indoorStartWeeksBefore = 4, minSoilTempF = 40, harvestIndicators = "Leaves 4-6 inches; harvest outer leaves first", harvestFrequency = "Every 3-5 days", yieldPerPlant = "4-8 oz over season", storageNotes = "Refrigerate 5-7 days in damp towel", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Slugs, Leaf miners", commonDiseases = "Downy mildew, Lettuce drop, Tip burn")
+        u(db, "Lettuce (head)", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "Bolts quickly above 80F", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Head feels firm when squeezed", harvestFrequency = "Once at maturity", yieldPerPlant = "8-16 oz", storageNotes = "Refrigerate up to 2 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Slugs, Cutworms", commonDiseases = "Downy mildew, Sclerotinia")
+        u(db, "Spinach", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen", fertilizerFrequency = "every 3 weeks", mulchRecommended = true, minTempF = 15, maxTempF = 75, heatTips = "Bolts rapidly in heat; grow in spring/fall only", coldTips = "Very cold hardy; survives to 15F", indoorStartWeeksBefore = 6, minSoilTempF = 35, harvestIndicators = "Leaves 3-6 inches; harvest outer leaves", harvestFrequency = "Every 3-5 days", yieldPerPlant = "4-6 oz", storageNotes = "Refrigerate 5-7 days; blanch and freeze", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Leaf miners, Slugs", commonDiseases = "Downy mildew, White rust, Fusarium wilt")
+        u(db, "Kale", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 10, maxTempF = 85, heatTips = "Becomes bitter in heat; best as fall crop", coldTips = "Frost improves flavor; hardy to 10F", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Harvest lower leaves when 8-10 inches", harvestFrequency = "Weekly", yieldPerPlant = "1-2 lbs over season", storageNotes = "Refrigerate 1-2 weeks; freezes well after blanching", rotationGroup = "brassica", commonPests = "Cabbage worms, Aphids, Flea beetles", commonDiseases = "Black rot, Clubroot, Downy mildew")
+        u(db, "Swiss Chard", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 15, maxTempF = 90, heatTips = "More heat tolerant than spinach", coldTips = "Tolerates light frost", indoorStartWeeksBefore = 4, minSoilTempF = 40, harvestIndicators = "Cut outer stalks when 8-12 inches", harvestFrequency = "Weekly", yieldPerPlant = "1-2 lbs", storageNotes = "Refrigerate 3-5 days", rotationGroup = "leaf", commonPests = "Leaf miners, Aphids, Slugs", commonDiseases = "Cercospora leaf spot, Downy mildew")
+        u(db, "Collard Greens", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 10, maxTempF = 95, heatTips = "Heat tolerant brassica; does well in South", coldTips = "Frost sweetens flavor; hardy to 10F", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Harvest lower leaves when 10 inches", harvestFrequency = "Weekly", yieldPerPlant = "2-4 lbs", storageNotes = "Refrigerate 4-5 days; freezes well", rotationGroup = "brassica", commonPests = "Cabbage worms, Aphids, Harlequin bugs", commonDiseases = "Black rot, Downy mildew")
+        u(db, "Mustard Greens", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "Bolts quickly in heat", minSoilTempF = 40, harvestIndicators = "Harvest leaves at 4-6 inches for mild flavor", harvestFrequency = "Every 5-7 days", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate 3-5 days", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "brassica", commonPests = "Flea beetles, Aphids, Cabbage worms", commonDiseases = "White rust, Downy mildew")
+        u(db, "Broccoli", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 2-3 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "Heads loosen in heat; plant for fall harvest", coldTips = "Tolerates light frost; improves flavor", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Cut main head when buds tight and dark green, before flowering", harvestFrequency = "Main head once, then side shoots weekly", yieldPerPlant = "1-2 lbs with side shoots", storageNotes = "Refrigerate 1-2 weeks; freezes well", rotationGroup = "brassica", rotationNotes = "Wait 3 years before replanting brassicas", commonPests = "Cabbage worms, Aphids, Cabbage loopers", commonDiseases = "Clubroot, Black rot, Downy mildew")
+        u(db, "Cauliflower", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 2 weeks", mulchRecommended = true, minTempF = 25, maxTempF = 75, heatTips = "Very heat sensitive; heads discolor above 80F", coldTips = "Tolerates light frost", indoorStartWeeksBefore = 6, minSoilTempF = 45, harvestIndicators = "Head is 6-8 inches and compact; cut before curds separate", harvestFrequency = "Once per plant", yieldPerPlant = "1-2 lbs", storageNotes = "Refrigerate 1-2 weeks; freezes well", rotationGroup = "brassica", commonPests = "Cabbage worms, Aphids, Flea beetles", commonDiseases = "Clubroot, Black rot, Downy mildew")
+        u(db, "Cabbage", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "high nitrogen early, balanced later", fertilizerFrequency = "every 2-3 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "May split in heat; harvest promptly", coldTips = "Very cold hardy; improves with frost", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Head feels solid and firm when squeezed", harvestFrequency = "Once per plant", yieldPerPlant = "2-5 lbs", storageNotes = "Root cellar 3-4 months; refrigerate 2-3 weeks", rotationGroup = "brassica", commonPests = "Cabbage worms, Cabbage loopers, Slugs", commonDiseases = "Clubroot, Black rot, Fusarium yellows")
+        u(db, "Brussels Sprouts", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3 weeks", mulchRecommended = true, minTempF = 10, maxTempF = 75, heatTips = "Needs cool temps to form sprouts; plant for fall harvest", coldTips = "Frost greatly improves flavor", indoorStartWeeksBefore = 8, minSoilTempF = 45, pruningNotes = "Top plant 3 weeks before harvest to redirect energy to sprouts", harvestIndicators = "Sprouts are 1-2 inches and firm; harvest from bottom up", harvestFrequency = "Weekly from bottom up", yieldPerPlant = "50-100 sprouts", storageNotes = "Refrigerate 3-4 weeks; freezes well", rotationGroup = "brassica", commonPests = "Cabbage worms, Aphids, Harlequin bugs", commonDiseases = "Clubroot, Powdery mildew, Ring spot")
+        u(db, "Peas", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "low nitrogen, inoculant at planting", fertilizerFrequency = "at planting only", mulchRecommended = true, stakingRequired = true, minTempF = 20, maxTempF = 75, heatTips = "Stop producing above 75F; spring/fall crop", coldTips = "Very cold hardy; can direct sow 4-6 weeks before last frost", minSoilTempF = 40, harvestIndicators = "Pods are plump and bright green", harvestFrequency = "Every 1-2 days in peak", yieldPerPlant = "0.5-1 lb", storageNotes = "Eat fresh; shell and freeze for storage", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "legume", rotationNotes = "Fixes nitrogen; good predecessor for heavy feeders", commonPests = "Aphids, Pea weevils, Thrips", commonDiseases = "Powdery mildew, Fusarium wilt, Root rot")
+        u(db, "Radish", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting", minTempF = 20, maxTempF = 80, heatTips = "Bolts and becomes pithy in heat", minSoilTempF = 40, thinningNotes = "Thin to 1-2 inches apart when seedlings emerge", harvestIndicators = "Tops of roots visible at soil surface; 1 inch diameter", harvestFrequency = "Pull as needed", yieldPerPlant = "1-2 oz", storageNotes = "Refrigerate up to 2 weeks; remove greens", successionPlantingDays = 10, canSuccessionPlant = true, rotationGroup = "root", commonPests = "Flea beetles, Root maggots", commonDiseases = "Clubroot, Black root")
+        u(db, "Carrot", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting", mulchRecommended = true, minTempF = 15, maxTempF = 85, coldTips = "Frost sweetens carrots; can overwinter with mulch", minSoilTempF = 45, thinningNotes = "Thin to 2-3 inches apart; crowded carrots fork", harvestIndicators = "Top of root 0.5-0.75 inch diameter at soil line", harvestFrequency = "Pull as needed", yieldPerPlant = "2-4 oz", storageNotes = "Root cellar 4-6 months; refrigerate 4 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "root", commonPests = "Carrot rust fly, Aphids, Wireworms", commonDiseases = "Alternaria leaf blight, Cavity spot")
+        u(db, "Beet", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting and mid-season", mulchRecommended = true, minTempF = 20, maxTempF = 85, coldTips = "Tolerates frost; can overwinter", minSoilTempF = 40, thinningNotes = "Thin to 3-4 inches apart; each seed cluster produces multiple seedlings", harvestIndicators = "Root top 1.5-3 inches at soil surface", harvestFrequency = "Pull as needed", yieldPerPlant = "3-6 oz root plus greens", storageNotes = "Root cellar 3-5 months; refrigerate 2-3 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "root", commonPests = "Leaf miners, Flea beetles, Aphids", commonDiseases = "Cercospora leaf spot, Scab")
+        u(db, "Turnip", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting", minTempF = 15, maxTempF = 80, coldTips = "Frost sweetens roots", minSoilTempF = 40, thinningNotes = "Thin to 4 inches apart", harvestIndicators = "Root 2-3 inches diameter; harvest before woody", harvestFrequency = "Pull as needed", yieldPerPlant = "4-8 oz", storageNotes = "Root cellar 2-4 months; refrigerate 2 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "root", commonPests = "Flea beetles, Root maggots, Aphids", commonDiseases = "Clubroot, White rust")
+        u(db, "Onion", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen early, stop at bulbing", fertilizerFrequency = "every 2-3 weeks until bulbing", mulchRecommended = true, minTempF = 20, maxTempF = 90, heatTips = "Heat triggers bulbing; choose correct day-length variety", minSoilTempF = 35, harvestIndicators = "Tops fall over and begin to yellow", harvestFrequency = "Once at maturity", yieldPerPlant = "4-16 oz", storageNotes = "Cure 2 weeks in dry shade; stores 3-6 months", rotationGroup = "allium", rotationNotes = "Wait 3 years before replanting alliums", commonPests = "Onion maggots, Thrips", commonDiseases = "Botrytis, Pink root, Downy mildew")
+        u(db, "Garlic", waterInchesPerWeek = 0.5f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen in spring", fertilizerFrequency = "monthly in spring", mulchRecommended = true, minTempF = 0, maxTempF = 90, coldTips = "Plant in fall; needs cold period for bulb formation", startNotes = "Plant cloves in fall, 6-8 weeks before ground freezes", harvestIndicators = "Lower 3-4 leaves brown while upper leaves still green", harvestFrequency = "Once in early summer", yieldPerPlant = "1 bulb (1-3 oz)", storageNotes = "Cure 2-4 weeks; hardneck stores 4-6 months, softneck 6-9 months", rotationGroup = "allium", commonPests = "Onion maggots, Nematodes", commonDiseases = "White rot, Rust, Botrytis")
+        u(db, "Potato", waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting and hilling", mulchRecommended = true, minTempF = 25, maxTempF = 85, heatTips = "Tubers stop forming above 85F", coldTips = "Frost kills foliage but tubers survive underground", minSoilTempF = 45, startNotes = "Plant seed potatoes; cut pieces with 2+ eyes", harvestIndicators = "New potatoes when flowering; storage potatoes when vines die back", harvestFrequency = "Once or twice per season", yieldPerPlant = "3-5 lbs", storageNotes = "Cure 1-2 weeks; root cellar 4-6 months", rotationGroup = "nightshade", rotationNotes = "Wait 3+ years; avoid after tomatoes/peppers", commonPests = "Colorado potato beetles, Aphids, Wireworms", commonDiseases = "Late blight, Early blight, Scab", pestNotes = "Hill soil around stems to prevent green tubers")
+        u(db, "Kohlrabi", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting", minTempF = 20, maxTempF = 80, minSoilTempF = 40, harvestIndicators = "Bulb 2-3 inches diameter; becomes woody if larger", harvestFrequency = "Once per plant", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate 2-3 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "brassica", commonPests = "Cabbage worms, Aphids, Flea beetles", commonDiseases = "Clubroot, Black rot")
+        u(db, "Romaine Lettuce", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "More heat tolerant than head lettuce", indoorStartWeeksBefore = 4, minSoilTempF = 40, harvestIndicators = "Leaves 8-10 inches tall; firm heart formed", harvestFrequency = "Once or cut-and-come-again", yieldPerPlant = "8-16 oz", storageNotes = "Refrigerate 1-2 weeks", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Downy mildew, Tip burn")
+        u(db, "Butter Lettuce", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 75, indoorStartWeeksBefore = 4, minSoilTempF = 40, harvestIndicators = "Loose head formed and leaves tender", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate 5-7 days; very delicate", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Downy mildew, Botrytis")
+        u(db, "Arugula", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "at planting", minTempF = 25, maxTempF = 75, heatTips = "Bolts rapidly in heat; becomes very spicy", minSoilTempF = 40, harvestIndicators = "Leaves 2-3 inches; baby leaves mildest", harvestFrequency = "Every 3-5 days", yieldPerPlant = "2-4 oz", storageNotes = "Refrigerate 3-5 days", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "brassica", commonPests = "Flea beetles, Aphids", commonDiseases = "Downy mildew")
+        u(db, "Green Onion", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", minTempF = 20, maxTempF = 85, minSoilTempF = 35, harvestIndicators = "Tops 6-8 inches tall; pencil thickness", harvestFrequency = "Pull as needed", yieldPerPlant = "1-2 oz", storageNotes = "Refrigerate 1-2 weeks", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "allium", commonPests = "Thrips, Onion maggots", commonDiseases = "Downy mildew")
+        u(db, "Shallot", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "monthly", mulchRecommended = true, minTempF = 20, maxTempF = 85, harvestIndicators = "Tops fall and brown like onions", harvestFrequency = "Once at maturity", yieldPerPlant = "3-6 bulbs per set", storageNotes = "Cure and store 6-8 months", rotationGroup = "allium", commonPests = "Thrips, Onion maggots", commonDiseases = "Botrytis, Pink root")
+        u(db, "Leek", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen", fertilizerFrequency = "every 3 weeks", mulchRecommended = true, minTempF = 10, maxTempF = 85, coldTips = "Very cold hardy; can overwinter", indoorStartWeeksBefore = 10, minSoilTempF = 40, harvestIndicators = "Shaft is 1 inch diameter; can harvest anytime", harvestFrequency = "As needed", yieldPerPlant = "6-12 oz", storageNotes = "Refrigerate 2-3 weeks; leave in ground until needed", rotationGroup = "allium", commonPests = "Onion maggots, Thrips, Leek moth", commonDiseases = "Rust, White rot")
+        u(db, "Celery", waterInchesPerWeek = 2.0f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 2 weeks", mulchRecommended = true, minTempF = 30, maxTempF = 80, heatTips = "Becomes pithy and bitter in heat", coldTips = "Extended cold can cause bolting", indoorStartWeeksBefore = 10, minSoilTempF = 50, harvestIndicators = "Stalks 8 inches or more; harvest outer stalks or whole plant", harvestFrequency = "Outer stalks as needed", yieldPerPlant = "1-2 lbs", storageNotes = "Refrigerate 2-3 weeks wrapped in foil", rotationGroup = "leaf", commonPests = "Aphids, Celery leaf tier, Slugs", commonDiseases = "Early blight, Late blight, Fusarium wilt")
+        u(db, "Asparagus", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "early spring and after harvest", mulchRecommended = true, minTempF = -30, maxTempF = 95, startNotes = "Plant crowns; do not harvest first 2 years", harvestIndicators = "Spears 6-8 inches tall and pencil thickness", harvestFrequency = "Every 1-2 days during 6-8 week harvest season", yieldPerPlant = "0.5 lb per crown per year once established", storageNotes = "Refrigerate 3-5 days standing in water; freezes well", rotationGroup = "perennial", rotationNotes = "Perennial; produces 15-20 years in same bed", commonPests = "Asparagus beetles, Aphids, Cutworms", commonDiseases = "Fusarium crown rot, Rust, Purple spot")
+        u(db, "Artichoke", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "monthly", mulchRecommended = true, minTempF = 25, maxTempF = 90, coldTips = "Mulch heavily in winter; may die below 20F", indoorStartWeeksBefore = 8, harvestIndicators = "Buds are tight and compact; harvest before scales open", harvestFrequency = "Main bud first, then side buds", yieldPerPlant = "6-12 buds", storageNotes = "Refrigerate 1-2 weeks", rotationGroup = "perennial", commonPests = "Aphids, Slugs, Earwigs", commonDiseases = "Botrytis, Powdery mildew")
+        u(db, "Iceberg Lettuce", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 25, maxTempF = 75, heatTips = "Needs cool weather; bolts above 80F", indoorStartWeeksBefore = 6, minSoilTempF = 40, harvestIndicators = "Head firm and compact", yieldPerPlant = "12-24 oz", storageNotes = "Refrigerate up to 2 weeks", rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Downy mildew, Tip burn")
+        u(db, "Yam", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting and mid-season", mulchRecommended = true, minTempF = 50, maxTempF = 100, heatTips = "Tropical crop; loves heat", minSoilTempF = 65, harvestIndicators = "Leaves begin to yellow and die back", harvestFrequency = "Once at end of season", yieldPerPlant = "2-5 lbs", storageNotes = "Cure in warm humid conditions 1-2 weeks; stores 2-3 months", rotationGroup = "root", commonPests = "Nematodes, Wireworms", commonDiseases = "Anthracnose, Tuber rot")
+        // Extended leafy greens and roots
+        u(db, "Radicchio", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, coldTips = "Frost improves color and flavor", harvestIndicators = "Head firm and colorful", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate 2-3 weeks", rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Downy mildew, Bottom rot")
+        u(db, "Endive", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "every 3-4 weeks", minTempF = 20, maxTempF = 80, harvestIndicators = "Heads full and blanched center", yieldPerPlant = "6-12 oz", storageNotes = "Refrigerate 1-2 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Tip burn, Downy mildew")
+        u(db, "Escarole", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "every 3-4 weeks", minTempF = 20, maxTempF = 80, harvestIndicators = "Broad leaves 12-16 inches; blanch center for milder flavor", yieldPerPlant = "8-16 oz", storageNotes = "Refrigerate 1-2 weeks", rotationGroup = "leaf", commonPests = "Aphids, Slugs", commonDiseases = "Tip burn")
+        u(db, "Mache", waterInchesPerWeek = 0.5f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "at planting", minTempF = 5, maxTempF = 70, coldTips = "Extremely cold hardy; grows through winter", minSoilTempF = 35, harvestIndicators = "Rosettes 3-4 inches across", yieldPerPlant = "1-2 oz", storageNotes = "Refrigerate 3-5 days", successionPlantingDays = 14, canSuccessionPlant = true, rotationGroup = "leaf", commonPests = "Slugs", commonDiseases = "Downy mildew")
+        u(db, "Cress", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "at planting", minTempF = 25, maxTempF = 75, harvestIndicators = "Leaves 2-3 inches; cut before flowering", yieldPerPlant = "1-2 oz", storageNotes = "Refrigerate 3-5 days", successionPlantingDays = 10, canSuccessionPlant = true, rotationGroup = "brassica", commonPests = "Flea beetles", commonDiseases = "Damping off")
+        u(db, "Purslane", waterInchesPerWeek = 0.5f, fertilizerNeeds = "none", minTempF = 40, maxTempF = 100, heatTips = "Thrives in heat and drought", harvestIndicators = "Stems 6+ inches; harvest tips", harvestFrequency = "Weekly", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate 3-5 days", rotationGroup = "leaf", commonPests = "Purslane sawfly", commonDiseases = "Rarely affected")
+        u(db, "Sorrel", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "early spring", mulchRecommended = true, minTempF = -10, maxTempF = 85, harvestIndicators = "Leaves 4-6 inches; harvest outer leaves", harvestFrequency = "Weekly", yieldPerPlant = "4-8 oz", storageNotes = "Use fresh; wilts quickly", rotationGroup = "perennial", commonPests = "Aphids, Slugs", commonDiseases = "Rarely affected")
+        u(db, "Lamb's Quarters", waterInchesPerWeek = 0.5f, fertilizerNeeds = "none", minTempF = 20, maxTempF = 95, harvestIndicators = "Young leaves and tender tops", harvestFrequency = "Weekly", yieldPerPlant = "4-8 oz", storageNotes = "Use fresh or blanch and freeze", rotationGroup = "leaf", commonPests = "Leaf miners", commonDiseases = "Rarely affected")
+        u(db, "Watercress", waterInchesPerWeek = 2.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "monthly", minTempF = 25, maxTempF = 80, startNotes = "Grows best in running water or very wet soil", harvestIndicators = "Stems 4-6 inches; cut above water line", harvestFrequency = "Every 1-2 weeks", yieldPerPlant = "4-8 oz", storageNotes = "Refrigerate in water 3-5 days", rotationGroup = "leaf", commonPests = "Aphids", commonDiseases = "Rarely affected in clean water")
+        u(db, "Malabar Spinach", waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "every 3-4 weeks", stakingRequired = true, minTempF = 50, maxTempF = 100, heatTips = "Thrives in heat; true warm-season green", minSoilTempF = 65, harvestIndicators = "Pick young leaves and tender stems", harvestFrequency = "Weekly", yieldPerPlant = "1-2 lbs", storageNotes = "Refrigerate 3-5 days", rotationGroup = "leaf", commonPests = "Rarely affected", commonDiseases = "Rarely affected")
+        u(db, "New Zealand Spinach", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "monthly", minTempF = 35, maxTempF = 100, heatTips = "Does not bolt in heat; great spinach substitute", seedSoakHours = 12, minSoilTempF = 60, harvestIndicators = "Pick growing tips 3-4 inches", harvestFrequency = "Every 5-7 days", yieldPerPlant = "1-2 lbs", storageNotes = "Refrigerate 3-5 days", rotationGroup = "leaf", commonPests = "Aphids", commonDiseases = "Rarely affected")
+        u(db, "Amaranth Greens", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "high nitrogen", fertilizerFrequency = "every 3-4 weeks", minTempF = 50, maxTempF = 100, heatTips = "Loves heat; grows fastest in summer", minSoilTempF = 65, harvestIndicators = "Young leaves and tender shoots", harvestFrequency = "Weekly", yieldPerPlant = "8-16 oz greens", storageNotes = "Refrigerate 3-5 days", rotationGroup = "leaf", commonPests = "Flea beetles, Aphids", commonDiseases = "Rarely affected")
+        u(db, "Moringa", waterInchesPerWeek = 0.5f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "monthly", pruningNotes = "Cut back hard to promote bushy growth and leaf production", minTempF = 50, maxTempF = 110, heatTips = "Extremely heat and drought tolerant", coldTips = "Dies back below 50F; tropical only or grow as annual", harvestIndicators = "Pick young leaves and tender tips", harvestFrequency = "Weekly", yieldPerPlant = "Several pounds of leaves per season", storageNotes = "Dry leaves for storage", rotationGroup = "perennial", commonPests = "Rarely affected", commonDiseases = "Root rot in wet soil")
+        u(db, "Fennel", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 3-4 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, heatTips = "Bolts in heat; best as fall crop", indoorStartWeeksBefore = 4, minSoilTempF = 50, harvestIndicators = "Bulb 3 inches across; before bolting", harvestFrequency = "Once per plant", yieldPerPlant = "8-16 oz bulb", storageNotes = "Refrigerate 1-2 weeks", rotationGroup = "leaf", commonPests = "Aphids, Swallowtail caterpillars", commonDiseases = "Damping off, Root rot")
+        u(db, "Celeriac", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "every 2-3 weeks", mulchRecommended = true, minTempF = 20, maxTempF = 80, indoorStartWeeksBefore = 10, minSoilTempF = 50, harvestIndicators = "Root 3-4 inches diameter; harvest before hard freeze", harvestFrequency = "Once at maturity", yieldPerPlant = "1-2 lbs", storageNotes = "Root cellar 3-4 months; refrigerate 2-3 weeks", rotationGroup = "leaf", commonPests = "Aphids, Celery leaf tier", commonDiseases = "Early blight, Sclerotinia")
+        u(db, "Rutabaga", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced 10-10-10", fertilizerFrequency = "at planting", mulchRecommended = true, minTempF = 15, maxTempF = 80, coldTips = "Frost improves flavor significantly", minSoilTempF = 40, thinningNotes = "Thin to 6-8 inches apart", harvestIndicators = "Root 3-5 inches diameter", yieldPerPlant = "1-3 lbs", storageNotes = "Root cellar 4-6 months", rotationGroup = "brassica", commonPests = "Root maggots, Flea beetles", commonDiseases = "Clubroot, Powdery mildew")
+        u(db, "Parsnip", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting", mulchRecommended = true, minTempF = 0, maxTempF = 80, coldTips = "Frost greatly improves sweetness; can overwinter", minSoilTempF = 45, startNotes = "Slow to germinate (14-28 days); use fresh seed", thinningNotes = "Thin to 3-4 inches apart", harvestIndicators = "After first frost for best flavor; root 1.5+ inch diameter", yieldPerPlant = "4-8 oz", storageNotes = "Root cellar 4-6 months; leave in ground through winter", rotationGroup = "root", commonPests = "Carrot rust fly, Parsnip webworm", commonDiseases = "Canker, Leaf spot")
+        u(db, "Daikon Radish", waterInchesPerWeek = 1.0f, fertilizerNeeds = "light", fertilizerType = "balanced", fertilizerFrequency = "at planting", minTempF = 20, maxTempF = 80, minSoilTempF = 40, thinningNotes = "Thin to 4-6 inches apart", harvestIndicators = "Root top visible 2-3 inches above soil; harvest before pithy", yieldPerPlant = "1-3 lbs", storageNotes = "Refrigerate 2-3 weeks", successionPlantingDays = 21, canSuccessionPlant = true, rotationGroup = "root", commonPests = "Flea beetles, Root maggots", commonDiseases = "Clubroot")
+        u(db, "Horseradish", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "early spring", mulchRecommended = true, minTempF = -30, maxTempF = 90, startNotes = "Plant root cuttings; very vigorous", harvestIndicators = "Dig roots after first frost", harvestFrequency = "Once in fall", yieldPerPlant = "1-2 lbs per plant", storageNotes = "Refrigerate in damp sand 4-6 months", rotationGroup = "perennial", commonPests = "Flea beetles", commonDiseases = "White rust", pestNotes = "Very invasive; plant in contained area")
+        u(db, "Jicama", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting and mid-season", minTempF = 50, maxTempF = 100, heatTips = "Tropical; needs long warm season (150+ days)", minSoilTempF = 65, harvestIndicators = "Harvest before first frost; tubers near soil surface", yieldPerPlant = "1-5 lbs", storageNotes = "Cool dry storage 1-2 months; do not refrigerate", rotationGroup = "legume", commonPests = "Aphids", commonDiseases = "Root rot in wet soil", pestNotes = "Vines and seeds are toxic; only eat tuber")
+        u(db, "Taro", waterInchesPerWeek = 2.0f, fertilizerNeeds = "heavy", fertilizerType = "high nitrogen", fertilizerFrequency = "monthly", mulchRecommended = true, minTempF = 50, maxTempF = 100, heatTips = "Loves heat and moisture; tropical crop", coldTips = "Dies back below 50F", startNotes = "Plant corms in wet soil; can grow in standing water", harvestIndicators = "Leaves begin to yellow; 7-12 months after planting", yieldPerPlant = "1-5 lbs", storageNotes = "Must be cooked; stores 1-2 weeks at room temp", rotationGroup = "root", commonPests = "Aphids, Spider mites", commonDiseases = "Taro leaf blight")
+        u(db, "Ginger", waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "monthly", mulchRecommended = true, minTempF = 50, maxTempF = 95, heatTips = "Loves warm, humid conditions", coldTips = "Cannot tolerate frost; container grow in cold climates", startNotes = "Plant rhizome pieces with eyes; start indoors 6-8 weeks early", harvestIndicators = "Harvest baby ginger at 4 months or mature at 8-10 months", yieldPerPlant = "1-4 lbs", storageNotes = "Fresh refrigerate 3 weeks; dry for long-term", rotationGroup = "root", commonPests = "Aphids, Root-knot nematodes", commonDiseases = "Bacterial wilt, Rhizome rot")
+        u(db, "Turmeric", waterInchesPerWeek = 1.5f, fertilizerNeeds = "moderate", fertilizerType = "balanced", fertilizerFrequency = "monthly", mulchRecommended = true, minTempF = 50, maxTempF = 95, coldTips = "Cannot tolerate frost", startNotes = "Plant rhizome pieces; start indoors in cold climates", harvestIndicators = "Leaves yellow and die back; 8-10 months", yieldPerPlant = "1-3 lbs", storageNotes = "Fresh refrigerate 2-3 weeks; dry and grind for long-term", rotationGroup = "root", commonPests = "Rarely affected", commonDiseases = "Rhizome rot in wet soil")
+        u(db, "Rhubarb", waterInchesPerWeek = 1.5f, fertilizerNeeds = "heavy", fertilizerType = "balanced 10-10-10 or compost", fertilizerFrequency = "early spring", mulchRecommended = true, minTempF = -30, maxTempF = 85, heatTips = "Goes dormant in hot summers", coldTips = "Needs winter chill; very cold hardy", startNotes = "Plant crowns; do not harvest first year", harvestIndicators = "Stalks 12-18 inches and deep red; pull don't cut", harvestFrequency = "2-3 times per week during 8-week harvest", yieldPerPlant = "4-8 lbs per season", storageNotes = "Refrigerate 2 weeks; freezes well", rotationGroup = "perennial", rotationNotes = "Perennial; produces 10+ years", commonPests = "Rhubarb curculio, Slugs", commonDiseases = "Crown rot, Leaf spot", pestNotes = "Leaves are toxic; only eat stalks")
+        u(db, "Cassava", waterInchesPerWeek = 1.0f, fertilizerNeeds = "moderate", fertilizerType = "low nitrogen 5-10-10", fertilizerFrequency = "at planting and 2 months", minTempF = 50, maxTempF = 110, heatTips = "Thrives in tropical heat", coldTips = "Cannot tolerate frost", startNotes = "Plant stem cuttings 8-12 inches long", harvestIndicators = "8-12 months after planting; harvest before hard freeze", yieldPerPlant = "5-10 lbs", storageNotes = "Use within 2-3 days of harvest; must be cooked properly", rotationGroup = "root", commonPests = "Whiteflies, Mealybugs, Spider mites", commonDiseases = "Cassava mosaic virus, Root rot", pestNotes = "Raw roots contain cyanide; must be properly processed")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  BATCH 3 — (placeholder for herbs, flowers, leafy greens)
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedBatch3(db: SupportSQLiteDatabase) {
+        // To be filled in later
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  BATCH 4 — (placeholder for fruits, berries, perennials)
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedBatch4(db: SupportSQLiteDatabase) {
+        // To be filled in later
+    }
+}

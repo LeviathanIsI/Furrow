@@ -1,24 +1,17 @@
 package com.furrow.app.ui.poultry
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import android.view.HapticFeedbackConstants
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,31 +21,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Egg
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.outlined.Assessment
 import androidx.compose.material.icons.outlined.EggAlt
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,22 +54,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,26 +72,31 @@ import com.furrow.app.data.local.entity.Chicken
 import com.furrow.app.data.local.entity.ChickenBreedInfo
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.bees.DropdownSelector
-import com.furrow.app.ui.components.DecoratedSectionHeader
-import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.FurrowBottomSheet
+import com.furrow.app.ui.components.GlowCard
+import com.furrow.app.ui.components.GlowRing
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.SearchableSelector
-import com.furrow.app.ui.theme.CardBorderDark
-import com.furrow.app.ui.theme.FurrowBackground
-import com.furrow.app.ui.theme.LocalFurrowColors
-import com.furrow.app.ui.theme.glowBorder
-import com.furrow.app.ui.theme.shimmer
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.RoundedCornerShape
-import kotlinx.coroutines.delay
+import com.furrow.app.ui.components.StatNumber
+import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.Charcoal
+import com.furrow.app.ui.theme.DmSans
+import com.furrow.app.ui.theme.PoultryGlow
+import com.furrow.app.ui.theme.StatusBad
+import com.furrow.app.ui.theme.StatusGood
+import com.furrow.app.ui.theme.StatusWarn
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
+import com.furrow.app.ui.theme.TextTertiary
+import com.furrow.app.ui.theme.Void
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 private val zone: ZoneId = ZoneId.systemDefault()
 private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
@@ -130,6 +122,8 @@ private fun climateBadgeFor(breed: ChickenBreedInfo, zoneGroup: String?): Climat
     }
 }
 
+// ── Main Screen ──
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlockScreen(
@@ -145,249 +139,216 @@ fun FlockScreen(
     val weeklyTotal by viewModel.weeklyTotal.collectAsState()
     val flockSize by viewModel.flockSize.collectAsState()
     val layRate by viewModel.layRatePercent.collectAsState()
-    val dailyAvg by viewModel.dailyAvg.collectAsState()
-    val expectedWeekly by viewModel.expectedWeeklyEggs.collectAsState()
     val breedInfoMap by viewModel.breedInfoMap.collectAsState()
     val allBreeds by viewModel.allBreeds.collectAsState()
     val userProfile by viewModel.userProfile.collectAsState()
     val dailyCounts by viewModel.dailyEggCounts.collectAsState()
+
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("EGG LOG", "FLOCK")
     var showAddChickenDialog by remember { mutableStateOf(false) }
-    val furrowColors = LocalFurrowColors.current
     var eggLogToDelete by remember { mutableStateOf<EggLog?>(null) }
     var chickenToDelete by remember { mutableStateOf<Chicken?>(null) }
     var eggLogForAction by remember { mutableStateOf<EggLog?>(null) }
     var chickenForAction by remember { mutableStateOf<Chicken?>(null) }
     var chickenToEdit by remember { mutableStateOf<Chicken?>(null) }
 
-    var isRefreshing by remember { mutableStateOf(false) }
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            delay(500)
-            isRefreshing = false
-        }
-    }
-
-    val fabInteraction = remember { MutableInteractionSource() }
-    val isFabPressed by fabInteraction.collectIsPressedAsState()
-    val fabScale by animateFloatAsState(
-        targetValue = if (isFabPressed) 0.92f else 1f,
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        label = "fabScale",
-    )
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Poultry") },
-                actions = {
-                    IconButton(onClick = onReportsClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Assessment,
-                            contentDescription = "Reports",
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                ),
-            )
-        },
+        containerColor = Void,
         floatingActionButton = {
             if (selectedTab == 0) {
                 ExtendedFloatingActionButton(
                     onClick = onAddEgg,
-                    icon = { Icon(Icons.Filled.Egg, contentDescription = null) },
-                    text = { Text("Log Eggs") },
-                    modifier = Modifier.graphicsLayer {
-                        scaleX = fabScale
-                        scaleY = fabScale
-                    },
-                    interactionSource = fabInteraction,
-                )
+                    containerColor = PoultryGlow,
+                    contentColor = Void,
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Icon(Icons.Filled.Egg, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Log Eggs")
+                }
             } else {
                 FloatingActionButton(
                     onClick = { showAddChickenDialog = true },
-                    modifier = Modifier.graphicsLayer {
-                        scaleX = fabScale
-                        scaleY = fabScale
-                    },
-                    interactionSource = fabInteraction,
+                    containerColor = PoultryGlow,
+                    contentColor = Void,
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Add Chicken")
                 }
             }
-        }
+        },
     ) { padding ->
-        FurrowBackground(modifier = Modifier.fillMaxSize().padding(padding)) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Stats
-                val poultryAccentColor = furrowColors.poultryAccent
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = BorderStroke(0.5.dp, CardBorderDark.copy(alpha = 0.4f)),
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            // ── Header ──
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 8.dp, top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    "Poultry",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
+                    fontFamily = DmSans,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = onReportsClick) {
+                    Icon(
+                        Icons.Outlined.Assessment,
+                        contentDescription = "Reports",
+                        tint = TextTertiary,
+                    )
+                }
+            }
+
+            // ── Stats Card ──
+            if (eggLogs.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                GlowCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .glowBorder(poultryAccentColor),
+                        .padding(horizontal = 20.dp),
+                    glowColor = PoultryGlow,
+                    glowIntensity = 0.12f,
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .drawBehind {
-                                drawCircle(
-                                    color = poultryAccentColor.copy(alpha = 0.08f),
-                                    radius = size.maxDimension * 0.5f,
-                                    center = Offset(size.width * 0.8f, size.height * 0.2f),
-                                )
-                            },
+                            .padding(20.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            // Hero: today's eggs
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(3.dp, 36.dp)
-                                        .background(furrowColors.poultryAccent, MaterialTheme.shapes.extraSmall),
-                                )
-                                Spacer(modifier = Modifier.width(14.dp))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        "TODAY'S EGGS",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        letterSpacing = 1.sp,
-                                    )
-                                    Text(
-                                        "$flockSize birds in flock",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                                Text(
-                                    "$todayCount",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = furrowColors.poultryAccent,
-                                )
-                            }
-                            HorizontalDivider(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.15f),
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            StatNumber(
+                                value = "$todayCount",
+                                label = "today",
+                                glowColor = PoultryGlow,
+                                fontSize = 48,
                             )
-                            // This week
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically,
+                        }
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            GlowRing(
+                                progress = (layRate ?: 0) / 100f,
+                                glowColor = PoultryGlow,
+                                size = 80.dp,
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(3.dp, 36.dp)
-                                        .background(furrowColors.poultryAccent, MaterialTheme.shapes.extraSmall),
-                                )
-                                Spacer(modifier = Modifier.width(14.dp))
-                                Column(modifier = Modifier.weight(1f)) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
-                                        "THIS WEEK",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        letterSpacing = 1.sp,
-                                    )
-                                    Text(
-                                        "Avg ${String.format(Locale.US, "%.1f", dailyAvg)}/day",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                                Column(horizontalAlignment = Alignment.End) {
-                                    Text(
-                                        "$weeklyTotal",
-                                        style = MaterialTheme.typography.headlineMedium,
+                                        "${layRate ?: 0}%",
+                                        fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = furrowColors.poultryAccent,
+                                        color = PoultryGlow,
                                     )
                                     Text(
-                                        "eggs",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        "rate",
+                                        fontSize = 10.sp,
+                                        color = TextTertiary,
                                     )
                                 }
                             }
                         }
-                        // Lay Rate Ring Chart
-                        if (layRate != null) {
-                            LayRateRing(
-                                layRate = layRate,
-                                accentColor = furrowColors.poultryAccent,
-                                modifier = Modifier
-                                    .padding(end = 16.dp)
-                                    .align(Alignment.CenterVertically),
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            StatNumber(
+                                value = "$weeklyTotal",
+                                label = "this week",
+                                glowColor = TextPrimary,
+                                fontSize = 32,
                             )
                         }
                     }
                 }
+            }
 
-                // 7-day egg chart
-                if (dailyCounts.isNotEmpty()) {
-                    Surface(
-                        shape = MaterialTheme.shapes.medium,
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        border = BorderStroke(0.5.dp, CardBorderDark.copy(alpha = 0.4f)),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            DecoratedSectionHeader(
-                                title = "7-Day Eggs",
-                                accentColor = furrowColors.poultryAccent,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            WeeklyEggChart(
-                                dailyCounts = dailyCounts,
-                                accentColor = furrowColors.poultryAccent,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp),
-                            )
-                        }
-                    }
-                }
-
-                PrimaryTabRow(selectedTabIndex = selectedTab) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = {
-                                val count = if (index == 0) eggLogs.size else chickens.size
-                                Text(
-                                    "$title ($count)",
-                                    letterSpacing = 1.2.sp,
-                                )
-                            }
+            // ── 7-Day Chart ──
+            val hasChartData = dailyCounts.any { it.count > 0 }
+            if (dailyCounts.isNotEmpty() && hasChartData) {
+                Spacer(modifier = Modifier.height(12.dp))
+                GlowCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    glowColor = Color.Transparent,
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            "7-DAY EGGS",
+                            fontSize = 12.sp,
+                            color = TextTertiary,
+                            letterSpacing = 2.sp,
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        WeeklyEggChart(
+                            dailyCounts = dailyCounts,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp),
                         )
                     }
                 }
+            }
 
-                PullToRefreshBox(
-                    isRefreshing = isRefreshing,
-                    onRefresh = { isRefreshing = true },
-                    modifier = Modifier.fillMaxWidth().weight(1f),
-                ) {
-                    when (selectedTab) {
-                        0 -> EggLogList(eggLogs, flockSize, onLongPress = { eggLogForAction = it })
-                        1 -> ChickenList(chickens, breedInfoMap, userProfile?.zoneGroup, onChickenClick, onLongPress = { chickenForAction = it })
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ── Tabs ──
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = Charcoal,
+                indicator = { tabPositions ->
+                    if (selectedTab < tabPositions.size) {
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                            height = 2.dp,
+                            color = PoultryGlow,
+                        )
                     }
+                },
+                divider = { HorizontalDivider(thickness = 0.5.dp, color = BorderSubtle) },
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                title,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    letterSpacing = 1.2.sp,
+                                ),
+                                color = if (selectedTab == index) TextPrimary else TextTertiary,
+                            )
+                        },
+                    )
+                }
+            }
+
+            // ── Tab Content ──
+            Box(modifier = Modifier.weight(1f)) {
+                when (selectedTab) {
+                    0 -> EggLogList(
+                        eggLogs = eggLogs,
+                        onAddEgg = onAddEgg,
+                        onLongPress = { eggLogForAction = it },
+                    )
+                    1 -> ChickenList(
+                        chickens = chickens,
+                        breedInfoMap = breedInfoMap,
+                        onChickenClick = onChickenClick,
+                        onAddChicken = { showAddChickenDialog = true },
+                        onLongPress = { chickenForAction = it },
+                    )
                 }
             }
         }
     }
+
+    // ── Sheets & Dialogs ──
 
     if (showAddChickenDialog || chickenToEdit != null) {
         AddChickenSheet(
@@ -439,53 +400,39 @@ fun FlockScreen(
     }
 }
 
+// ── Egg Log Tab ──
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun EggLogList(eggLogs: List<EggLog>, flockSize: Int, onLongPress: (EggLog) -> Unit) {
+private fun EggLogList(
+    eggLogs: List<EggLog>,
+    onAddEgg: () -> Unit,
+    onLongPress: (EggLog) -> Unit,
+) {
     val view = LocalView.current
+
     if (eggLogs.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .shimmer(),
-            ) {
+        EmptyState(
+            icon = {
                 Icon(
                     Icons.Outlined.EggAlt,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                    modifier = Modifier.size(40.dp),
+                    tint = PoultryGlow,
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    "No egg logs yet",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    "Tap \"Log Eggs\" to record today's count",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                )
-            }
-        }
+            },
+            title = "No egg logs yet",
+            subtitle = "Tap \"Log Eggs\" to record today's count",
+            actionLabel = "Log Eggs",
+            glowColor = PoultryGlow,
+            onAction = onAddEgg,
+        )
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 80.dp),
         ) {
             items(eggLogs, key = { it.id }) { entry ->
-                val dotColor = when {
-                    entry.count == 0 -> MaterialTheme.colorScheme.error
-                    flockSize > 0 && entry.count >= flockSize -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.tertiary
-                }
-
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = BorderStroke(0.5.dp, CardBorderDark.copy(alpha = 0.4f)),
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .combinedClickable(
@@ -496,101 +443,79 @@ private fun EggLogList(eggLogs: List<EggLog>, flockSize: Int, onLongPress: (EggL
                             },
                             indication = ripple(),
                             interactionSource = remember { MutableInteractionSource() },
-                        ),
+                        )
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    ) {
-                        // Colored dot
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(dotColor, CircleShape),
-                        )
-                        // Date + note icon
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            Text(
-                                formatDate(entry.date),
-                                style = MaterialTheme.typography.titleSmall,
-                            )
-                            if (entry.notes != null) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.StickyNote2,
-                                    contentDescription = "Has notes",
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                                )
-                            }
-                        }
-                        // Count
-                        Text(
-                            "${entry.count} eggs",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(StatusGood, CircleShape),
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        formatDate(entry.date),
+                        fontSize = 14.sp,
+                        color = TextPrimary,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        "${entry.count} eggs",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = PoultryGlow,
+                    )
                 }
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    thickness = 0.5.dp,
+                    color = BorderSubtle,
+                )
             }
         }
     }
 }
+
+// ── Flock Tab ──
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ChickenList(
     chickens: List<Chicken>,
     breedInfoMap: Map<String, ChickenBreedInfo>,
-    zoneGroup: String?,
     onChickenClick: (Long) -> Unit,
+    onAddChicken: () -> Unit,
     onLongPress: (Chicken) -> Unit,
 ) {
     val view = LocalView.current
+
     if (chickens.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .shimmer(),
-            ) {
+        EmptyState(
+            icon = {
                 Icon(
                     Icons.Filled.Egg,
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                    modifier = Modifier.size(40.dp),
+                    tint = PoultryGlow,
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    "No chickens yet",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    "Tap + to add your first bird",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                )
-            }
-        }
+            },
+            title = "No chickens yet",
+            subtitle = "Add your first bird to start tracking",
+            actionLabel = "Add Chicken",
+            glowColor = PoultryGlow,
+            onAction = onAddChicken,
+        )
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             items(chickens, key = { it.id }) { chicken ->
                 val breedInfo = breedInfoMap[chicken.breed]
-                val poultryAccent = LocalFurrowColors.current.poultryAccent
+                val displayName = chicken.name ?: chicken.breed
+                val isActive = chicken.status == "active"
 
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    border = BorderStroke(0.5.dp, CardBorderDark.copy(alpha = 0.4f)),
+                GlowCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .combinedClickable(
@@ -602,80 +527,53 @@ private fun ChickenList(
                                 onLongPress(chicken)
                             },
                         ),
+                    glowColor = Color.Transparent,
                 ) {
-                    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Box(
                             modifier = Modifier
-                                .width(4.dp)
-                                .fillMaxHeight()
-                                .background(poultryAccent),
-                        )
-                        Column(modifier = Modifier.weight(1f).padding(12.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                val displayName = chicken.name ?: chicken.breed
-                                val avatarColor = avatarColorFor(displayName)
-                                Box(
-                                    modifier = Modifier
-                                        .size(40.dp)
-                                        .background(avatarColor, CircleShape),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Text(
-                                        displayName.first().uppercase(),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.surface,
-                                    )
-                                }
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        displayName,
-                                        style = MaterialTheme.typography.titleSmall,
-                                    )
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        if (chicken.name != null) {
-                                            Text(
-                                                chicken.breed,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            )
-                                        }
-                                        Text(
-                                            formatAge(chicken.dateAcquired),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                        )
-                                    }
-                                }
-                                StatusBadge(chicken.status)
+                                .size(40.dp)
+                                .background(PoultryGlow.copy(alpha = 0.15f), CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                chicken.breed.first().uppercase(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = PoultryGlow,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                displayName,
+                                fontSize = 16.sp,
+                                color = TextPrimary,
+                            )
+                            Text(
+                                "${chicken.breed} \u00b7 ${formatAge(chicken.dateAcquired)}",
+                                fontSize = 12.sp,
+                                color = TextSecondary,
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.End) {
+                            if (isActive) {
+                                Text(
+                                    "Active",
+                                    fontSize = 10.sp,
+                                    color = StatusGood,
+                                )
                             }
-                            if (breedInfo != null) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    if (breedInfo.eggsPerYear > 0) {
-                                        Text(
-                                            "${breedInfo.eggsPerYear} eggs/yr expected",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    } else {
-                                        Text(
-                                            breedInfo.purpose.replaceFirstChar { it.uppercase() },
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                    ClimateBadgePill(climateBadgeFor(breedInfo, zoneGroup))
+                            breedInfo?.let {
+                                if (it.eggsPerYear > 0) {
+                                    Text(
+                                        "${it.eggsPerYear} eggs/yr",
+                                        fontSize = 12.sp,
+                                        color = TextTertiary,
+                                    )
                                 }
                             }
                         }
@@ -686,47 +584,73 @@ private fun ChickenList(
     }
 }
 
+// ── 7-Day Chart ──
+
 @Composable
-private fun ClimateBadgePill(badge: ClimateBadge) {
-    val color = when (badge) {
-        ClimateBadge.GREAT -> MaterialTheme.colorScheme.primary
-        ClimateBadge.MANAGEABLE -> MaterialTheme.colorScheme.tertiary
-        ClimateBadge.NOT_IDEAL -> MaterialTheme.colorScheme.error
-    }
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = color.copy(alpha = 0.12f),
-    ) {
-        Text(
-            badge.label,
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
+private fun WeeklyEggChart(
+    dailyCounts: List<DailyEggCount>,
+    modifier: Modifier = Modifier,
+) {
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val countStyle = TextStyle(fontSize = 10.sp, color = TextSecondary, textAlign = TextAlign.Center)
+    val labelStyle = TextStyle(fontSize = 10.sp, color = TextTertiary, textAlign = TextAlign.Center)
+    val todayLabelStyle = TextStyle(fontSize = 10.sp, color = TextPrimary, textAlign = TextAlign.Center)
+    val cornerRadiusPx = with(density) { 4.dp.toPx() }
+    val labelSpacePx = with(density) { 16.dp.toPx() }
+    val topPadPx = with(density) { 14.dp.toPx() }
+
+    Canvas(modifier = modifier) {
+        val maxCount = (dailyCounts.maxOfOrNull { it.count } ?: 1).coerceAtLeast(1)
+        val barCount = dailyCounts.size
+        val totalSpacing = size.width * 0.3f
+        val barWidth = (size.width - totalSpacing) / barCount
+        val gap = totalSpacing / (barCount + 1)
+        val maxBarHeight = size.height - labelSpacePx - topPadPx
+
+        dailyCounts.forEachIndexed { index, day ->
+            val barHeight = if (maxCount > 0) (day.count.toFloat() / maxCount) * maxBarHeight else 0f
+            val x = gap + index * (barWidth + gap)
+            val y = topPadPx + maxBarHeight - barHeight
+            val barColor = if (day.isToday) PoultryGlow else PoultryGlow.copy(alpha = 0.4f)
+
+            if (barHeight > 0f) {
+                drawRoundRect(
+                    color = barColor,
+                    topLeft = Offset(x, y),
+                    size = Size(barWidth, barHeight),
+                    cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx),
+                )
+            }
+
+            // Value above bar
+            if (day.count > 0) {
+                val label = day.count.toString()
+                val textLayout = textMeasurer.measure(label, countStyle)
+                drawText(
+                    textLayoutResult = textLayout,
+                    topLeft = Offset(
+                        x + (barWidth - textLayout.size.width) / 2,
+                        y - textLayout.size.height - 2.dp.toPx(),
+                    ),
+                )
+            }
+
+            // Day label below
+            val style = if (day.isToday) todayLabelStyle else labelStyle
+            val dayLayout = textMeasurer.measure(day.dayLabel, style)
+            drawText(
+                textLayoutResult = dayLayout,
+                topLeft = Offset(
+                    x + (barWidth - dayLayout.size.width) / 2,
+                    topPadPx + maxBarHeight + 4.dp.toPx(),
+                ),
+            )
+        }
     }
 }
 
-@Composable
-private fun StatusBadge(status: String) {
-    val (label, color) = when (status) {
-        "active" -> "Active" to MaterialTheme.colorScheme.primary
-        "deceased" -> "Deceased" to MaterialTheme.colorScheme.error
-        "rehomed" -> "Rehomed" to MaterialTheme.colorScheme.onSurfaceVariant
-        "processed" -> "Processed" to MaterialTheme.colorScheme.onSurfaceVariant
-        else -> status.replaceFirstChar { it.uppercase() } to MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = color.copy(alpha = 0.12f),
-    ) {
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
-    }
-}
+// ── Form Sheets ──
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -763,15 +687,28 @@ private fun AddChickenSheet(
                         ClimateBadge.MANAGEABLE -> 1
                         ClimateBadge.NOT_IDEAL -> 2
                     }
-                }.thenBy { it.name }
+                }.thenBy { it.name },
             )
     }
+
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = Charcoal,
+        focusedContainerColor = Charcoal,
+        unfocusedBorderColor = BorderSubtle,
+        focusedBorderColor = PoultryGlow,
+        unfocusedLabelColor = TextTertiary,
+        focusedLabelColor = PoultryGlow,
+        cursorColor = PoultryGlow,
+        unfocusedTextColor = TextPrimary,
+        focusedTextColor = TextPrimary,
+    )
 
     FurrowBottomSheet(
         onDismiss = onDismiss,
         title = if (isEditMode) "Edit Chicken" else "Add Chicken",
         confirmText = "Save",
         confirmEnabled = breed.isNotBlank(),
+        glowColor = PoultryGlow,
         onConfirm = {
             if (breed.isNotBlank()) {
                 onSave(
@@ -782,7 +719,7 @@ private fun AddChickenSheet(
                         dateAcquired = dateAcquired,
                         status = status,
                         notes = notes.ifBlank { null },
-                    )
+                    ),
                 )
             }
         },
@@ -793,6 +730,8 @@ private fun AddChickenSheet(
                 label = { Text("Name (optional)") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
             SearchableSelector(
                 query = breedQuery,
@@ -806,18 +745,15 @@ private fun AddChickenSheet(
                     breedQuery = b.name
                 },
                 label = "Breed",
+                accentColor = PoultryGlow,
                 nameSelector = { it.name },
                 isCustom = { it.isCustom },
                 onAddCustom = { customName ->
                     customBreedInitialName = customName
                     showAddCustomBreed = true
                 },
-                onEditCustom = { b ->
-                    breedToEdit = b
-                },
-                onDeleteCustom = { b ->
-                    breedToDelete = b
-                },
+                onEditCustom = { b -> breedToEdit = b },
+                onDeleteCustom = { b -> breedToDelete = b },
                 itemContent = { b ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -830,13 +766,13 @@ private fun AddChickenSheet(
                                 Text(
                                     "${b.eggsPerYear} eggs/yr",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = TextTertiary,
                                 )
                             } else {
                                 Text(
                                     b.purpose.replaceFirstChar { it.uppercase() },
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = TextTertiary,
                                 )
                             }
                         }
@@ -855,6 +791,7 @@ private fun AddChickenSheet(
                 options = listOf("active", "deceased", "rehomed", "processed"),
                 selected = status,
                 onSelect = { status = it },
+                accentColor = PoultryGlow,
             )
             OutlinedTextField(
                 value = notes,
@@ -862,6 +799,8 @@ private fun AddChickenSheet(
                 label = { Text("Notes (optional)") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
         },
     )
@@ -875,11 +814,7 @@ private fun AddChickenSheet(
                 breedToEdit = null
             },
             onSave = { b ->
-                if (breedToEdit != null) {
-                    onUpdateBreed(b)
-                } else {
-                    onInsertBreed(b)
-                }
+                if (breedToEdit != null) onUpdateBreed(b) else onInsertBreed(b)
                 breed = b.name
                 breedQuery = b.name
                 showAddCustomBreed = false
@@ -924,11 +859,24 @@ private fun AddCustomBreedSheet(
     var broodiness by remember { mutableStateOf(existingBreed?.broodiness ?: "low") }
     var climateNotes by remember { mutableStateOf(existingBreed?.climateNotes ?: "") }
 
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = Charcoal,
+        focusedContainerColor = Charcoal,
+        unfocusedBorderColor = BorderSubtle,
+        focusedBorderColor = PoultryGlow,
+        unfocusedLabelColor = TextTertiary,
+        focusedLabelColor = PoultryGlow,
+        cursorColor = PoultryGlow,
+        unfocusedTextColor = TextPrimary,
+        focusedTextColor = TextPrimary,
+    )
+
     FurrowBottomSheet(
         onDismiss = onDismiss,
         title = if (existingBreed != null) "Edit Custom Breed" else "Add Custom Breed",
         confirmText = "Save",
         confirmEnabled = breedName.isNotBlank(),
+        glowColor = PoultryGlow,
         onConfirm = {
             if (breedName.isNotBlank()) {
                 onSave(
@@ -947,7 +895,7 @@ private fun AddCustomBreedSheet(
                         broodiness = broodiness,
                         climateNotes = climateNotes.ifBlank { null },
                         isCustom = true,
-                    )
+                    ),
                 )
             }
         },
@@ -958,6 +906,8 @@ private fun AddCustomBreedSheet(
                 label = { Text("Breed Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
             OutlinedTextField(
                 value = eggsPerYear,
@@ -965,18 +915,22 @@ private fun AddCustomBreedSheet(
                 label = { Text("Eggs Per Year") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
             DropdownSelector(
                 label = "Egg Color",
                 options = listOf("brown", "white", "blue", "green", "cream", "tinted"),
                 selected = eggColor,
                 onSelect = { eggColor = it },
+                accentColor = PoultryGlow,
             )
             DropdownSelector(
                 label = "Purpose",
                 options = listOf("dual-purpose", "egg", "meat", "ornamental"),
                 selected = purpose,
                 onSelect = { purpose = it },
+                accentColor = PoultryGlow,
             )
             OutlinedTextField(
                 value = temperament,
@@ -984,6 +938,8 @@ private fun AddCustomBreedSheet(
                 label = { Text("Temperament") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -992,6 +948,8 @@ private fun AddCustomBreedSheet(
                     label = { Text("Heat (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
                 )
                 OutlinedTextField(
                     value = coldTolerance,
@@ -999,6 +957,8 @@ private fun AddCustomBreedSheet(
                     label = { Text("Cold (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
+                    colors = fieldColors,
+                    shape = RoundedCornerShape(12.dp),
                 )
             }
             DropdownSelector(
@@ -1006,6 +966,7 @@ private fun AddCustomBreedSheet(
                 options = listOf("low", "moderate", "high"),
                 selected = broodiness,
                 onSelect = { broodiness = it },
+                accentColor = PoultryGlow,
             )
             OutlinedTextField(
                 value = climateNotes,
@@ -1013,169 +974,36 @@ private fun AddCustomBreedSheet(
                 label = { Text("Climate Notes (optional)") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
+                colors = fieldColors,
+                shape = RoundedCornerShape(12.dp),
             )
         },
     )
 }
 
-@Composable
-private fun WeeklyEggChart(
-    dailyCounts: List<DailyEggCount>,
-    accentColor: Color,
-    modifier: Modifier = Modifier,
-) {
-    val accentFaded = accentColor.copy(alpha = 0.35f)
-    val onSurface = MaterialTheme.colorScheme.onSurface
-    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
-    val dashColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-    val textMeasurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    val countStyle = TextStyle(fontSize = 10.sp, color = onSurface, textAlign = TextAlign.Center)
-    val labelStyle = TextStyle(fontSize = 10.sp, color = onSurfaceVariant, textAlign = TextAlign.Center)
-    val cornerRadiusPx = with(density) { 4.dp.toPx() }
-    val labelSpacePx = with(density) { 16.dp.toPx() }
-    val topPadPx = with(density) { 14.dp.toPx() }
-
-    Canvas(modifier = modifier) {
-        val maxCount = (dailyCounts.maxOfOrNull { it.count } ?: 1).coerceAtLeast(1)
-        val barCount = dailyCounts.size
-        val totalSpacing = size.width * 0.3f
-        val barWidth = (size.width - totalSpacing) / barCount
-        val gap = totalSpacing / (barCount + 1)
-        val maxBarHeight = size.height - labelSpacePx - topPadPx
-
-        // Dashed "no data" line at zero
-        val hasAnyData = dailyCounts.any { it.count > 0 }
-        if (!hasAnyData) {
-            val midY = topPadPx + maxBarHeight / 2
-            val dashWidth = 6.dp.toPx()
-            val dashGap = 4.dp.toPx()
-            var x = 0f
-            while (x < size.width) {
-                drawLine(
-                    color = dashColor,
-                    start = Offset(x, midY),
-                    end = Offset((x + dashWidth).coerceAtMost(size.width), midY),
-                    strokeWidth = 1.dp.toPx(),
-                )
-                x += dashWidth + dashGap
-            }
-        }
-
-        dailyCounts.forEachIndexed { index, day ->
-            val barHeight = if (maxCount > 0) (day.count.toFloat() / maxCount) * maxBarHeight else 0f
-            val x = gap + index * (barWidth + gap)
-            val y = topPadPx + maxBarHeight - barHeight
-            val barColor = if (day.isToday) accentColor else accentFaded
-
-            if (barHeight > 0f) {
-                drawRoundRect(
-                    color = barColor,
-                    topLeft = Offset(x, y),
-                    size = Size(barWidth, barHeight),
-                    cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx),
-                )
-            }
-
-            // Count label above bar
-            if (day.count > 0) {
-                val label = day.count.toString()
-                val textLayout = textMeasurer.measure(label, countStyle)
-                drawText(
-                    textLayoutResult = textLayout,
-                    topLeft = Offset(
-                        x + (barWidth - textLayout.size.width) / 2,
-                        y - textLayout.size.height - 2.dp.toPx(),
-                    ),
-                )
-            }
-
-            // Day label below
-            val dayLayout = textMeasurer.measure(day.dayLabel, labelStyle)
-            drawText(
-                textLayoutResult = dayLayout,
-                topLeft = Offset(
-                    x + (barWidth - dayLayout.size.width) / 2,
-                    topPadPx + maxBarHeight + 4.dp.toPx(),
-                ),
-            )
-        }
-    }
-}
+// ── Helper Composables ──
 
 @Composable
-private fun LayRateRing(
-    layRate: Int?,
-    accentColor: Color,
-    modifier: Modifier = Modifier,
-) {
-    val rate = layRate ?: 0
-    val sweepAngle = rate * 3.6f
-    val trackColor = accentColor.copy(alpha = 0.12f)
-    val ringColor = when {
-        layRate == null -> accentColor.copy(alpha = 0.3f)
-        rate >= 70 -> accentColor
-        rate >= 40 -> Color(0xFFDEC057)
-        else -> Color(0xFFFFB4AB)
+private fun ClimateBadgePill(badge: ClimateBadge) {
+    val color = when (badge) {
+        ClimateBadge.GREAT -> StatusGood
+        ClimateBadge.MANAGEABLE -> StatusWarn
+        ClimateBadge.NOT_IDEAL -> StatusBad
     }
-
-    Box(modifier = modifier.size(100.dp), contentAlignment = Alignment.Center) {
-        Canvas(modifier = Modifier.size(100.dp)) {
-            val strokeWidth = 10.dp.toPx()
-            val arcSize = Size(size.width - strokeWidth, size.height - strokeWidth)
-            val arcOffset = Offset(strokeWidth / 2, strokeWidth / 2)
-            drawArc(
-                color = trackColor,
-                startAngle = -90f,
-                sweepAngle = 360f,
-                useCenter = false,
-                topLeft = arcOffset,
-                size = arcSize,
-                style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-            )
-            if (sweepAngle > 0f) {
-                drawArc(
-                    color = ringColor,
-                    startAngle = -90f,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = arcOffset,
-                    size = arcSize,
-                    style = Stroke(width = strokeWidth, cap = StrokeCap.Round),
-                )
-            }
-        }
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = if (layRate != null) "$layRate%" else "--",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = ringColor,
-            )
-            Text(
-                text = "lay rate",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = color.copy(alpha = 0.12f),
+    ) {
+        Text(
+            badge.label,
+            style = MaterialTheme.typography.labelSmall,
+            color = color,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        )
     }
 }
 
-private val avatarColors = listOf(
-    Color(0xFFE67E22), // warm orange
-    Color(0xFF8D6E63), // brown
-    Color(0xFFF39C12), // amber
-    Color(0xFF27AE60), // green
-    Color(0xFF2980B9), // blue
-    Color(0xFFC0392B), // red
-    Color(0xFF8E44AD), // purple
-    Color(0xFF16A085), // teal
-)
-
-private fun avatarColorFor(name: String): Color {
-    val hash = name.fold(0) { acc, c -> acc * 31 + c.code }
-    return avatarColors[(hash and 0x7FFFFFFF) % avatarColors.size]
-}
+// ── Helper Functions ──
 
 private fun formatAge(dateAcquiredMillis: Long): String {
     val acquired = Instant.ofEpochMilli(dateAcquiredMillis).atZone(zone).toLocalDate()

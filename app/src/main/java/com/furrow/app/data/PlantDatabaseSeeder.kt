@@ -13,7 +13,10 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
     /** Called from both onCreate (fresh install) and Migration (upgrade). */
     fun seedAllReferenceTables(db: SupportSQLiteDatabase) {
         seedPlantInfo(db)
+        seedPlantVarieties(db)
         seedPlantingWindows(db)
+        seedExpandedPlants(db)
+        PlantGrowingDataSeeder.seedGrowingData(db)
         seedBreedInfo(db)
         seedBeeRaceInfo(db)
     }
@@ -38,14 +41,27 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
         dtmMin: Int, dtmMax: Int, sun: String, water: String,
         container: Boolean, gallon: Int,
         companions: String, incompatible: String, notes: String? = null,
+        depth: Float? = null, spacing: Int? = null, rowSpacing: Int? = null,
+        germMin: Int? = null, germMax: Int? = null,
+        height: String? = null, ph: String? = null,
+        frost: Boolean = false, peren: Boolean = false,
+        sow: String? = null, harvest: String? = null,
     ) {
         db.execSQL(
             """INSERT INTO plant_info (name, category, minZone, maxZone, daysToHarvestMin, daysToHarvestMax,
                sunRequirement, waterFrequency, containerSuitable, containerMinGallons,
-               companionPlants, incompatiblePlants, notes, isCustom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,0)""",
+               companionPlants, incompatiblePlants, notes,
+               plantingDepthInches, spacingInches, rowSpacingInches,
+               germinationDaysMin, germinationDaysMax,
+               plantHeight, soilPH, frostTolerant, perennial,
+               sowMethod, harvestMethod, isCustom)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)""",
             arrayOf<Any?>(
                 name, cat, minZ, maxZ, dtmMin, dtmMax, sun, water,
                 if (container) 1 else 0, gallon, companions, incompatible, notes,
+                depth, spacing, rowSpacing, germMin, germMax,
+                height, ph, if (frost) 1 else 0, if (peren) 1 else 0,
+                sow, harvest,
             ),
         )
     }
@@ -1208,6 +1224,674 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
 
         // Yam
         w(db, "Yam", H, 3, 5, TP, "Tropical, needs very long warm season")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  PLANT VARIETIES — cultivar data for harvest predictions
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun v(
+        db: SupportSQLiteDatabase,
+        plant: String, name: String,
+        dthMin: Int?, dthMax: Int?, desc: String,
+    ) {
+        db.execSQL(
+            """INSERT INTO plant_variety (plantId, name, daysToHarvestMin, daysToHarvestMax, description, notes, isCustom)
+               VALUES ((SELECT id FROM plant_info WHERE name = ?), ?, ?, ?, ?, NULL, 0)""",
+            arrayOf<Any?>(plant, name, dthMin, dthMax, desc),
+        )
+    }
+
+    @Suppress("LongMethod")
+    private fun seedPlantVarieties(db: SupportSQLiteDatabase) {
+
+        // ── Tomato (determinate) ──
+        v(db, "Tomato (determinate)", "Celebrity", 65, 72, "All-American classic hybrid; excellent disease resistance and reliable yields")
+        v(db, "Tomato (determinate)", "Mountain Pride", 74, 77, "Firm crack-resistant 10 oz fruits; great for humid regions")
+        v(db, "Tomato (determinate)", "Defiant PhR", 70, 75, "Late blight resistant hybrid with 8 oz fruits; bred for organic gardens")
+        v(db, "Tomato (determinate)", "Rutgers", 73, 80, "Heritage variety with classic tomato flavor; balanced acid-sweet for slicing and canning")
+        v(db, "Tomato (determinate)", "Glacier", 55, 60, "Ultra-early 2-3 oz fruits on compact plants; perfect for short seasons and containers")
+        v(db, "Tomato (determinate)", "Mountain Fresh Plus", 72, 78, "Large firm fruits with strong disease resistance; bred for Eastern US conditions")
+        v(db, "Tomato (determinate)", "Bush Early Girl", 59, 65, "Compact bush form with 4-6 oz fruits; great for containers and small spaces")
+
+        // ── Tomato (indeterminate) ──
+        v(db, "Tomato (indeterminate)", "Better Boy", 70, 75, "Classic hybrid producing 12-16 oz fruits; one of the most popular home garden tomatoes")
+        v(db, "Tomato (indeterminate)", "Big Beef", 73, 78, "AAS-winning hybrid with smooth 10-12 oz fruits; excellent disease resistance")
+        v(db, "Tomato (indeterminate)", "Brandywine", 80, 90, "Famous Amish heirloom with large pink beefsteak fruits and exceptional rich flavor")
+        v(db, "Tomato (indeterminate)", "Cherokee Purple", 80, 90, "Dusky purple-brown fruits with complex sweet-smoky flavor; thin skin")
+        v(db, "Tomato (indeterminate)", "Mortgage Lifter", 80, 85, "Large 1-2 lb pink beefsteak heirloom with mild sweet flavor; few seeds")
+        v(db, "Tomato (indeterminate)", "Early Girl", 52, 62, "Very early 4-6 oz slicer on vigorous vines; reliable in all climates")
+        v(db, "Tomato (indeterminate)", "Beefsteak", 80, 90, "Classic large meaty 1-2 lb fruits; needs staking and long warm season")
+        v(db, "Tomato (indeterminate)", "Black Krim", 75, 85, "Russian heirloom with dark mahogany fruits and intense sweet-salty flavor")
+        v(db, "Tomato (indeterminate)", "Amish Paste", 74, 85, "Large 8 oz paste tomato with meaty flesh; versatile for fresh eating and canning")
+        v(db, "Tomato (indeterminate)", "German Johnson", 76, 85, "Large pink heirloom with mild sweet flavor; parent variety of Mortgage Lifter")
+
+        // ── Cherry Tomato ──
+        v(db, "Cherry Tomato", "Sun Gold", 55, 65, "Gold-orange cherry with intensely sweet tropical flavor; the benchmark sweet cherry")
+        v(db, "Cherry Tomato", "Sweet 100", 55, 65, "Prolific red cherry producing long clusters of very sweet 1-inch fruits")
+        v(db, "Cherry Tomato", "Supersweet 100", 60, 65, "Improved Sweet 100 with better crack resistance; uniform sweet red cherries")
+        v(db, "Cherry Tomato", "Matt's Wild Cherry", 58, 65, "Tiny half-inch Mexican heirloom; intense flavor, incredibly productive and heat tolerant")
+        v(db, "Cherry Tomato", "Yellow Pear", 70, 78, "Heirloom pear-shaped yellow fruits with mild sweet flavor; vigorous and heavy yields")
+        v(db, "Cherry Tomato", "Black Cherry", 65, 75, "Deep purple-brown cherry with complex rich sweet flavor; beautiful in salads")
+        v(db, "Cherry Tomato", "Juliet", 60, 65, "AAS-winning grape tomato with oblong 1 oz fruits; crack resistant with good disease tolerance")
+        v(db, "Cherry Tomato", "Sweetie", 55, 65, "Open-pollinated red cherry with high sugar; clusters of 15-20 fruits per truss")
+
+        // ── Roma Tomato ──
+        v(db, "Roma Tomato", "San Marzano", 78, 85, "Italian classic paste tomato with elongated fruits; the gold standard for sauce")
+        v(db, "Roma Tomato", "Roma VF", 73, 80, "Compact determinate paste type; fusarium and verticillium resistant")
+        v(db, "Roma Tomato", "Martino's Roma", 75, 80, "Italian heirloom with meaty pear-shaped fruits; more flavor than standard Roma")
+        v(db, "Roma Tomato", "Opalka", 78, 85, "Polish heirloom with long pointed 5-inch fruits; nearly seedless with sweet rich flavor")
+        v(db, "Roma Tomato", "Viva Italia", 72, 80, "Hybrid Roma with improved disease resistance; firm meaty fruits for processing")
+        v(db, "Roma Tomato", "Granadero", 70, 75, "High-yielding hybrid with uniform 4 oz fruits; excellent late blight resistance")
+
+        // ── Pepper (sweet) ──
+        v(db, "Pepper (sweet)", "California Wonder", 72, 80, "Classic blocky green-to-red bell; thick sweet walls and open habit")
+        v(db, "Pepper (sweet)", "Big Bertha", 72, 78, "Extra-large 7-inch green-to-red bell; thick walls and heavy yields")
+        v(db, "Pepper (sweet)", "King of the North", 70, 75, "Early blocky bell for northern gardens; sets fruit in cool temps")
+        v(db, "Pepper (sweet)", "Red Knight", 68, 72, "Early red bell hybrid with thick sweet walls; compact with disease resistance")
+        v(db, "Pepper (sweet)", "Lunchbox Mini", 60, 75, "Snack-size 3-inch elongated sweet peppers; prolific, great for containers")
+        v(db, "Pepper (sweet)", "Corno di Toro", 78, 85, "Italian 8-10 inch bull's horn pepper; sweet rich flavor when roasted")
+        v(db, "Pepper (sweet)", "Lipstick", 55, 65, "Early pimiento with tapered 4-inch sweet red fruits; reliable in short seasons")
+        v(db, "Pepper (sweet)", "Purple Beauty", 70, 78, "Dark purple bell with thick sweet walls; compact plants and unique color")
+
+        // ── Pepper (hot) ──
+        v(db, "Pepper (hot)", "Serrano", 75, 85, "Classic Mexican hot pepper (10-23k SHU); cylindrical 2-3 inch fruits")
+        v(db, "Pepper (hot)", "Thai Hot", 75, 90, "Small fiery 1-inch peppers (50-100k SHU); prolific on compact plants")
+        v(db, "Pepper (hot)", "Anaheim", 74, 80, "Mild 6-8 inch pepper (500-2500 SHU); great for roasting and stuffing")
+        v(db, "Pepper (hot)", "Poblano", 70, 80, "Mild-medium heart-shaped (1-2k SHU); essential for chiles rellenos")
+        v(db, "Pepper (hot)", "Ghost Pepper", 100, 120, "Extremely hot (1M+ SHU); needs long warm season and patience")
+        v(db, "Pepper (hot)", "Hungarian Wax", 60, 70, "Medium-hot 6-inch waxy yellow (5-10k SHU); early, great for pickling")
+        v(db, "Pepper (hot)", "Scotch Bonnet", 90, 120, "Caribbean bonnet-shaped (100-350k SHU); fruity heat for jerk seasoning")
+
+        // ── Jalapeno ──
+        v(db, "Jalapeno", "Early Jalapeno", 60, 70, "First to mature with 3-inch fruits; reliable in short-season gardens")
+        v(db, "Jalapeno", "TAM Mild Jalapeno", 68, 80, "Milder version (1000-1500 SHU); same flavor with reduced heat")
+        v(db, "Jalapeno", "Mucho Nacho", 68, 75, "Extra-large 4-inch thick-walled fruits; heavy yields and classic heat")
+        v(db, "Jalapeno", "Purple Jalapeno", 70, 80, "Dark purple 3-inch fruits ripening to red; ornamental and edible")
+        v(db, "Jalapeno", "Mammoth", 70, 75, "Jumbo 5-inch jalapenos with thick walls; great for stuffing and poppers")
+
+        // ── Habanero ──
+        v(db, "Habanero", "Orange Habanero", 90, 100, "Classic lantern-shaped orange (150-325k SHU); fruity tropical heat")
+        v(db, "Habanero", "Caribbean Red", 90, 110, "Hotter cousin (400k SHU) with wrinkled red fruits")
+        v(db, "Habanero", "Chocolate Habanero", 95, 110, "Dark brown fruits (300-425k SHU); rich smoky flavor with intense heat")
+        v(db, "Habanero", "Red Savina", 90, 100, "Large red fruits with extreme heat (500k SHU) and fruity flavor")
+        v(db, "Habanero", "Habanada", 90, 100, "Heatless habanero (0 SHU) with all the fruity flavor; unique no-heat variety")
+
+        // ── Cayenne ──
+        v(db, "Cayenne", "Long Slim", 70, 80, "Classic thin 5-6 inch red cayenne (30-50k SHU); great dried or powdered")
+        v(db, "Cayenne", "Large Red Thick", 70, 85, "Meatier 6-inch cayenne with thicker walls; easier to stuff and dehydrate")
+        v(db, "Cayenne", "Ring of Fire", 60, 68, "Early hybrid with 4-inch peppers (50k SHU); compact and very heavy yields")
+        v(db, "Cayenne", "Golden Cayenne", 72, 82, "Golden-yellow 6-inch fruits (30-50k SHU); milder fruity flavor")
+        v(db, "Cayenne", "Dragon Cayenne", 68, 75, "Asian hybrid with slim curved red fruits; productive and great for drying")
+
+        // ── Banana Pepper ──
+        v(db, "Banana Pepper", "Sweet Banana", 60, 72, "Classic mild yellow 6-7 inch tapered; sweet and tangy, great pickled")
+        v(db, "Banana Pepper", "Hungarian Yellow Wax", 58, 70, "Medium-hot 5-6 inch yellow; more heat, excellent for pickling")
+        v(db, "Banana Pepper", "Inferno Hot Banana", 60, 75, "Hot banana type (7k SHU) with 8-inch fruits")
+        v(db, "Banana Pepper", "Bananarama", 58, 68, "Sweet 7-8 inch hybrid with thick walls; very productive and uniform")
+        v(db, "Banana Pepper", "Sweet Hungarian", 58, 70, "Mild 6-inch yellow to red; traditional Hungarian type with sweet fruity flavor")
+
+        // ── Cucumber ──
+        v(db, "Cucumber", "Marketmore 76", 58, 68, "Dark green 8-9 inch slicer; downy and powdery mildew resistant")
+        v(db, "Cucumber", "Straight Eight", 52, 65, "Classic heirloom slicer with uniform 8-inch fruits; AAS winner since 1935")
+        v(db, "Cucumber", "Armenian", 55, 65, "Long ribbed 12-18 inch pale green; actually a melon, never bitter")
+        v(db, "Cucumber", "Lemon", 55, 65, "Unique round lemon-yellow heirloom; sweet, mild, never bitter")
+        v(db, "Cucumber", "Diva", 58, 65, "Seedless gynoecious hybrid with sweet 7-inch fruits; AAS winner")
+        v(db, "Cucumber", "Spacemaster", 56, 62, "Compact bush type for containers; 7-8 inch slicers on short vines")
+
+        // ── Pickling Cucumber ──
+        v(db, "Pickling Cucumber", "Boston Pickling", 50, 58, "Classic American pickling cucumber since 1880; crisp 3-6 inch fruits")
+        v(db, "Pickling Cucumber", "National Pickling", 48, 55, "Blocky 5-inch fruits for uniform pickles; heavy yields")
+        v(db, "Pickling Cucumber", "Calypso", 50, 56, "Gynoecious hybrid with uniform fruits; multiple disease resistances")
+        v(db, "Pickling Cucumber", "Homemade Pickles", 50, 55, "Compact vines with 2-5 inch fruits; white spined and crisp")
+        v(db, "Pickling Cucumber", "Wisconsin SMR 58", 54, 60, "Disease-resistant heirloom; reliable Midwest favorite for canning")
+
+        // ── Zucchini ──
+        v(db, "Zucchini", "Black Beauty", 45, 55, "Classic dark green Italian zucchini; glossy straight fruits on compact plants")
+        v(db, "Zucchini", "Costata Romanesco", 52, 60, "Ribbed Italian heirloom with nutty flavor; gourmet quality")
+        v(db, "Zucchini", "Dark Star", 43, 50, "Early hybrid with deep green fruits; open bush habit and good virus tolerance")
+        v(db, "Zucchini", "Golden Zucchini", 45, 55, "Bright yellow fruits easy to spot; same flavor, fun color variety")
+        v(db, "Zucchini", "Cocozelle", 45, 55, "Italian heirloom with dark green striped 12-inch fruits; rich nutty flavor")
+        v(db, "Zucchini", "Ronde de Nice", 45, 52, "French round heirloom, best picked golf-ball size; perfect for stuffing")
+
+        // ── Yellow Squash ──
+        v(db, "Yellow Squash", "Early Prolific Straightneck", 42, 50, "Standard yellow straightneck; compact bush with heavy yields")
+        v(db, "Yellow Squash", "Early Summer Crookneck", 42, 53, "Classic crookneck with bumpy golden skin; buttery flavor")
+        v(db, "Yellow Squash", "Dixie", 42, 50, "Improved crookneck with smooth skin; excellent Southern adaptation")
+        v(db, "Yellow Squash", "Goldbar", 42, 50, "Hybrid straightneck with bright golden fruits; strong virus tolerance")
+        v(db, "Yellow Squash", "Yellow Scallop", 45, 55, "Patty pan type with scalloped edges; great for stuffing and grilling")
+
+        // ── Winter Squash ──
+        v(db, "Winter Squash", "Kabocha", 90, 100, "Japanese sweet squash with dense orange flesh; dry flaky texture when baked")
+        v(db, "Winter Squash", "Delicata", 80, 100, "Cream and green striped; sweet edible skin, no peeling needed")
+        v(db, "Winter Squash", "Blue Hubbard", 100, 110, "Large 12-15 lb blue-grey squash; stores 6+ months")
+        v(db, "Winter Squash", "Red Kuri", 85, 95, "Teardrop-shaped red-orange; smooth sweet chestnut-like flavor")
+        v(db, "Winter Squash", "Turban Squash", 95, 100, "Colorful turban-shaped ornamental; also edible with sweet mild flesh")
+
+        // ── Butternut Squash ──
+        v(db, "Butternut Squash", "Waltham", 85, 100, "Classic butternut with 9-10 inch tan fruits; stores 3-6 months")
+        v(db, "Butternut Squash", "Honeynut", 90, 100, "Mini butternut half the size; sweeter concentrated flavor")
+        v(db, "Butternut Squash", "Butterbush", 75, 85, "Compact bush type producing 1.5 lb fruits; for small gardens")
+        v(db, "Butternut Squash", "Atlas", 85, 95, "Hybrid with 6-8 lb fruits; powdery mildew resistance")
+        v(db, "Butternut Squash", "Penelope", 80, 90, "Early hybrid with uniform 2-3 lb fruits; sweet smooth flesh")
+
+        // ── Acorn Squash ──
+        v(db, "Acorn Squash", "Table Queen", 80, 90, "Original acorn squash with dark green ribbed 1-2 lb fruits")
+        v(db, "Acorn Squash", "Table Gold", 78, 85, "Golden-skinned; slightly sweeter than green varieties")
+        v(db, "Acorn Squash", "Carnival", 85, 95, "Multicolored cream, green, orange skin; excellent flavor")
+        v(db, "Acorn Squash", "Honey Bear", 85, 90, "AAS-winning mini on compact vines; 1 lb personal-size fruits")
+        v(db, "Acorn Squash", "Festival", 85, 95, "Colorful striped acorn-butternut cross; sweet dry flaky texture")
+
+        // ── Spaghetti Squash ──
+        v(db, "Spaghetti Squash", "Vegetable Spaghetti", 90, 100, "The original with 8-10 inch oblong yellow fruits; mild stringy flesh")
+        v(db, "Spaghetti Squash", "Orangetti", 85, 90, "Orange-fleshed hybrid with richer flavor and more beta-carotene")
+        v(db, "Spaghetti Squash", "Hasta La Pasta", 85, 95, "Compact semi-bush with golden fruits; excellent noodle-like texture")
+        v(db, "Spaghetti Squash", "Small Wonder", 80, 85, "Mini 2 lb personal-size; compact vines for small gardens")
+        v(db, "Spaghetti Squash", "Pinnacle", 85, 90, "Hybrid with uniform cream-yellow fruits; improved disease resistance")
+
+        // ── Pumpkin ──
+        v(db, "Pumpkin", "Jack O'Lantern", 100, 115, "Classic carving pumpkin 10-18 lb; good shape for Halloween")
+        v(db, "Pumpkin", "Sugar Pie", 100, 110, "Baking standard with 6-8 lb fruits; sweet dense flesh for pies")
+        v(db, "Pumpkin", "Connecticut Field", 100, 120, "Large 15-25 lb field pumpkin; classic American heirloom")
+        v(db, "Pumpkin", "Cinderella", 95, 110, "Flat 20-35 lb French Rouge Vif d'Etampes; beautiful display and good eating")
+        v(db, "Pumpkin", "Lumina", 90, 100, "Ghostly white 10-12 lb pumpkin; great for painting and decorating")
+        v(db, "Pumpkin", "Baby Bear", 90, 105, "Mini 1.5-2.5 lb with flat shape; perfect for kids and individual pies")
+        v(db, "Pumpkin", "Big Max", 110, 120, "Show pumpkin reaching 50-100+ lb; fun giant variety")
+        v(db, "Pumpkin", "Jarrahdale", 95, 100, "Blue-grey Australian heirloom 12-18 lb; sweet dense orange flesh")
+
+        // ── Watermelon ──
+        v(db, "Watermelon", "Crimson Sweet", 80, 90, "Classic oval 20-25 lb with light/dark green stripes; bright red sweet flesh")
+        v(db, "Watermelon", "Sugar Baby", 75, 80, "Compact icebox 8-12 lb; dark green rind, great for small gardens")
+        v(db, "Watermelon", "Charleston Gray", 85, 90, "Large oblong 28-35 lb; light green rind, good disease resistance")
+        v(db, "Watermelon", "Moon and Stars", 90, 100, "Unique heirloom with yellow spots on dark rind; 25-40 lb")
+        v(db, "Watermelon", "Yellow Doll", 65, 75, "Early 5-8 lb icebox with yellow flesh; sweet, compact vines")
+        v(db, "Watermelon", "Jubilee", 90, 95, "Large oblong 30-40 lb striped; bright red sweet flesh")
+        v(db, "Watermelon", "Blacktail Mountain", 70, 75, "Extra-early 8-12 lb; excellent for short-season gardens")
+
+        // ── Cantaloupe ──
+        v(db, "Cantaloupe", "Hale's Best Jumbo", 75, 85, "Classic heirloom 4-5 lb netted; thick sweet salmon flesh, drought tolerant")
+        v(db, "Cantaloupe", "Ambrosia", 72, 86, "Hybrid with extra-sweet peach-colored flesh; superb flavor")
+        v(db, "Cantaloupe", "Hearts of Gold", 70, 80, "Heirloom 2-3 lb with deep orange very sweet flesh")
+        v(db, "Cantaloupe", "Honey Rock", 80, 85, "AAS-winning heirloom 3-4 lb; juicy sweet salmon flesh")
+        v(db, "Cantaloupe", "Sugar Cube", 72, 80, "Personal-size 2 lb hybrid; extremely sweet, mildew resistant")
+        v(db, "Cantaloupe", "Minnesota Midget", 60, 68, "Extra-early 4-inch mini melon; bred for short seasons, compact vines")
+
+        // ── Honeydew ──
+        v(db, "Honeydew", "Green Flesh", 80, 100, "Classic smooth white-rind with sweet green flesh; standard type")
+        v(db, "Honeydew", "Earlidew", 80, 90, "Early hybrid 4-5 lb; sweet green flesh, good for shorter seasons")
+        v(db, "Honeydew", "Honey Brew", 80, 95, "Orange-fleshed cross blending honeydew and cantaloupe flavors")
+        v(db, "Honeydew", "Snow Mass", 85, 100, "Large 6-8 lb; very sweet pale green flesh")
+        v(db, "Honeydew", "Kazakh", 85, 95, "Heirloom golden-yellow rind with spicy sweet green flesh")
+
+        // ── Eggplant ──
+        v(db, "Eggplant", "Black Beauty", 72, 80, "Classic large globe heirloom; glossy dark purple, heavy producer")
+        v(db, "Eggplant", "Ichiban", 58, 70, "Japanese hybrid with slender 10-inch dark purple fruits; early and prolific")
+        v(db, "Eggplant", "Rosa Bianca", 75, 90, "Italian heirloom with lavender-white globe fruits; no bitterness")
+        v(db, "Eggplant", "Hansel", 55, 65, "AAS-winning mini producing dark purple clusters; compact for containers")
+        v(db, "Eggplant", "Orient Express", 58, 65, "Early Asian hybrid; sets fruit in cool weather better than most")
+        v(db, "Eggplant", "Ping Tung Long", 62, 75, "Taiwanese heirloom with slender 12-18 inch lavender fruits; sweet and tender")
+
+        // ── Okra ──
+        v(db, "Okra", "Clemson Spineless", 55, 64, "Most popular home garden okra; spineless plants, AAS winner since 1939")
+        v(db, "Okra", "Emerald", 52, 58, "Smooth round dark green pods; stay tender at larger sizes")
+        v(db, "Okra", "Burgundy", 55, 65, "Wine-red stems and crimson pods; ornamental and edible")
+        v(db, "Okra", "Annie Oakley II", 48, 55, "Early hybrid on compact spineless plants; suited to northern gardens")
+        v(db, "Okra", "Jambalaya", 48, 53, "Compact 3-4 ft plants with heavy yields; great for small spaces")
+        v(db, "Okra", "Hill Country Red", 60, 70, "Texas heirloom since 1954; green pods tinted red at tips")
+
+        // ── Sweet Potato ──
+        v(db, "Sweet Potato", "Beauregard", 90, 105, "Most widely grown commercial variety; orange skin and flesh, reliable yields")
+        v(db, "Sweet Potato", "Jewel", 100, 120, "Copper-skinned with deep orange flesh; good storage quality")
+        v(db, "Sweet Potato", "Covington", 95, 110, "Rose-copper skin with bright orange flesh; excellent eating quality")
+        v(db, "Sweet Potato", "Georgia Jet", 90, 100, "Red skin with deep orange flesh; extra-early for northern growing")
+        v(db, "Sweet Potato", "Murasaki", 100, 120, "Purple skin with dry white flesh; Asian type with chestnut-like flavor")
+
+        // ── Corn ──
+        v(db, "Corn", "Early Sunglow", 60, 68, "Extra-early yellow; compact 5 ft stalks with 7-inch ears")
+        v(db, "Corn", "Golden Bantam", 75, 82, "Classic open-pollinated heirloom with rich old-fashioned flavor")
+        v(db, "Corn", "Bodacious", 73, 78, "Sugar-enhanced yellow hybrid; tender sweet kernels on 8-inch ears")
+        v(db, "Corn", "Peaches and Cream", 78, 85, "Popular bicolor with sweet white and yellow kernels; widely adapted")
+        v(db, "Corn", "Ambrosia", 73, 78, "Bicolor hybrid prized for exceptional tenderness and sweetness")
+        v(db, "Corn", "Honey and Cream", 78, 86, "Bicolor with 7-8 inch ears; reliable classic sweet corn flavor")
+        v(db, "Corn", "Kandy Korn", 84, 92, "Yellow se hybrid with extra-sweet tender kernels; large ears")
+        v(db, "Corn", "Silver Queen", 88, 96, "Late-season white classic producing large 8-9 inch ears of sweet kernels")
+        v(db, "Corn", "Jubilee", 85, 95, "Supersweet sh2 yellow hybrid with extended harvest window")
+
+        // ── Bush Beans ──
+        v(db, "Bush Beans", "Blue Lake 274", 50, 58, "Industry standard with straight 6-inch stringless pods; heavy yields")
+        v(db, "Bush Beans", "Contender", 40, 55, "Early producer of tender 6-inch pods; tolerates cool soil")
+        v(db, "Bush Beans", "Provider", 50, 54, "Reliable early bean that germinates in cool soil; round stringless pods")
+        v(db, "Bush Beans", "Jade", 53, 60, "Slim straight dark green 6-7 inch pods; excellent for market gardens")
+        v(db, "Bush Beans", "Royal Burgundy", 51, 60, "Purple pods turn green when cooked; tolerates cool soil")
+        v(db, "Bush Beans", "Roma II", 53, 59, "Bush Italian classic with wide flat stringless pods; great fresh or frozen")
+        v(db, "Bush Beans", "Tendergreen", 50, 60, "Heirloom with round meaty dark green pods; good disease resistance")
+
+        // ── Pole Beans ──
+        v(db, "Pole Beans", "Kentucky Wonder", 58, 72, "Classic heirloom since 1877 with 7-9 inch pods; vigorous climber")
+        v(db, "Pole Beans", "Blue Lake Pole", 60, 68, "Gold standard for canning with straight round 6-inch stringless pods")
+        v(db, "Pole Beans", "Kentucky Blue", 63, 73, "Cross of Kentucky Wonder and Blue Lake; sweet flavor and heavy yield")
+        v(db, "Pole Beans", "Rattlesnake", 65, 73, "Dark green pods streaked purple; heat-tolerant for hot climates")
+        v(db, "Pole Beans", "Romano Pole", 66, 75, "Italian heirloom with broad flat meaty pods; rich nutty flavor")
+        v(db, "Pole Beans", "Fortex", 60, 70, "French filet type with slender stringless 11-inch pods; tender at large sizes")
+
+        // ── Lima Beans ──
+        v(db, "Lima Beans", "Henderson Bush", 60, 70, "Most popular dwarf baby lima; compact with small creamy white beans")
+        v(db, "Lima Beans", "Fordhook 242", 70, 80, "AAS winner producing large plump green beans on heat-tolerant plants")
+        v(db, "Lima Beans", "Jackson Wonder", 65, 75, "Heirloom bush lima with speckled beans; drought-tolerant in the South")
+        v(db, "Lima Beans", "Eastland", 68, 75, "Early baby bush lima with uniform pods; downy mildew resistance")
+        v(db, "Lima Beans", "Christmas Lima", 85, 100, "Pole heirloom with maroon-speckled white beans; chestnut-like flavor")
+
+        // ── Southern Peas ──
+        v(db, "Southern Peas", "California Blackeye No. 5", 70, 80, "Dominant blackeye variety with heavy yields; vigorous bush")
+        v(db, "Southern Peas", "Pinkeye Purple Hull", 60, 70, "Popular purple-hull type; easy to shell, turns purple when ready")
+        v(db, "Southern Peas", "Mississippi Silver", 64, 75, "Silver-hulled crowder; vigorous semi-vining with heavy yields")
+        v(db, "Southern Peas", "Zipper Cream", 65, 75, "Cream pea with zipper-like seam for easy shelling; sweet mild flavor")
+        v(db, "Southern Peas", "Queen Anne", 60, 68, "Compact blackeye bush producing 7-9 inch pods; earlier maturity")
+
+        // ── Peas ──
+        v(db, "Peas", "Alaska", 55, 60, "Earliest shelling pea; 24-inch vines with 2-3 inch pods; great for canning")
+        v(db, "Peas", "Little Marvel", 55, 63, "Dwarf 18-inch plants with plump 3-inch pods of sweet peas; no staking")
+        v(db, "Peas", "Thomas Laxton", 58, 65, "Heirloom with 4-inch pods of 7-8 large sweet peas; vigorous 30-inch vines")
+        v(db, "Peas", "Green Arrow", 68, 72, "24-inch plants with 4-5 inch pods of 9-11 peas; mildew resistant")
+        v(db, "Peas", "Lincoln", 60, 70, "English heirloom also called Homesteader; the sweetest shelling pea")
+        v(db, "Peas", "Wando", 65, 70, "Heat-tolerant heirloom; handles warm weather better than most peas")
+
+        // ── Snap Peas ──
+        v(db, "Snap Peas", "Sugar Snap", 58, 65, "The original snap pea with tall 5-6 ft vines; crisp sweet edible pods")
+        v(db, "Snap Peas", "Sugar Ann", 52, 58, "AAS-winning dwarf on 24-30 inch vines; earliest snap pea")
+        v(db, "Snap Peas", "Super Sugar Snap", 60, 66, "Improved Sugar Snap with better disease resistance; shorter vines")
+        v(db, "Snap Peas", "Cascadia", 58, 62, "Short 32-inch vines; plump stringless pods with sweet flavor")
+        v(db, "Snap Peas", "Sugar Bob", 53, 58, "Compact 24-inch dwarf with thick-walled crunchy pods; no trellising")
+
+        // ── Snow Peas ──
+        v(db, "Snow Peas", "Oregon Sugar Pod II", 60, 68, "Bush 28-inch plants; flat tender stringless pods, disease resistant")
+        v(db, "Snow Peas", "Mammoth Melting Sugar", 65, 75, "Tall 4-5 ft vines with large 4-5 inch stringless tender pods")
+        v(db, "Snow Peas", "Snowbird", 55, 60, "Extra-early dwarf 18-inch plants with 3-inch pods in clusters")
+        v(db, "Snow Peas", "Oregon Giant", 65, 75, "Large 4.5-inch wide sweet pods on 3 ft vines; great disease resistance")
+        v(db, "Snow Peas", "Golden Sweet", 60, 70, "Unique heirloom with lemon-yellow pods and purple flowers")
+
+        // ── Lettuce (leaf) ──
+        v(db, "Lettuce (leaf)", "Salad Bowl", 40, 50, "Classic oak-leaf type; light green tender leaves, slow to bolt")
+        v(db, "Lettuce (leaf)", "Red Sails", 40, 50, "AAS winner with ruffled bronze-red leaves; very slow to bolt")
+        v(db, "Lettuce (leaf)", "Black-Seeded Simpson", 42, 55, "Heirloom with large crinkled light green leaves; fast growing")
+        v(db, "Lettuce (leaf)", "Oak Leaf", 40, 50, "Deeply lobed oak-shaped leaves; heat tolerant with sweet mild flavor")
+        v(db, "Lettuce (leaf)", "Lollo Rossa", 40, 55, "Italian frilly red-tipped leaves; beautiful in salads, slow to bolt")
+        v(db, "Lettuce (leaf)", "Red Salad Bowl", 40, 50, "Red version with deeply lobed bronze leaves; heat tolerant")
+        v(db, "Lettuce (leaf)", "Deer Tongue", 46, 55, "Amish heirloom with pointed leaves; heat tolerant, sweet buttery flavor")
+
+        // ── Lettuce (head) ──
+        v(db, "Lettuce (head)", "Great Lakes", 75, 85, "Large firm crisphead; heat tolerant for a head lettuce")
+        v(db, "Lettuce (head)", "Ithaca", 60, 72, "Early crisphead that tolerates heat; reliable in variable weather")
+        v(db, "Lettuce (head)", "Crispino", 57, 65, "Very early crisphead hybrid with excellent heat tolerance")
+        v(db, "Lettuce (head)", "Nevada", 60, 70, "Summer crisphead with good bolt resistance; large dense heads")
+        v(db, "Lettuce (head)", "Webb's Wonderful", 72, 85, "English heirloom crisphead with large firm heads; sweet mild flavor")
+
+        // ── Romaine Lettuce ──
+        v(db, "Romaine Lettuce", "Parris Island Cos", 60, 68, "Classic 10-inch upright romaine; mosaic virus resistant")
+        v(db, "Romaine Lettuce", "Little Gem", 50, 60, "Mini romaine forming compact 6-inch heads; sweet crunchy hearts")
+        v(db, "Romaine Lettuce", "Jericho", 60, 70, "Israeli variety bred for desert heat; exceptional bolt resistance")
+        v(db, "Romaine Lettuce", "Winter Density", 55, 65, "Cos-butterhead cross with small dense heads; cold hardy and sweet")
+        v(db, "Romaine Lettuce", "Rouge d'Hiver", 55, 65, "French heirloom with red-bronze outer leaves; cold hardy")
+
+        // ── Butter Lettuce ──
+        v(db, "Butter Lettuce", "Buttercrunch", 55, 65, "AAS-winning bibb type; heat tolerant, forms small dense sweet heads")
+        v(db, "Butter Lettuce", "Tom Thumb", 48, 60, "Tiny tennis-ball size bibb heads; perfect for containers")
+        v(db, "Butter Lettuce", "Bibb", 55, 70, "The original butterhead with small silky heads; classic gourmet lettuce")
+        v(db, "Butter Lettuce", "Marvel of Four Seasons", 55, 65, "French heirloom with red-tinged outer leaves and creamy hearts")
+        v(db, "Butter Lettuce", "Nancy", 48, 58, "European greenhouse type with bright green soft heads; excellent flavor")
+
+        // ── Iceberg Lettuce ──
+        v(db, "Iceberg Lettuce", "Ithaca", 60, 72, "Adaptable crisphead; good heat tolerance and tip burn resistance")
+        v(db, "Iceberg Lettuce", "Summertime", 70, 85, "Heat-adapted with large firm heads; slower to bolt in warm weather")
+        v(db, "Iceberg Lettuce", "Salinas", 70, 80, "Commercial standard with large dense heads; crisp and mild")
+        v(db, "Iceberg Lettuce", "Great Lakes 118", 75, 85, "Improved strain with firmer denser heads; heat tolerant")
+        v(db, "Iceberg Lettuce", "Crispino", 57, 65, "Early mini iceberg with very firm heads; bolt resistant")
+
+        // ── Arugula ──
+        v(db, "Arugula", "Astro", 25, 35, "Fast-growing smooth-leaf with milder flavor; earliest variety")
+        v(db, "Arugula", "Roquette", 30, 40, "Standard Italian arugula with deeply lobed peppery leaves")
+        v(db, "Arugula", "Sylvetta", 35, 50, "Wild perennial with fine narrow leaves; more intense, slower bolting")
+        v(db, "Arugula", "Dragon's Tongue", 30, 40, "Purple-veined leaves with mild peppery flavor; heat tolerant")
+        v(db, "Arugula", "Wasabi", 30, 40, "Spicy wasabi-like flavor with broad green leaves")
+
+        // ── Spinach ──
+        v(db, "Spinach", "Bloomsdale Long Standing", 40, 50, "Classic heirloom with thick crinkled dark green leaves; slow to bolt")
+        v(db, "Spinach", "Giant Noble", 42, 48, "Large smooth leaves; great for canning and freezing with heavy yields")
+        v(db, "Spinach", "Space", 38, 45, "Hybrid with smooth upright leaves; easy to clean, slow to bolt")
+        v(db, "Spinach", "Tyee", 39, 45, "Semi-savoy hybrid; excellent bolt resistance and downy mildew tolerance")
+        v(db, "Spinach", "Regiment", 37, 42, "Very fast smooth-leaf hybrid; baby leaf harvest in 4 weeks")
+
+        // ── Kale ──
+        v(db, "Kale", "Lacinato", 55, 65, "Italian dinosaur kale with puckered strap-like leaves; sweetens after frost")
+        v(db, "Kale", "Red Russian", 50, 65, "Flat grey-green leaves with purple veins; tender, mild, cold hardy to 10F")
+        v(db, "Kale", "Winterbor", 55, 65, "Curly blue-green hybrid; extremely cold hardy to -10F")
+        v(db, "Kale", "Dwarf Blue Curled Scotch", 55, 65, "Compact 12-15 inch plants; great for containers and small spaces")
+        v(db, "Kale", "Redbor", 55, 65, "Deep purple-red curly leaves; beautiful ornamental and very tasty")
+
+        // ── Swiss Chard ──
+        v(db, "Swiss Chard", "Fordhook Giant", 55, 60, "Classic white-stemmed with large crinkled dark green leaves; heat tolerant")
+        v(db, "Swiss Chard", "Bright Lights", 55, 60, "AAS winner with rainbow stems in gold, pink, orange, red, purple")
+        v(db, "Swiss Chard", "Ruby Red", 55, 60, "Deep crimson stems with dark green crinkled leaves; ornamental")
+        v(db, "Swiss Chard", "Rhubarb", 55, 60, "Dark red stems with savoyed leaves; heirloom with rich color")
+        v(db, "Swiss Chard", "Lucullus", 50, 60, "Light green stems with pale crinkled leaves; mild delicate flavor")
+
+        // ── Collard Greens ──
+        v(db, "Collard Greens", "Georgia Southern", 60, 80, "Classic tall heirloom with large blue-green leaves; the standard Southern collard")
+        v(db, "Collard Greens", "Vates", 60, 75, "Compact plants with dark green smooth leaves; more cold hardy")
+        v(db, "Collard Greens", "Morris Heading", 60, 80, "Forms a loose head like cabbage; tender wavy leaves with mild flavor")
+        v(db, "Collard Greens", "Champion", 60, 75, "Compact Vates-type with darker leaves; improved bolt resistance")
+        v(db, "Collard Greens", "Top Bunch", 50, 65, "Short-stemmed with clustered dark green leaves; easy to harvest")
+
+        // ── Mustard Greens ──
+        v(db, "Mustard Greens", "Southern Giant Curled", 40, 50, "Large bright green frilled leaves with mild mustard bite")
+        v(db, "Mustard Greens", "Red Giant", 40, 50, "Dark red-purple leaves with spicy wasabi-like flavor; beautiful in salads")
+        v(db, "Mustard Greens", "Tendergreen", 35, 45, "Smooth leaves with mild spinach-like flavor; also called mustard spinach")
+        v(db, "Mustard Greens", "Florida Broadleaf", 40, 50, "Large smooth light green leaves with mild peppery taste; slow to bolt")
+        v(db, "Mustard Greens", "Green Wave", 40, 50, "Frilly bright green leaves with moderately spicy bite; very cold tolerant")
+
+        // ── Broccoli ──
+        v(db, "Broccoli", "Calabrese", 60, 75, "Italian heirloom; produces abundant side shoots after main head harvest")
+        v(db, "Broccoli", "De Cicco", 48, 65, "Early heirloom with prolific side shoots; great for extended harvest")
+        v(db, "Broccoli", "Waltham 29", 70, 80, "Compact cold-hardy with dense blue-green heads; bred for fall crops")
+        v(db, "Broccoli", "Green Magic", 60, 70, "Hybrid with uniform domed blue-green heads; heat tolerant")
+        v(db, "Broccoli", "Belstar", 65, 75, "Organic favorite with smooth domed heads; good heat tolerance")
+        v(db, "Broccoli", "Marathon", 68, 80, "Long-standing hybrid with dense heads; excellent cold tolerance")
+
+        // ── Cauliflower ──
+        v(db, "Cauliflower", "Snowball", 60, 75, "Self-blanching white heirloom; tight curds, reliable in cool weather")
+        v(db, "Cauliflower", "Amazing", 68, 75, "Hybrid with large 2-3 lb pure white self-wrapping heads")
+        v(db, "Cauliflower", "Graffiti", 70, 80, "Stunning bright purple curds that hold color when cooked lightly")
+        v(db, "Cauliflower", "Cheddar", 68, 75, "Orange curds rich in beta-carotene; color deepens when cooked")
+        v(db, "Cauliflower", "Romanesco", 75, 85, "Fractal lime-green spiraling curds; nutty sweet, stunning appearance")
+        v(db, "Cauliflower", "Snow Crown", 50, 60, "Very early hybrid with smooth white heads; forgiving of weather swings")
+
+        // ── Cabbage ──
+        v(db, "Cabbage", "Early Jersey Wakefield", 60, 70, "Pointed-head heirloom; the earliest heading cabbage")
+        v(db, "Cabbage", "Golden Acre", 58, 65, "Early round 3-4 lb heads; compact for close spacing")
+        v(db, "Cabbage", "Copenhagen Market", 65, 80, "Round firm 3-4 lb heads; good for kraut and fresh eating")
+        v(db, "Cabbage", "Savoy Perfection", 85, 95, "Crinkled blue-green leaves with tender sweet flavor; great for wraps")
+        v(db, "Cabbage", "Red Acre", 72, 80, "Compact 3-4 lb red-purple heads; good for fresh eating and pickling")
+        v(db, "Cabbage", "Mammoth Red Rock", 90, 100, "Large 5-8 lb deep red heads; excellent storage variety")
+
+        // ── Brussels Sprouts ──
+        v(db, "Brussels Sprouts", "Long Island Improved", 90, 110, "Classic heirloom with dark green sprouts on 24-inch stalks")
+        v(db, "Brussels Sprouts", "Catskill", 90, 100, "Dwarf 20-inch plants with medium-large sprouts; easier harvesting")
+        v(db, "Brussels Sprouts", "Jade Cross", 90, 100, "Hybrid with uniform blue-green sprouts; disease resistant")
+        v(db, "Brussels Sprouts", "Nautic", 95, 105, "Tall hybrid with smooth round dark green sprouts; great flavor after frost")
+        v(db, "Brussels Sprouts", "Dagan", 100, 110, "Late hybrid with large firm sprouts; holds well in cold weather")
+
+        // ── Radish ──
+        v(db, "Radish", "Cherry Belle", 22, 28, "Classic round bright red; crisp white flesh with mild peppery bite")
+        v(db, "Radish", "French Breakfast", 23, 28, "Oblong red with white tip; mild crisp flesh, beautiful")
+        v(db, "Radish", "Watermelon", 50, 60, "Green-white exterior with bright pink interior; mild sweet")
+        v(db, "Radish", "Black Spanish Round", 55, 60, "Black-skinned winter radish; crisp white spicy flesh, stores well")
+        v(db, "Radish", "Easter Egg", 25, 30, "Mix of red, purple, pink, white colors; fun with mild flavor")
+        v(db, "Radish", "Champion", 25, 28, "Round bright scarlet; resists pithiness longer than most")
+
+        // ── Carrot ──
+        v(db, "Carrot", "Danvers 126", 65, 78, "Classic 6-7 inch half-long; tolerates heavy soil and stores well")
+        v(db, "Carrot", "Scarlet Nantes", 65, 75, "Cylindrical 6-7 inch French type; sweet crisp and virtually coreless")
+        v(db, "Carrot", "Imperator 58", 70, 80, "Long slender 8-9 inch; classic shape with sweet flavor")
+        v(db, "Carrot", "Little Finger", 55, 65, "Tiny 3-4 inch baby Nantes; perfect for containers and shallow soil")
+        v(db, "Carrot", "Cosmic Purple", 60, 73, "Purple exterior with orange interior; unique color, sweet flavor")
+        v(db, "Carrot", "Chantenay Red Core", 65, 75, "Short thick 5-inch tapered; tolerates heavy clay soil")
+
+        // ── Beet ──
+        v(db, "Beet", "Detroit Dark Red", 55, 65, "Classic round deep red; sweet fine-grained flesh, the standard beet")
+        v(db, "Beet", "Chioggia", 50, 60, "Italian heirloom with candy-stripe pink and white rings; mild sweet")
+        v(db, "Beet", "Golden", 50, 65, "Yellow-orange flesh that doesn't stain; sweet mild flavor")
+        v(db, "Beet", "Bull's Blood", 50, 60, "Deep burgundy foliage for baby greens; dark red roots with good flavor")
+        v(db, "Beet", "Cylindra", 55, 65, "Unique long cylindrical shape; Danish heirloom, dark red sweet flesh")
+        v(db, "Beet", "Early Wonder", 48, 58, "Fast growing flattened globe; dual-purpose for roots and greens")
+
+        // ── Turnip ──
+        v(db, "Turnip", "Purple Top White Globe", 45, 60, "Classic purple and white; mild sweet 3-4 inch roots")
+        v(db, "Turnip", "Hakurei", 35, 45, "Japanese salad turnip; sweet mild, can be eaten raw like an apple")
+        v(db, "Turnip", "Golden Globe", 45, 60, "Yellow-fleshed mild sweet; great for turnip skeptics")
+        v(db, "Turnip", "Shogoin", 40, 50, "Japanese variety grown primarily for large mild greens")
+        v(db, "Turnip", "Scarlet Queen", 40, 50, "Bright red-skinned with white flesh; beautiful with mild sweet flavor")
+
+        // ── Onion ──
+        v(db, "Onion", "Yellow Sweet Spanish", 100, 120, "Large mild sweet yellow globe; classic all-purpose onion")
+        v(db, "Onion", "Walla Walla", 90, 115, "Famous Pacific Northwest sweet; very mild jumbo bulbs")
+        v(db, "Onion", "Red Wing", 100, 118, "Large dark red globe; good storage onion with mild sweet flavor")
+        v(db, "Onion", "Candy", 85, 100, "Mid-size sweet yellow hybrid; intermediate day length, works in more zones")
+        v(db, "Onion", "Copra", 104, 118, "Best storage onion with firm yellow globes; keeps 10-12 months")
+        v(db, "Onion", "Texas 1015", 90, 110, "Texas supersweet short-day jumbo; very mild for Southern zones")
+
+        // ── Garlic ──
+        v(db, "Garlic", "Music", 90, 120, "Large hardneck with 4-5 fat easy-peel cloves; robust spicy, cold hardy")
+        v(db, "Garlic", "California Early", 90, 120, "Classic softneck with 12-16 cloves; mild flavor, braids well")
+        v(db, "Garlic", "Georgian Fire", 90, 120, "Porcelain hardneck with 5-6 large cloves; very hot raw, mellows cooked")
+        v(db, "Garlic", "Elephant", 90, 120, "Mild giant cloves actually a leek relative; very mild garlic flavor")
+        v(db, "Garlic", "Inchelium Red", 90, 120, "Softneck with complex mild-to-hot flavor; stores 6-9 months")
+        v(db, "Garlic", "Spanish Roja", 90, 120, "Heirloom rocambole hardneck; true rich garlic flavor, easy-peel cloves")
+
+        // ── Potato ──
+        v(db, "Potato", "Yukon Gold", 70, 90, "Golden flesh all-purpose; buttery flavor, great mashed or roasted")
+        v(db, "Potato", "Russet Burbank", 80, 120, "Classic large baking potato; dry fluffy flesh, the Idaho standard")
+        v(db, "Potato", "Red Pontiac", 80, 100, "Red-skinned waxy with white flesh; great boiled or in salads")
+        v(db, "Potato", "Kennebec", 80, 100, "Large white all-purpose; excellent yields, great for frying and baking")
+        v(db, "Potato", "Purple Majesty", 75, 90, "Deep purple skin and flesh; high in antioxidants, holds color when cooked")
+        v(db, "Potato", "German Butterball", 90, 120, "Golden-skinned with rich buttery yellow flesh; good storage")
+
+        // ── Kohlrabi ──
+        v(db, "Kohlrabi", "Early White Vienna", 50, 60, "Classic pale green bulb; mild broccoli-stem flavor, best at 2-3 inches")
+        v(db, "Kohlrabi", "Early Purple Vienna", 50, 60, "Purple-skinned with white flesh; same flavor, beautiful color")
+        v(db, "Kohlrabi", "Winner", 45, 55, "Hybrid that stays tender at large size; very slow to get woody")
+        v(db, "Kohlrabi", "Gigante", 70, 80, "Czech heirloom growing to 10 inches without getting woody")
+        v(db, "Kohlrabi", "Kolibri", 45, 55, "Purple hybrid with crisp sweet white flesh; uniform and slow to bolt")
+
+        // ── Green Onion ──
+        v(db, "Green Onion", "Evergreen White Bunching", 50, 65, "Hardy perennial bunching type; divides into clusters, cold hardy")
+        v(db, "Green Onion", "Tokyo Long White", 50, 65, "Classic Asian green onion with long white single stems; mild sweet")
+        v(db, "Green Onion", "Red Beard", 55, 65, "Stunning burgundy-red stalks with mild flavor; beautiful garnish")
+        v(db, "Green Onion", "Parade", 50, 60, "Dutch hybrid with tall straight single-stem stalks; uniform")
+        v(db, "Green Onion", "Guardsman", 50, 60, "Upright uniform bunching type; good heat and bolt tolerance")
+
+        // ── Shallot ──
+        v(db, "Shallot", "French Red", 90, 120, "Classic copper-skinned with pink-tinged flesh; the gourmet standard")
+        v(db, "Shallot", "Ambition", 90, 100, "Hybrid seed-grown with uniform copper-red bulbs; easier to grow")
+        v(db, "Shallot", "Dutch Yellow", 90, 120, "Golden-skinned with yellow flesh; mild sweet, multiplies well")
+        v(db, "Shallot", "Conservor", 90, 100, "Long teardrop-shaped French type; reddish skin with subtle flavor")
+        v(db, "Shallot", "Prisma", 90, 100, "Deep red hybrid with strong flavor; uniform oval shape")
+
+        // ── Leek ──
+        v(db, "Leek", "American Flag", 100, 130, "Classic heirloom with long white shanks; mild onion flavor")
+        v(db, "Leek", "King Richard", 75, 90, "Early variety with extra-long slender shanks; fast growing")
+        v(db, "Leek", "Giant Musselburgh", 100, 150, "Scottish heirloom with thick shanks; very cold hardy")
+        v(db, "Leek", "Lancelot", 75, 95, "Early hybrid with uniform white shanks; good disease resistance")
+        v(db, "Leek", "Bandit", 100, 120, "Very cold hardy winter leek; thick short blue-green shanks")
+
+        // ── Celery ──
+        v(db, "Celery", "Tall Utah", 120, 140, "Classic crisp stalks; the standard green celery for home gardens")
+        v(db, "Celery", "Golden Self-Blanching", 80, 100, "Naturally pale golden stalks needing no blanching; mild sweet")
+        v(db, "Celery", "Ventura", 80, 100, "Long thick smooth dark green stalks; good bolt resistance")
+        v(db, "Celery", "Conquistador", 80, 95, "Early hybrid with thick dark green stalks; good for variable conditions")
+        v(db, "Celery", "Tango", 80, 90, "Compact hybrid; earliest celery for short-season gardens")
+
+        // ── Asparagus ──
+        v(db, "Asparagus", "Mary Washington", 730, 1095, "Classic heirloom with green spears and purple tips; rust resistant")
+        v(db, "Asparagus", "Jersey Knight", 730, 1095, "All-male hybrid with thick green spears; higher yields")
+        v(db, "Asparagus", "Purple Passion", 730, 1095, "Large purple spears sweeter than green; 20% more sugar")
+        v(db, "Asparagus", "Millennium", 730, 1095, "Canadian bred for cold climates; vigorous large green spears")
+        v(db, "Asparagus", "Atlas", 730, 1095, "All-male hybrid adapted to warm climates; thick green spears")
+
+        // ── Artichoke ──
+        v(db, "Artichoke", "Green Globe", 120, 180, "Classic large globe; perennial in mild climates")
+        v(db, "Artichoke", "Imperial Star", 85, 100, "Bred to produce first year from seed; reliable annual production")
+        v(db, "Artichoke", "Purple of Romagna", 120, 150, "Italian heirloom with deep purple buds; rich nutty flavor")
+        v(db, "Artichoke", "Violetto", 120, 160, "Purple Italian with elongated buds; ornamental and edible")
+        v(db, "Artichoke", "Big Heart", 100, 120, "Thornless with large meaty hearts; mild sweet flavor")
+
+        // ── Yam ──
+        v(db, "Yam", "Water Yam", 150, 240, "Purple-fleshed variety; moist starchy tubers popular in tropics")
+        v(db, "Yam", "White Yam", 150, 240, "Most common true yam with white starchy flesh; West African staple")
+        v(db, "Yam", "Yellow Guinea", 180, 240, "Yellow-fleshed tropical; firm texture, popular in Caribbean cooking")
+        v(db, "Yam", "Purple Yam", 150, 210, "Vibrant purple flesh (ube); used in Filipino desserts, sweet flavor")
+        v(db, "Yam", "Chinese Yam", 150, 200, "Long cylindrical with crisp white flesh; can be eaten raw, cold hardy")
+
+        // ═══════════════════════════════════════════════════
+        //  HERBS
+        // ═══════════════════════════════════════════════════
+
+        // ── Basil ──
+        v(db, "Basil", "Genovese", 50, 68, "Classic Italian large-leaf; the standard for pesto with sweet intense aroma")
+        v(db, "Basil", "Sweet Basil", 50, 75, "All-purpose medium-leaf; versatile for cooking")
+        v(db, "Basil", "Thai", 55, 75, "Narrow pointed leaves with spicy anise-clove flavor; heat tolerant")
+        v(db, "Basil", "Purple Ruffles", 60, 75, "AAS winner with ruffled deep purple leaves; stunning garnish")
+        v(db, "Basil", "Lemon", 50, 65, "Bright citrus aroma; great in teas, fish dishes, and desserts")
+        v(db, "Basil", "Cinnamon", 50, 68, "Spicy cinnamon-scented; unique flavor for Mexican and Asian dishes")
+        v(db, "Basil", "Holy (Tulsi)", 55, 75, "Sacred Indian basil with peppery clove flavor; medicinal tea herb")
+        v(db, "Basil", "Lettuce Leaf", 50, 75, "Huge 4-5 inch crinkled leaves; mild sweet flavor, great for wraps")
+
+        // ── Cilantro ──
+        v(db, "Cilantro", "Santo", 45, 55, "Slow bolt with large aromatic leaves; one of the best for leaf production")
+        v(db, "Cilantro", "Slow Bolt", 45, 60, "Bred for extended leaf harvest; goes to seed later than standard")
+        v(db, "Cilantro", "Calypso", 45, 55, "Slowest bolting variety; large leaves with maximum harvest window")
+        v(db, "Cilantro", "Long Standing", 50, 65, "Extended leaf production; good for warm-season growing")
+        v(db, "Cilantro", "Delfino", 45, 60, "Feathery fern-like leaves; ornamental look, very slow to bolt")
+
+        // ── Dill ──
+        v(db, "Dill", "Bouquet", 40, 55, "Classic large-headed dill for pickling; big seed heads")
+        v(db, "Dill", "Fernleaf", 40, 60, "Dwarf 18-inch AAS winner; perfect for containers, slow bolting")
+        v(db, "Dill", "Mammoth Long Island", 40, 55, "Tall plants with large seed heads; the traditional pickling dill")
+        v(db, "Dill", "Hera", 40, 55, "Compact multi-branching with extended leaf harvest; slow to bolt")
+        v(db, "Dill", "Dukat", 40, 55, "Scandinavian variety with extra-fine sweet foliage; high oil content")
+
+        // ── Parsley ──
+        v(db, "Parsley", "Italian Flat Leaf", 70, 90, "Flat dark green leaves with bold flavor; preferred for cooking")
+        v(db, "Parsley", "Moss Curled", 70, 85, "Tightly curled decorative dark green leaves; classic garnish")
+        v(db, "Parsley", "Giant of Italy", 70, 90, "Large flat leaves on tall stems; robust flavor and big harvests")
+        v(db, "Parsley", "Forest Green", 70, 85, "Dark green densely curled compact variety; cold hardy")
+        v(db, "Parsley", "Titan", 70, 85, "Vigorous flat-leaf with large dark green leaves; strong bolt resistance")
+
+        // ── Oregano ──
+        v(db, "Oregano", "Greek", 80, 90, "Compact with small pungent leaves; the most flavorful variety")
+        v(db, "Oregano", "Italian", 80, 90, "Larger leaves with milder flavor; good all-purpose cooking oregano")
+        v(db, "Oregano", "Hot and Spicy", 80, 90, "Extra-pungent with intense spicy flavor; small leaves packed with oil")
+        v(db, "Oregano", "Kent Beauty", 80, 90, "Ornamental trailing with hop-like pink bracts; edible but mainly decorative")
+        v(db, "Oregano", "Syrian", 80, 90, "Broader leaves with sweet earthy aroma; key ingredient in za'atar")
+
+        // ── Thyme ──
+        v(db, "Thyme", "English", 85, 95, "Classic culinary with small grey-green leaves; strong flavor")
+        v(db, "Thyme", "French", 85, 95, "Narrow grey-green leaves with sweeter more subtle flavor")
+        v(db, "Thyme", "Lemon", 85, 95, "Bright citrus-scented; wonderful with fish, chicken, and in teas")
+        v(db, "Thyme", "Creeping Red", 85, 95, "Low-growing ground cover with tiny pink flowers; fragrant")
+        v(db, "Thyme", "Silver", 85, 95, "Variegated white and green leaves; beautiful ornamental edible")
+
+        // ── Rosemary ──
+        v(db, "Rosemary", "Tuscan Blue", 80, 100, "Tall upright 4-6 ft with broad dark leaves; strong pine flavor")
+        v(db, "Rosemary", "Arp", 80, 100, "Most cold-hardy variety surviving to zone 6; lemon-pine flavor")
+        v(db, "Rosemary", "Hill Hardy", 80, 100, "Cold hardy to zone 7 with upright bushy habit; strong flavor")
+        v(db, "Rosemary", "Prostrate", 80, 100, "Trailing ground-cover type; great for walls and containers")
+        v(db, "Rosemary", "Salem", 80, 100, "Hardy upright with dark green narrow leaves; vigorous grower")
+
+        // ── Sage ──
+        v(db, "Sage", "Common Garden", 75, 85, "Classic grey-green fuzzy leaves; the standard culinary sage")
+        v(db, "Sage", "Purple", 75, 85, "Purple-tinged leaves with same flavor; beautiful ornamental edible")
+        v(db, "Sage", "Berggarten", 75, 85, "Broad round leaves that rarely flower; stays compact and bushy")
+        v(db, "Sage", "Pineapple", 75, 85, "Tender perennial with fruity pineapple scent; not cold hardy")
+        v(db, "Sage", "Tricolor", 75, 85, "Variegated green, white, and pink leaves; less hardy than common")
+
+        // ── Mint ──
+        v(db, "Mint", "Spearmint", 60, 90, "Classic sweet mint for mojitos and teas; the most widely grown mint")
+        v(db, "Mint", "Peppermint", 60, 90, "Strong menthol-rich; darker leaves, best for teas and medicinal use")
+        v(db, "Mint", "Chocolate", 60, 90, "Dark stems with chocolate-mint aroma; popular for desserts")
+        v(db, "Mint", "Apple", 60, 90, "Fuzzy rounded leaves with fruity apple-mint scent; mild flavor")
+        v(db, "Mint", "Mojito", 60, 90, "Cuban mint with large soft leaves; mild sweet, the authentic mojito mint")
+
+        // ── Chives ──
+        v(db, "Chives", "Common", 60, 90, "Standard onion chives; purple pom-pom flowers are also edible")
+        v(db, "Chives", "Garlic (Chinese)", 60, 90, "Flat broad leaves with mild garlic flavor; white star-shaped flowers")
+        v(db, "Chives", "Fine Leaf", 60, 90, "Extra-thin delicate leaves; refined appearance for garnishing")
+        v(db, "Chives", "Staro", 60, 90, "Vigorous thick-leaved variety; upright dark green, good for production")
+        v(db, "Chives", "Purly", 60, 90, "Compact with abundant purple flowers; ornamental and edible")
+
+        // ── Lemongrass ──
+        v(db, "Lemongrass", "East Indian", 90, 120, "Most common culinary type; strong lemon flavor for Thai cooking")
+        v(db, "Lemongrass", "West Indian", 90, 120, "Broader leaves with milder citrus; used in Caribbean dishes")
+        v(db, "Lemongrass", "Malabar", 90, 120, "Compact with intense lemon-ginger aroma; good for containers")
+
+        // ── Lavender ──
+        v(db, "Lavender", "Munstead", 90, 200, "Compact English lavender 12-18 inch; very cold hardy and fragrant")
+        v(db, "Lavender", "Hidcote", 90, 200, "Dark purple flowers on compact plants; the most popular English lavender")
+        v(db, "Lavender", "Grosso", 90, 200, "Lavandin hybrid with long purple spikes; highest oil content")
+        v(db, "Lavender", "Provence", 90, 200, "French lavandin with light purple flowers; classic fragrance")
+        v(db, "Lavender", "Lady", 90, 200, "AAS winner that blooms first year from seed; compact 10-inch plants")
+
+        // ═══════════════════════════════════════════════════
+        //  FRUITS
+        // ═══════════════════════════════════════════════════
+
+        // ── Strawberry ──
+        v(db, "Strawberry", "Chandler", 60, 90, "Large sweet June-bearing; excellent flavor, warm climate standard")
+        v(db, "Strawberry", "Ozark Beauty", 60, 90, "Everbearing with large sweet red berries; spring through fall")
+        v(db, "Strawberry", "Seascape", 60, 90, "Day-neutral producing all season; large sweet with high yields")
+        v(db, "Strawberry", "Earliglow", 60, 75, "Earliest June-bearer; intense sweet flavor, outstanding taste")
+        v(db, "Strawberry", "Jewel", 60, 90, "Late June-bearing with large firm sweet berries; great for freezing")
+        v(db, "Strawberry", "Albion", 60, 90, "Day-neutral with long conical firm berries; heavy spring through fall")
+        v(db, "Strawberry", "Honeoye", 60, 80, "Early June-bearing with large bright red berries; very productive")
+
+        // ── Blueberry ──
+        v(db, "Blueberry", "Bluecrop", 730, 1095, "Most widely planted highbush; reliable heavy yields")
+        v(db, "Blueberry", "Patriot", 730, 1095, "Very cold hardy to -30F; large sweet berries, tolerates wet feet")
+        v(db, "Blueberry", "Duke", 730, 1095, "Early-season with large firm mild sweet berries; consistent yields")
+        v(db, "Blueberry", "Jersey", 730, 1095, "Late-season heirloom with small very sweet berries; extremely productive")
+        v(db, "Blueberry", "Sunshine Blue", 730, 1095, "Compact 3-4 ft Southern highbush for containers; self-fertile")
+        v(db, "Blueberry", "Blueray", 730, 1095, "Mid-season with very large sweet berries; outstanding flavor")
+
+        // ── Raspberry ──
+        v(db, "Raspberry", "Heritage", 365, 730, "Most popular fall-bearing red; two crops per year, widely adapted")
+        v(db, "Raspberry", "Caroline", 365, 730, "Large sweet fall-bearing; excellent flavor and disease resistance")
+        v(db, "Raspberry", "Jewel", 365, 730, "Premier black raspberry; large sweet glossy berries, productive")
+        v(db, "Raspberry", "Boyne", 365, 730, "Extra cold-hardy summer-bearing; survives to -40F")
+        v(db, "Raspberry", "Latham", 365, 730, "Classic summer-bearing red; very cold hardy, reliable heirloom")
+        v(db, "Raspberry", "Anne", 365, 730, "Fall-bearing yellow; large pale gold sweet berries with mild flavor")
+
+        // ── Blackberry ──
+        v(db, "Blackberry", "Triple Crown", 365, 730, "Thornless semi-erect with very large sweet berries; up to 30 lbs per plant")
+        v(db, "Blackberry", "Navaho", 365, 730, "Thornless erect with medium sweet firm berries")
+        v(db, "Blackberry", "Chester", 365, 730, "Thornless trailing with large sweet-tart berries; very cold hardy")
+        v(db, "Blackberry", "Apache", 365, 730, "Thornless erect with very large firm sweet berries; easy to harvest")
+        v(db, "Blackberry", "Ouachita", 365, 730, "Thornless erect with excellent sweet flavor; heat tolerant")
+        v(db, "Blackberry", "Prime-Ark Freedom", 365, 730, "Thornless primocane-bearing; produces on first-year canes")
+
+        // ── Fig ──
+        v(db, "Fig", "Brown Turkey", 365, 730, "Most widely adapted; sweet brown-purple fruits, cold hardiest fig")
+        v(db, "Fig", "Celeste", 365, 730, "Small very sweet purple-brown figs; cold hardy and disease resistant")
+        v(db, "Fig", "Chicago Hardy", 365, 730, "Cold hardy to zone 6; dies back and regrows in cold winters")
+        v(db, "Fig", "Black Mission", 365, 730, "Classic dark purple-black figs with sweet jammy flesh")
+        v(db, "Fig", "Kadota", 365, 730, "Light green skin with sweet amber flesh; excellent for drying")
+        v(db, "Fig", "LSU Purple", 365, 730, "Louisiana-bred; good disease resistance for humid climates")
+
+        // ── Grape ──
+        v(db, "Grape", "Concord", 365, 1095, "Classic American blue-black; bold sweet flavor for jelly and juice")
+        v(db, "Grape", "Thompson Seedless", 365, 1095, "Seedless green table and raisin grape; needs hot summers")
+        v(db, "Grape", "Niagara", 365, 1095, "White American; sweet foxy flavor, cold hardy companion to Concord")
+        v(db, "Grape", "Catawba", 365, 1095, "Pink-red American for wine and juice; sweet spicy, late ripening")
+        v(db, "Grape", "Mars", 365, 1095, "Seedless blue-black table grape; cold hardy and disease resistant")
+        v(db, "Grape", "Reliance", 365, 1095, "Seedless red table grape; very sweet, cold hardy to -25F")
+
+        // ── Passion Fruit ──
+        v(db, "Passion Fruit", "Frederick", 365, 545, "Purple-fruited with sweet-tart aromatic pulp; most common type")
+        v(db, "Passion Fruit", "Possum Purple", 365, 545, "Cold-tolerant purple variety hardy to 25F")
+        v(db, "Passion Fruit", "Panama Red", 365, 545, "Red-purple fruits larger than standard; sweet aromatic pulp")
+        v(db, "Passion Fruit", "Yellow Giant", 365, 545, "Large yellow fruits with tangy juice; great for drinks")
+
+        // ── Papaya ──
+        v(db, "Papaya", "Red Lady", 270, 365, "Bisexual dwarf producing sweet red-fleshed fruits; disease resistant")
+        v(db, "Papaya", "Maradol", 270, 365, "Large 3-5 lb fruits with sweet salmon-red flesh; Cuban variety")
+        v(db, "Papaya", "Solo", 270, 330, "Hawaiian type with small sweet yellow-orange flesh; pear-shaped")
+        v(db, "Papaya", "Tainung No. 2", 270, 365, "Taiwanese hybrid with large red-orange flesh; high yielding")
+        v(db, "Papaya", "Sunrise", 270, 330, "Hawaiian solo type with sweet reddish-orange flesh; compact plants")
+
+        // ── Mango ──
+        v(db, "Mango", "Tommy Atkins", 730, 1825, "Most widely grown commercial variety; colorful red-green skin")
+        v(db, "Mango", "Alphonso", 730, 1825, "Considered the world's best mango; rich sweet creamy flesh")
+        v(db, "Mango", "Kent", 730, 1825, "Large green-red fruit with sweet juicy fiberless flesh")
+        v(db, "Mango", "Nam Doc Mai", 730, 1825, "Thai variety with elongated yellow fruits; sweet aromatic fiberless")
+        v(db, "Mango", "Glenn", 730, 1825, "Florida variety with sweet mild fiberless flesh; compact tree")
     }
 
     // ── Chicken Breed Seeding ──

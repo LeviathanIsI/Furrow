@@ -10,8 +10,12 @@ import com.furrow.app.data.local.dao.GardenBedDao
 import com.furrow.app.data.local.dao.HiveDao
 import com.furrow.app.data.local.dao.InspectionDao
 import com.furrow.app.data.local.dao.PlantInfoDao
+import com.furrow.app.data.local.dao.PlantVarietyDao
 import com.furrow.app.data.local.dao.PlantingDao
+import com.furrow.app.data.local.dao.FertilizerLogDao
+import com.furrow.app.data.local.dao.PestDiseaseLogDao
 import com.furrow.app.data.local.dao.UserProfileDao
+import com.furrow.app.data.local.dao.WateringLogDao
 import com.furrow.app.data.local.entity.BeeRaceInfo
 import com.furrow.app.data.local.entity.Chicken
 import com.furrow.app.data.local.entity.ChickenBreedInfo
@@ -22,10 +26,14 @@ import com.furrow.app.data.local.entity.HarvestLog
 import com.furrow.app.data.local.entity.Hive
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.data.local.entity.PlantInfo
+import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.PlantingWindow
+import com.furrow.app.data.local.entity.FertilizerLog
+import com.furrow.app.data.local.entity.PestDiseaseLog
 import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.data.local.entity.UserProfile
+import com.furrow.app.data.local.entity.WateringLog
 
 @Database(
     entities = [
@@ -43,9 +51,13 @@ import com.furrow.app.data.local.entity.UserProfile
         UserProfile::class,
         PlantInfo::class,
         PlantingWindow::class,
+        PlantVariety::class,
+        WateringLog::class,
+        FertilizerLog::class,
+        PestDiseaseLog::class,
     ],
-    version = 8,
-    exportSchema = false
+    version = 12,
+    exportSchema = false,
 )
 abstract class FurrowDatabase : RoomDatabase() {
     abstract fun hiveDao(): HiveDao
@@ -58,4 +70,8 @@ abstract class FurrowDatabase : RoomDatabase() {
     abstract fun plantingDao(): PlantingDao
     abstract fun userProfileDao(): UserProfileDao
     abstract fun plantInfoDao(): PlantInfoDao
+    abstract fun plantVarietyDao(): PlantVarietyDao
+    abstract fun wateringLogDao(): WateringLogDao
+    abstract fun fertilizerLogDao(): FertilizerLogDao
+    abstract fun pestDiseaseLogDao(): PestDiseaseLogDao
 }
