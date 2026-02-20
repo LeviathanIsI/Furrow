@@ -44,6 +44,7 @@ import com.furrow.app.ui.bees.DropdownSelector
 import com.furrow.app.ui.components.AppButtonPrimary
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppSectionHeader
+import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
@@ -174,13 +175,8 @@ fun PlantingFormScreen(
 
     AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (isEditMode) "Edit Planting" else "Add Planting",
-                        color = TextPrimary,
-                    )
-                },
+            AppTopBar(
+                title = if (isEditMode) "Edit planting" else "Add planting",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -190,7 +186,6 @@ fun PlantingFormScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
     ) { padding ->
@@ -203,7 +198,7 @@ fun PlantingFormScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // ── Section: Plant Info ──
-            GardenSectionHeader("PLANT INFO")
+            GardenSectionHeader("Plant info")
 
             SearchableSelector(
                 query = plantQuery,
@@ -321,7 +316,7 @@ fun PlantingFormScreen(
             }
 
             // ── Section: Status ──
-            GardenSectionHeader("STATUS")
+            GardenSectionHeader("Status")
 
             DateFieldWithToggle(
                 label = "Date Planted",

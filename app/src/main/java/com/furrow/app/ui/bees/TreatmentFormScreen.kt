@@ -44,10 +44,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.InputField
+import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.theme.BeeGlow
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 
@@ -91,16 +94,10 @@ fun TreatmentFormScreen(
         cursorColor = BeeGlow,
     )
 
-    Scaffold(
-        containerColor = Void,
+    com.furrow.app.ui.components.AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (isEditMode) "Edit Treatment" else "Add Treatment",
-                        color = TextPrimary,
-                    )
-                },
+            com.furrow.app.ui.components.AppTopBar(
+                title = if (isEditMode) "Edit treatment" else "Add treatment",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -110,7 +107,6 @@ fun TreatmentFormScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
     ) { padding ->
@@ -119,7 +115,7 @@ fun TreatmentFormScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             DateFieldWithToggle(
@@ -140,9 +136,9 @@ fun TreatmentFormScreen(
                         .background(BeeGlow, RoundedCornerShape(2.dp)),
                 )
                 Text(
-                    "TREATMENT DETAILS",
-                    style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.5.sp),
-                    color = TextTertiary,
+                    "Treatment details",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = TextSecondary,
                 )
             }
 
@@ -160,7 +156,7 @@ fun TreatmentFormScreen(
                 onSelect = { method = it },
             )
 
-            OutlinedTextField(
+            InputField(
                 value = dose,
                 onValueChange = { dose = it },
                 label = { Text("Dose") },
@@ -168,23 +164,22 @@ fun TreatmentFormScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
             )
 
-            OutlinedTextField(
+            InputField(
                 value = notes,
                 onValueChange = { notes = it },
                 label = { Text("Notes") },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // ── Save Button ──
-            Button(
+            PrimaryButton(
+                text = "Save treatment",
                 onClick = {
                     val treatment = Treatment(
                         id = if (isEditMode) editId else 0,
@@ -199,18 +194,12 @@ fun TreatmentFormScreen(
                     onBack()
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BeeGlow,
-                    contentColor = Void,
-                ),
-            ) {
-                Text("Save Treatment")
-            }
+                    .fillMaxWidth(),
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
+
+

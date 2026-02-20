@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -31,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -55,6 +52,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.PoultryGlow
@@ -112,16 +112,10 @@ fun EggLogScreen(
         cursorColor = PoultryGlow,
     )
 
-    Scaffold(
-        containerColor = Void,
+    com.furrow.app.ui.components.AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (isEditMode) "Edit Egg Log" else "Log Eggs",
-                        color = TextPrimary,
-                    )
-                },
+            com.furrow.app.ui.components.AppTopBar(
+                title = if (isEditMode) "Edit egg log" else "Log eggs",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -131,7 +125,6 @@ fun EggLogScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
     ) { padding ->
@@ -139,7 +132,7 @@ fun EggLogScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             DateFieldWithToggle(
@@ -220,20 +213,19 @@ fun EggLogScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             // Notes section
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                color = Charcoal,
-                onClick = { showNotes = !showNotes },
+            Panel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showNotes = !showNotes },
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column {
                     Text(
                         text = if (showNotes) "Notes" else "Add Note",
                         style = MaterialTheme.typography.titleSmall,
                         color = TextSecondary,
                     )
                     AnimatedVisibility(visible = showNotes) {
-                        OutlinedTextField(
+                        InputField(
                             value = notes,
                             onValueChange = { notes = it },
                             placeholder = { Text("Soft shells, abnormalities, etc.") },
@@ -242,7 +234,6 @@ fun EggLogScreen(
                                 .padding(top = 8.dp),
                             minLines = 3,
                             colors = fieldColors,
-                            shape = RoundedCornerShape(12.dp),
                         )
                     }
                 }
@@ -251,7 +242,8 @@ fun EggLogScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Save button
-            Button(
+            PrimaryButton(
+                text = "Save",
                 onClick = {
                     val eggLog = EggLog(
                         id = if (isEditMode) editId else 0,
@@ -264,18 +256,12 @@ fun EggLogScreen(
                 },
                 enabled = count > 0,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PoultryGlow,
-                    contentColor = Void,
-                ),
-            ) {
-                Text("Save")
-            }
+                    .fillMaxWidth(),
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
+
+

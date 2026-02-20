@@ -1,22 +1,26 @@
 package com.furrow.app.ui.components
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -24,12 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.furrow.app.ui.theme.*
+import com.furrow.app.ui.theme.AppRadius
+import com.furrow.app.ui.theme.AppSpacing
+import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.DmSans
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
 
-/**
- * Legacy wrapper retained for compatibility.
- * Prefer AppCard for default cards and AppGlowCard only for allowed state usage.
- */
 @Composable
 fun GlowCard(
     modifier: Modifier = Modifier,
@@ -38,19 +43,13 @@ fun GlowCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    AppGlowCard(
+    AppCard(
         modifier = modifier,
         onClick = onClick,
-        glowColor = if (glowColor != Color.Transparent) glowColor else GardenGlow,
-        glowEnabled = glowIntensity > 0f,
         content = content,
     )
 }
 
-/**
- * Large stat number with a subtle glow halo behind it.
- * The halo is barely visible — just enough to give the number presence.
- */
 @Composable
 fun StatNumber(
     value: String,
@@ -61,32 +60,21 @@ fun StatNumber(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
-            color = glowColor,
+            color = TextPrimary,
             fontSize = fontSize.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = DmSans,
-            modifier = Modifier.drawBehind {
-                // Very subtle halo behind the number — barely visible
-                drawCircle(
-                    color = glowColor.copy(alpha = 0.04f),
-                    radius = size.maxDimension * 0.7f,
-                )
-            },
         )
         Text(
-            text = label.uppercase(),
-            color = TextTertiary,
+            text = label,
+            color = TextSecondary,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             fontFamily = DmSans,
-            letterSpacing = 1.5.sp,
         )
     }
 }
 
-/**
- * Circular progress ring with rounded stroke caps.
- */
 @Composable
 fun GlowRing(
     progress: Float,
@@ -101,7 +89,6 @@ fun GlowRing(
         modifier = Modifier.size(size),
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            // Track
             drawArc(
                 color = BorderSubtle,
                 startAngle = -90f,
@@ -109,10 +96,9 @@ fun GlowRing(
                 useCenter = false,
                 style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round),
             )
-            // Progress arc
             if (clampedProgress > 0f) {
                 drawArc(
-                    color = glowColor,
+                    color = TextPrimary,
                     startAngle = -90f,
                     sweepAngle = 360f * clampedProgress,
                     useCenter = false,
@@ -124,9 +110,6 @@ fun GlowRing(
     }
 }
 
-/**
- * Horizontal progress bar with gradient fill.
- */
 @Composable
 fun GlowBar(
     progress: Float,
@@ -135,36 +118,17 @@ fun GlowBar(
     height: Dp = 6.dp,
 ) {
     val clampedProgress = progress.coerceIn(0f, 1f)
-    Canvas(
+    androidx.compose.material3.LinearProgressIndicator(
+        progress = { clampedProgress },
         modifier = modifier
             .fillMaxWidth()
             .height(height),
-    ) {
-        // Track
-        drawRoundRect(
-            color = BorderSubtle,
-            cornerRadius = CornerRadius(this.size.height / 2),
-        )
-        // Fill
-        if (clampedProgress > 0f) {
-            drawRoundRect(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        glowColor.copy(alpha = 0.3f),
-                        glowColor,
-                    ),
-                ),
-                size = Size(this.size.width * clampedProgress, this.size.height),
-                cornerRadius = CornerRadius(this.size.height / 2),
-            )
-        }
-    }
+        color = TextPrimary,
+        trackColor = BorderSubtle,
+        gapSize = 0.dp,
+    )
 }
 
-/**
- * Empty state with a small icon, title, subtitle, and action button.
- * The icon gets a tiny, barely-visible glow. Nothing else.
- */
 @Composable
 fun EmptyState(
     icon: @Composable () -> Unit,
@@ -174,56 +138,11 @@ fun EmptyState(
     glowColor: Color,
     onAction: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        // Icon with minimal glow — 80dp box, circle at 0.06 alpha
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(80.dp)
-                .drawBehind {
-                    drawCircle(
-                        color = glowColor.copy(alpha = 0.06f),
-                        radius = size.minDimension * 0.5f,
-                    )
-                },
-        ) {
-            icon()
-        }
-        Spacer(modifier = Modifier.height(28.dp))
-        Text(
-            text = title,
-            color = TextPrimary,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            fontFamily = DmSans,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = subtitle,
-            color = TextSecondary,
-            fontSize = 14.sp,
-            fontFamily = DmSans,
-        )
-        Spacer(modifier = Modifier.height(28.dp))
-        OutlinedButton(
-            onClick = onAction,
-            border = BorderStroke(1.dp, glowColor.copy(alpha = 0.5f)),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = glowColor,
-            ),
-        ) {
-            Text(
-                text = actionLabel,
-                fontFamily = DmSans,
-                fontWeight = FontWeight.Medium,
-            )
-        }
-    }
+    com.furrow.app.ui.components.EmptyState(
+        title = title,
+        subtitle = subtitle,
+        icon = icon,
+        actionLabel = actionLabel,
+        onAction = onAction,
+    )
 }

@@ -1,494 +1,687 @@
 package com.furrow.app.ui.splash
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseInCubic
 import androidx.compose.animation.core.EaseInOutCubic
-import androidx.compose.animation.core.EaseOutBack
 import androidx.compose.animation.core.EaseOutCubic
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.furrow.app.ui.theme.BeeGlow
-import com.furrow.app.ui.theme.GardenGlow
-import com.furrow.app.ui.theme.PoultryGlow
-import com.furrow.app.ui.theme.TextPrimary
-import com.furrow.app.ui.theme.TextSecondary
-import com.furrow.app.ui.theme.TextTertiary
-import com.furrow.app.ui.theme.Void
+import com.furrow.app.R
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private fun quadBezier(t: Float, p0: Offset, p1: Offset, p2: Offset): Offset {
-    val u = 1f - t
-    return Offset(
-        u * u * p0.x + 2f * u * t * p1.x + t * t * p2.x,
-        u * u * p0.y + 2f * u * t * p1.y + t * t * p2.y,
-    )
-}
-
-private fun DrawScope.drawLeaf(
-    cx: Float, cy: Float, length: Float, maxW: Float, rotDeg: Float, color: Color,
-) {
-    val path = Path().apply {
-        moveTo(cx, cy)
-        cubicTo(cx - maxW * 0.5f, cy - length * 0.3f, cx - maxW * 0.3f, cy - length * 0.9f, cx, cy - length)
-        cubicTo(cx + maxW * 0.3f, cy - length * 0.9f, cx + maxW * 0.5f, cy - length * 0.3f, cx, cy)
-        close()
-    }
-    rotate(degrees = rotDeg, pivot = Offset(cx, cy)) {
-        drawPath(path, color)
-    }
-}
-
-private fun DrawScope.drawBee(center: Offset, wingAng: Float, alpha: Float) {
-    val dp1 = 1.dp.toPx()
-    val bw = 8f * dp1
-    val bh = 5f * dp1
-    val ww = 5f * dp1
-    val wh = 3f * dp1
-
-    // Body
-    drawOval(BeeGlow, Offset(center.x - bw / 2, center.y - bh / 2), Size(bw, bh), alpha = alpha)
-
-    // Stripes
-    val s1 = center.y - bh * 0.15f
-    val s2 = center.y + bh * 0.15f
-    drawLine(TextTertiary, Offset(center.x - bw * 0.3f, s1), Offset(center.x + bw * 0.3f, s1), dp1, alpha = alpha)
-    drawLine(TextTertiary, Offset(center.x - bw * 0.3f, s2), Offset(center.x + bw * 0.3f, s2), dp1, alpha = alpha)
-
-    // Wings (vertical oscillation for buzz)
-    val flap = wingAng / 15f * 2f * dp1
-    drawOval(
-        Color.White.copy(alpha = 0.3f),
-        Offset(center.x - ww * 0.8f, center.y - bh * 0.6f - wh + flap),
-        Size(ww, wh), alpha = alpha,
-    )
-    drawOval(
-        Color.White.copy(alpha = 0.3f),
-        Offset(center.x + bw * 0.1f, center.y - bh * 0.6f - wh - flap),
-        Size(ww, wh), alpha = alpha,
-    )
-}
-
-private data class ShellFrag(val dx: Float, val dy: Float, val vx: Float, val vy: Float, val rot: Float)
-
-private val fragments = listOf(
-    ShellFrag(-1f, 0f, -3f, -4f, 45f),
-    ShellFrag(1f, 0f, 3f, -3f, -30f),
-    ShellFrag(-0.5f, -0.5f, -2f, -5f, 60f),
-    ShellFrag(0.5f, -0.3f, 4f, -2f, -45f),
-)
-
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-    // Scene 1: Plant
-    val soilA = remember { Animatable(0f) }
-    val stemP = remember { Animatable(0f) }
-    val lf1 = remember { Animatable(0f) }
-    val lf2 = remember { Animatable(0f) }
-    val sl1 = remember { Animatable(0f) }
-    val sl2 = remember { Animatable(0f) }
 
-    // Scene 2: Hive + Bees
-    val hiveA = remember { Animatable(0f) }
-    val b1t = remember { Animatable(0f) }
-    val b1a = remember { Animatable(0f) }
-    val b2t = remember { Animatable(0f) }
-    val b2a = remember { Animatable(0f) }
-    val b3t = remember { Animatable(0f) }
-    val b3a = remember { Animatable(0f) }
-
-    // Scene 3: Egg + Chick
-    val eggA = remember { Animatable(0f) }
-    val eggS = remember { Animatable(0.8f) }
-    val crackP = remember { Animatable(0f) }
-    val shellSp = remember { Animatable(0f) }
-    val fragP = remember { Animatable(0f) }
-    val chickA = remember { Animatable(0f) }
-    val chickY = remember { Animatable(10f) }
-
-    // Scene 4: Logo
-    val elScale = remember { Animatable(1f) }
-    val pSlideX = remember { Animatable(0f) }
-    val hSlideX = remember { Animatable(0f) }
-    val eSlideY = remember { Animatable(0f) }
-    val logoA = remember { Animatable(0f) }
-    val logoY = remember { Animatable(20f) }
-    val tagA = remember { Animatable(0f) }
-    val scrA = remember { Animatable(1f) }
-
-    val wingTr = rememberInfiniteTransition(label = "w")
-    val wingAng by wingTr.animateFloat(
-        initialValue = -15f, targetValue = 15f,
-        animationSpec = infiniteRepeatable(tween(150, easing = LinearEasing), RepeatMode.Reverse),
-        label = "wa",
+    // ── 1. Breathing gradient ────────────────────────────────────────────
+    val infiniteTransition = rememberInfiniteTransition(label = "breathe")
+    val breathScale by infiniteTransition.animateFloat(
+        initialValue = 0.7f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "breathScale",
     )
 
+    // ── 2. Grid ──────────────────────────────────────────────────────────
+    val gridAlpha = remember { Animatable(0f) }
+
+    // ── Ring sweeps ──────────────────────────────────────────────────────
+    val outerSweep = remember { Animatable(0f) }
+    val middleSweep = remember { Animatable(0f) }
+    val innerSweep = remember { Animatable(0f) }
+    val ringsAlpha = remember { Animatable(1f) }
+    val outerLeadAlpha = remember { Animatable(0.8f) }
+    val middleLeadAlpha = remember { Animatable(0.8f) }
+    val innerLeadAlpha = remember { Animatable(0.8f) }
+    val ringScale = remember { Animatable(1f) }
+
+    // ── Ring flash + shockwave + burst ───────────────────────────────────
+    val outerFlashAlpha = remember { Animatable(0f) }
+    val middleFlashAlpha = remember { Animatable(0f) }
+    val innerFlashAlpha = remember { Animatable(0f) }
+    val outerShockProgress = remember { Animatable(0f) }
+    val middleShockProgress = remember { Animatable(0f) }
+    val innerShockProgress = remember { Animatable(0f) }
+    val outerBurstProgress = remember { Animatable(0f) }
+    val middleBurstProgress = remember { Animatable(0f) }
+    val innerBurstProgress = remember { Animatable(0f) }
+
+    // ── Data readout labels ──────────────────────────────────────────────
+    val outerLabelAlpha = remember { Animatable(0f) }
+    val middleLabelAlpha = remember { Animatable(0f) }
+    val innerLabelAlpha = remember { Animatable(0f) }
+
+    // ── Structural web lines ─────────────────────────────────────────────
+    val webLinesProgress = remember { Animatable(0f) }
+
+    // ── Logo reveal line ─────────────────────────────────────────────────
+    val logoLineProgress = remember { Animatable(0f) }
+    val logoLineAlpha = remember { Animatable(0f) }
+
+    // ── Title ────────────────────────────────────────────────────────────
+    val titleAlpha = remember { Animatable(0f) }
+    val titleOffsetDp = remember { Animatable(20f) }
+    val titleLetterSpacing = remember { Animatable(8f) }
+
+    // ── 6. Bass-drop canvas scale ────────────────────────────────────────
+    val canvasScale = remember { Animatable(1f) }
+
+    // ── Tagline typewriter ───────────────────────────────────────────────
+    val taglineCharCount = remember { mutableIntStateOf(0) }
+    val periodFlashAlpha = remember { Animatable(0f) }
+
+    // ── Module dots ──────────────────────────────────────────────────────
+    val dot1Alpha = remember { Animatable(0f) }
+    val dot2Alpha = remember { Animatable(0f) }
+    val dot3Alpha = remember { Animatable(0f) }
+    val connectLineProgress = remember { Animatable(0f) }
+
+    // ── Exit ─────────────────────────────────────────────────────────────
+    val textExitAlpha = remember { Animatable(1f) }
+    val textExitScale = remember { Animatable(1f) }
+    val implosionFlashAlpha = remember { Animatable(0f) }
+
+    // ═════════════════════════════════════════════════════════════════════
+    //  TIMELINE
+    // ═════════════════════════════════════════════════════════════════════
     LaunchedEffect(Unit) {
-        // Scene 1 (0ms)
-        launch { soilA.animateTo(1f, tween(100)) }
-        launch { stemP.animateTo(1f, tween(800, easing = EaseOutCubic)) }
+        // Grid fade in
+        launch { gridAlpha.animateTo(0.04f, tween(500)) }
+
+        // ── Phase 1: Garden ring (0–1500ms) ──────────────────────────
+        launch { outerSweep.animateTo(360f, tween(1000, easing = EaseInOutCubic)) }
+        launch { delay(1000); outerLeadAlpha.animateTo(0.3f, tween(200)) }
+        launch { delay(1000); outerFlashAlpha.snapTo(0.5f); outerFlashAlpha.animateTo(0f, tween(150)) }
+        launch { delay(1000); outerShockProgress.animateTo(1f, tween(200)) }
+        launch { delay(1000); outerBurstProgress.animateTo(1f, tween(300)) }
+        launch { delay(1000); outerLabelAlpha.animateTo(0.7f, tween(100)) }
+
+        // ── Phase 2: Apiary ring (1500–3000ms) ───────────────────────
+        launch { delay(1500); outerLabelAlpha.animateTo(0.35f, tween(200)) }
+        launch { delay(1500); middleSweep.animateTo(360f, tween(1000, easing = EaseInOutCubic)) }
+        launch { delay(2500); middleLeadAlpha.animateTo(0.3f, tween(200)) }
+        launch { delay(2500); middleFlashAlpha.snapTo(0.5f); middleFlashAlpha.animateTo(0f, tween(150)) }
+        launch { delay(2500); middleShockProgress.animateTo(1f, tween(200)) }
+        launch { delay(2500); middleBurstProgress.animateTo(1f, tween(300)) }
+        launch { delay(2500); middleLabelAlpha.animateTo(0.7f, tween(100)) }
+
+        // ── Phase 3: Flock ring (3000–4500ms) ────────────────────────
+        launch { delay(3000); middleLabelAlpha.animateTo(0.35f, tween(200)) }
+        launch { delay(3000); outerLabelAlpha.animateTo(0.2f, tween(200)) }
+        launch { delay(3000); innerSweep.animateTo(360f, tween(900, easing = EaseInOutCubic)) }
+        launch { delay(3900); innerLeadAlpha.animateTo(0.3f, tween(200)) }
+        launch { delay(3900); innerFlashAlpha.snapTo(0.5f); innerFlashAlpha.animateTo(0f, tween(150)) }
+        launch { delay(3900); innerShockProgress.animateTo(1f, tween(200)) }
+        launch { delay(3900); innerBurstProgress.animateTo(1f, tween(300)) }
+        launch { delay(3900); innerLabelAlpha.animateTo(0.7f, tween(100)) }
+
+        // "All systems go" — all labels flash bright then fade out
+        launch { delay(4300); outerLabelAlpha.animateTo(0.7f, tween(150)); outerLabelAlpha.animateTo(0f, tween(200)) }
+        launch { delay(4300); middleLabelAlpha.animateTo(0.7f, tween(150)); middleLabelAlpha.animateTo(0f, tween(200)) }
+        launch { delay(4300); innerLabelAlpha.animateTo(0.7f, tween(150)); innerLabelAlpha.animateTo(0f, tween(200)) }
+
+        // ── Phase 4: Logo reveal (4300–5500ms) ───────────────────────
+        // Web lines draw outward
+        launch { delay(4300); webLinesProgress.animateTo(1f, tween(400, easing = EaseOutCubic)) }
+
+        // Ring pulse
         launch {
-            delay(560)
-            launch { lf1.animateTo(-35f, spring(dampingRatio = 0.5f)) }
-            launch { lf2.animateTo(35f, spring(dampingRatio = 0.5f)) }
+            delay(4500)
+            ringScale.animateTo(1.03f, tween(150, easing = EaseInOutCubic))
+            ringScale.animateTo(1f, tween(150, easing = EaseInOutCubic))
         }
+
+        // Grid out + rings dim
+        launch { delay(4500); gridAlpha.animateTo(0f, tween(400)) }
+        launch { delay(4500); ringsAlpha.animateTo(0.15f, tween(500, easing = EaseOutCubic)) }
+
+        // Logo reveal line (wipe → flash → fade)
         launch {
-            delay(760)
-            launch { sl1.animateTo(-35f, spring(dampingRatio = 0.5f)) }
-            launch { sl2.animateTo(35f, spring(dampingRatio = 0.5f)) }
+            delay(4500)
+            logoLineAlpha.snapTo(0.5f)
+            logoLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic))
+            logoLineAlpha.snapTo(0.8f)
+            delay(16)
+            logoLineAlpha.animateTo(0f, tween(100))
         }
-        // Scene 2 (800ms)
-        launch { delay(800); hiveA.animateTo(1f, tween(300)) }
-        launch { delay(1000); b1a.snapTo(1f); b1t.animateTo(1f, tween(800, easing = EaseInOutCubic)) }
-        launch { delay(1750); b1a.animateTo(0f, tween(50)) }
-        launch { delay(1300); b2a.snapTo(1f); b2t.animateTo(1f, tween(900, easing = EaseInOutCubic)) }
-        launch { delay(1500); b3a.snapTo(1f); b3t.animateTo(1f, tween(1200, easing = EaseInOutCubic)) }
-        // Scene 3 (1800ms)
-        launch { delay(1800); eggA.snapTo(1f); eggS.animateTo(1f, spring(dampingRatio = 0.6f)) }
-        launch { delay(2200); crackP.animateTo(1f, tween(300)) }
-        launch { delay(2500); shellSp.animateTo(1f, tween(300)) }
-        launch { delay(2500); fragP.animateTo(1f, tween(500)) }
-        launch { delay(2600); chickA.snapTo(1f); chickY.animateTo(-5f, tween(400, easing = EaseOutBack)) }
+
+        // Title
         launch {
-            delay(2800)
-            repeat(2) {
-                chickY.animateTo(-7f, spring(stiffness = 600f))
-                chickY.animateTo(-5f, spring(stiffness = 600f))
+            delay(4600)
+            launch { titleAlpha.animateTo(1f, tween(500, easing = EaseOutCubic)) }
+            launch { titleOffsetDp.animateTo(0f, tween(500, easing = EaseOutCubic)) }
+            launch { titleLetterSpacing.animateTo(4f, tween(500, easing = EaseOutCubic)) }
+        }
+
+        // Bass-drop scale punch when title reaches full opacity
+        launch {
+            delay(5100)
+            canvasScale.animateTo(1.025f, tween(75, easing = EaseOutCubic))
+            canvasScale.animateTo(1f, tween(75, easing = EaseInCubic))
+        }
+
+        // Tagline typewriter
+        launch {
+            delay(4900)
+            val text = "grow smarter."
+            for (i in 1..text.length) {
+                taglineCharCount.intValue = i
+                delay(40)
             }
+            periodFlashAlpha.snapTo(1f)
+            delay(200)
+            periodFlashAlpha.animateTo(0f, tween(100))
         }
-        // Scene 4 (2800ms)
-        launch { delay(2800); elScale.animateTo(0.9f, tween(300)) }
-        launch { delay(2800); pSlideX.animateTo(-1f, tween(300)) }
-        launch { delay(2800); hSlideX.animateTo(1f, tween(300)) }
-        launch { delay(2800); eSlideY.animateTo(-1f, tween(300)) }
+
+        // Module dots
+        launch { delay(5200); dot1Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
+        launch { delay(5300); dot2Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
+        launch { delay(5400); dot3Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
+        launch { delay(5400); connectLineProgress.animateTo(1f, tween(200, easing = EaseOutCubic)) }
+
+        // ── Phase 5: Exit (5900–6400ms) ──────────────────────────────
         launch {
-            delay(2800)
-            launch { logoA.animateTo(1f, tween(400, easing = EaseOutCubic)) }
-            launch { logoY.animateTo(0f, tween(400, easing = EaseOutCubic)) }
+            delay(5900)
+            launch { ringScale.animateTo(0f, tween(250, easing = EaseInCubic)) }
+            launch { webLinesProgress.animateTo(0f, tween(250, easing = EaseInCubic)) }
         }
-        launch { delay(2950); tagA.animateTo(1f, tween(250)) }
-        launch { delay(4700); scrA.animateTo(0f, tween(300)) }
-        delay(5000)
+        launch { delay(5950); implosionFlashAlpha.snapTo(0.03f); delay(100); implosionFlashAlpha.snapTo(0f) }
+        launch {
+            delay(6100)
+            launch { textExitAlpha.animateTo(0f, tween(300)) }
+            launch { textExitScale.animateTo(1.1f, tween(300)) }
+        }
+
+        delay(6400)
         onFinished()
     }
 
-    val eggShell = Color(0xFFF5F0E0)
+    // ═════════════════════════════════════════════════════════════════════
+    //  DRAW
+    // ═════════════════════════════════════════════════════════════════════
+    val textMeasurer = rememberTextMeasurer()
+    val dmSansBold = remember { FontFamily(Font(R.font.dm_sans_bold, FontWeight.Bold)) }
+    val dmSansMedium = remember { FontFamily(Font(R.font.dm_sans_medium, FontWeight.Medium)) }
 
-    Box(
+    Canvas(
         modifier = Modifier
             .fillMaxSize()
-            .background(Void)
-            .graphicsLayer { alpha = scrA.value },
-        contentAlignment = Alignment.Center,
+            .graphicsLayer {
+                scaleX = canvasScale.value
+                scaleY = canvasScale.value
+            },
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val w = size.width
-            val h = size.height
-            val dp1 = 1.dp.toPx()
-            val sc = elScale.value
+        val bg = Color(0xFF050505)
+        val gardenGlow = Color(0xFF6ECF72)
+        val beeGlow = Color(0xFFFFB300)
+        val poultryGlow = Color(0xFFE8956E)
+        val textPrimary = Color(0xFFEAEAEA)
+        val textTertiary = Color(0xFF505050)
+        val textMuted = Color(0xFF333333)
 
-            // ── SCENE 1: Plant ──
-            val plantCx = w * 0.5f + pSlideX.value * w * 0.08f
-            val soilY = h * 0.65f
-            val soilHalf = w * 0.2f * sc
-            val stemLen = 80f * dp1 * sc
+        val cx = size.width / 2f
+        val cy = size.height / 2f
+        val diagonal = sqrt(size.width * size.width + size.height * size.height)
 
-            // Soil line
-            drawLine(
-                TextTertiary, Offset(plantCx - soilHalf, soilY),
-                Offset(plantCx + soilHalf, soilY), 3f * dp1, alpha = soilA.value,
+        // ── Background ───────────────────────────────────────────────────
+        drawRect(color = bg, size = size)
+
+        // 5. Enhanced breathing — primary gradient
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(gardenGlow.copy(alpha = 0.04f), Color.Transparent),
+                center = Offset(cx, cy),
+                radius = diagonal * breathScale,
+            ),
+            radius = diagonal,
+            center = Offset(cx, cy),
+        )
+        // 5. Secondary gradient — offset amber glow
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(beeGlow.copy(alpha = 0.015f), Color.Transparent),
+                center = Offset(cx + 50.dp.toPx(), cy - 30.dp.toPx()),
+                radius = diagonal * breathScale,
+            ),
+            radius = diagonal,
+            center = Offset(cx, cy),
+        )
+
+        // 2. Grid
+        if (gridAlpha.value > 0f) {
+            val spacing = 40.dp.toPx()
+            val gridStroke = 0.5f.dp.toPx()
+            var gy = spacing
+            while (gy < size.height) {
+                drawLine(textMuted, Offset(0f, gy), Offset(size.width, gy), gridStroke, alpha = gridAlpha.value)
+                gy += spacing
+            }
+            var gx = spacing
+            while (gx < size.width) {
+                drawLine(textMuted, Offset(gx, 0f), Offset(gx, size.height), gridStroke, alpha = gridAlpha.value)
+                gx += spacing
+            }
+        }
+
+        // ── Ring constants ───────────────────────────────────────────────
+        val outerR = 120.dp.toPx()
+        val middleR = 80.dp.toPx()
+        val innerR = 40.dp.toPx()
+        val outerStroke = 3.dp.toPx()
+        val middleStroke = 2.5f.dp.toPx()
+        val innerStroke = 2.dp.toPx()
+        val glowStroke = 8.dp.toPx()
+        val ringAlpha = ringsAlpha.value
+
+        // Glow layer specs: 12 layers for smooth point-light falloff
+        val glowRadii = floatArrayOf(32f, 28f, 24f, 21f, 18f, 15f, 12f, 9f, 7f, 5f, 3f, 1.5f)
+        val glowAlphas = floatArrayOf(0.01f, 0.015f, 0.02f, 0.03f, 0.045f, 0.06f, 0.08f, 0.12f, 0.18f, 0.28f, 0.45f, 0.85f)
+        // Trail glow: 60% radii, 50% alphas
+        val trailGlowRadii = floatArrayOf(19.2f, 16.8f, 14.4f, 12.6f, 10.8f, 9f, 7.2f, 5.4f, 4.2f, 3f, 1.8f, 0.9f)
+        val trailGlowAlphas = floatArrayOf(0.005f, 0.0075f, 0.01f, 0.015f, 0.0225f, 0.03f, 0.04f, 0.06f, 0.09f, 0.14f, 0.225f, 0.425f)
+        val burstDotR = 1.5f.dp.toPx()
+        val burstDist = 30.dp.toPx()
+
+        fun drawRing(
+            radius: Float,
+            sweep: Float,
+            color: Color,
+            leadAlpha: Float,
+            flashAlpha: Float,
+            strokeW: Float,
+            burstProgress: Float,
+        ) {
+            if (sweep <= 0f) return
+            val topLeft = Offset(cx - radius, cy - radius)
+            val arcSize = Size(radius * 2f, radius * 2f)
+
+            // Tapered scanning trail (only while drawing)
+            if (sweep < 360f) {
+                val primarySweep = 20f.coerceAtMost(sweep)
+                drawArc(
+                    color = color,
+                    startAngle = -90f + sweep - primarySweep,
+                    sweepAngle = primarySweep,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(12.dp.toPx(), cap = StrokeCap.Round),
+                    alpha = 0.10f * ringAlpha,
+                )
+                val secondarySweep = 10f.coerceAtMost(sweep)
+                drawArc(
+                    color = color,
+                    startAngle = -90f + sweep - secondarySweep,
+                    sweepAngle = secondarySweep,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(18.dp.toPx(), cap = StrokeCap.Round),
+                    alpha = 0.04f * ringAlpha,
+                )
+            }
+
+            // Glow layer
+            drawArc(
+                color = color,
+                startAngle = -90f,
+                sweepAngle = sweep,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(glowStroke, cap = StrokeCap.Round),
+                alpha = 0.08f * ringAlpha,
             )
 
-            // Stem
-            if (stemP.value > 0f) {
-                drawLine(
-                    GardenGlow, Offset(plantCx, soilY),
-                    Offset(plantCx, soilY - stemLen * stemP.value),
-                    3f * dp1, alpha = soilA.value,
+            // Main stroke
+            drawArc(
+                color = color,
+                startAngle = -90f,
+                sweepAngle = sweep,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(strokeW, cap = StrokeCap.Round),
+                alpha = ringAlpha,
+            )
+
+            // 1. Hot spot — 60° at 2x stroke, 0.25f alpha
+            val hotSpotSweep = 60f.coerceAtMost(sweep)
+            drawArc(
+                color = color,
+                startAngle = -90f + sweep - hotSpotSweep,
+                sweepAngle = hotSpotSweep,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(strokeW * 2f, cap = StrokeCap.Round),
+                alpha = 0.25f * ringAlpha,
+            )
+
+            // 4. Flash overlay — 3x stroke, fading over 150ms
+            if (flashAlpha > 0f) {
+                drawArc(
+                    color = color,
+                    startAngle = -90f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    topLeft = topLeft,
+                    size = arcSize,
+                    style = Stroke(strokeW * 3f, cap = StrokeCap.Round),
+                    alpha = flashAlpha,
                 )
             }
 
-            // Big leaves at 60% stem height
-            if (lf1.value != 0f) {
-                val ly = soilY - stemLen * 0.6f
-                val ll = 20f * dp1 * sc
-                val lw = 12f * dp1 * sc
-                drawLeaf(plantCx, ly, ll, lw, lf1.value, GardenGlow)
-                drawLeaf(plantCx, ly, ll, lw, lf2.value, GardenGlow)
-            }
-
-            // Small leaves at 85% stem height
-            if (sl1.value != 0f) {
-                val sy = soilY - stemLen * 0.85f
-                val sll = 12f * dp1 * sc
-                val slw = 7f * dp1 * sc
-                drawLeaf(plantCx, sy, sll, slw, sl1.value, GardenGlow)
-                drawLeaf(plantCx, sy, sll, slw, sl2.value, GardenGlow)
-            }
-
-            // ── SCENE 2: Hive + Bees ──
-            val hiveCx = w * 0.72f + hSlideX.value * w * 0.05f
-            val hiveCy = h * 0.48f
-            val hiveW = 50f * dp1 * sc
-            val hiveH = 60f * dp1 * sc
-            val hiveL = hiveCx - hiveW / 2
-            val hiveR = hiveCx + hiveW / 2
-            val hiveT = hiveCy - hiveH / 2
-            val hiveB = hiveCy + hiveH / 2
-            val topIn = hiveW * 0.15f
-
-            if (hiveA.value > 0f) {
-                // Body trapezoid
-                val bodyPath = Path().apply {
-                    moveTo(hiveL, hiveB); lineTo(hiveR, hiveB)
-                    lineTo(hiveR - topIn, hiveT); lineTo(hiveL + topIn, hiveT); close()
-                }
-                drawPath(bodyPath, BeeGlow.copy(alpha = 0.8f), alpha = hiveA.value)
-
-                // Roof triangle
-                val roofPath = Path().apply {
-                    moveTo(hiveL + topIn - 5f * dp1, hiveT)
-                    lineTo(hiveCx, hiveT - hiveH * 0.2f)
-                    lineTo(hiveR - topIn + 5f * dp1, hiveT); close()
-                }
-                drawPath(roofPath, BeeGlow.copy(alpha = 0.8f), alpha = hiveA.value)
-
-                // Horizontal lines
-                for (i in 1..3) {
-                    val ly = hiveT + hiveH * i / 4f
-                    val frac = (ly - hiveT) / hiveH
-                    val lx = hiveL + topIn * (1f - frac)
-                    val rx = hiveR - topIn * (1f - frac)
-                    drawLine(TextTertiary.copy(alpha = 0.4f), Offset(lx, ly), Offset(rx, ly), dp1, alpha = hiveA.value)
-                }
-
-                // Entrance
-                drawOval(
-                    Void,
-                    Offset(hiveCx - 5f * dp1, hiveB - 8f * dp1),
-                    Size(10f * dp1, 8f * dp1), alpha = hiveA.value,
-                )
-            }
-
-            val hiveEntrance = Offset(hiveCx, hiveB - 4f * dp1)
-
-            // Bee 1: off-screen right → hive entrance
-            if (b1a.value > 0f) {
-                val pos = quadBezier(
-                    b1t.value,
-                    Offset(w + 30f * dp1, hiveCy - 50f * dp1),
-                    Offset(hiveCx + 60f * dp1, hiveCy - 80f * dp1),
-                    hiveEntrance,
-                )
-                drawBee(pos, wingAng, b1a.value)
-            }
-
-            // Bee 2: hive entrance → off-screen left
-            if (b2a.value > 0f) {
-                val pos = quadBezier(
-                    b2t.value, hiveEntrance,
-                    Offset(hiveCx - 80f * dp1, hiveCy - 100f * dp1),
-                    Offset(-30f * dp1, hiveCy - 40f * dp1),
-                )
-                drawBee(pos, wingAng, b2a.value)
-            }
-
-            // Bee 3: upper right → plant → hive
-            if (b3a.value > 0f) {
-                val pos = if (b3t.value < 0.5f) {
-                    quadBezier(
-                        b3t.value * 2f,
-                        Offset(w * 0.8f, h * 0.2f),
-                        Offset(plantCx + 20f * dp1, soilY - stemLen * 0.7f),
-                        Offset(plantCx, soilY - stemLen * 0.5f),
+            // Comet trail — 5 trailing glow dots (50% scale of main glow)
+            for (t in 0 until 5) {
+                val offset = t + 1
+                if (sweep > offset) {
+                    val trailAngle = Math.toRadians(-90.0 + sweep - offset)
+                    val trailCenter = Offset(
+                        cx + radius * cos(trailAngle).toFloat(),
+                        cy + radius * sin(trailAngle).toFloat(),
                     )
-                } else {
-                    quadBezier(
-                        (b3t.value - 0.5f) * 2f,
-                        Offset(plantCx, soilY - stemLen * 0.5f),
-                        Offset(plantCx + 40f * dp1, hiveCy + 20f * dp1),
-                        hiveEntrance,
+                    val trailFade = (1f - t * 0.18f).coerceAtLeast(0.1f)
+                    for (g in trailGlowRadii.indices) {
+                        drawCircle(
+                            color = color,
+                            radius = trailGlowRadii[g].dp.toPx(),
+                            center = trailCenter,
+                            alpha = trailGlowAlphas[g] * trailFade * leadAlpha * ringAlpha,
+                        )
+                    }
+                }
+            }
+
+            // Leading edge glow — 7 concentric circles for point-light falloff
+            val leadAngle = Math.toRadians(-90.0 + sweep)
+            val leadCenter = Offset(
+                cx + radius * cos(leadAngle).toFloat(),
+                cy + radius * sin(leadAngle).toFloat(),
+            )
+            for (g in glowRadii.indices) {
+                drawCircle(
+                    color = color,
+                    radius = glowRadii[g].dp.toPx(),
+                    center = leadCenter,
+                    alpha = glowAlphas[g] * leadAlpha * ringAlpha,
+                )
+            }
+
+            // Completion dot glow
+            if (sweep >= 360f) {
+                val completionCenter = Offset(cx, cy - radius)
+                for (g in glowRadii.indices) {
+                    drawCircle(
+                        color = color,
+                        radius = glowRadii[g].dp.toPx(),
+                        center = completionCenter,
+                        alpha = glowAlphas[g] * ringAlpha,
                     )
                 }
-                drawBee(pos, wingAng, b3a.value)
             }
 
-            // ── SCENE 3: Egg + Chick ──
-            val eggCx = w * 0.28f
-            val eggCy = h * 0.48f + eSlideY.value * h * 0.05f
-            val eggW = 30f * dp1 * sc * eggS.value
-            val eggH = 40f * dp1 * sc * eggS.value
-            val eggL = eggCx - eggW / 2
-            val eggT = eggCy - eggH / 2
-            val eggB = eggCy + eggH / 2
-            val crackY = eggCy - eggH * 0.15f
-
-            if (eggA.value > 0f) {
-                // Crack zigzag points
-                val crackPts = listOf(
-                    Offset(eggCx - eggW * 0.3f, crackY),
-                    Offset(eggCx - eggW * 0.15f, crackY - 3f * dp1),
-                    Offset(eggCx, crackY + 2f * dp1),
-                    Offset(eggCx + eggW * 0.1f, crackY - 2f * dp1),
-                    Offset(eggCx + eggW * 0.2f, crackY + 3f * dp1),
-                    Offset(eggCx + eggW * 0.3f, crackY - 1f * dp1),
-                )
-
-                if (shellSp.value > 0f) {
-                    // ── Split egg ──
-
-                    // Chick (behind bottom half)
-                    if (chickA.value > 0f) {
-                        val ccy = crackY + chickY.value * dp1
-                        val headR = 6f * dp1 * sc
-
-                        // Head
-                        drawCircle(BeeGlow, headR, Offset(eggCx, ccy), alpha = chickA.value)
-
-                        // Beak
-                        val beakPath = Path().apply {
-                            moveTo(eggCx + headR * 0.7f, ccy)
-                            lineTo(eggCx + headR * 0.7f + 3f * dp1, ccy - 1.5f * dp1)
-                            lineTo(eggCx + headR * 0.7f + 3f * dp1, ccy + 1.5f * dp1)
-                            close()
-                        }
-                        drawPath(beakPath, PoultryGlow, alpha = chickA.value)
-
-                        // Eyes
-                        drawCircle(
-                            Void, dp1,
-                            Offset(eggCx - 2f * dp1, ccy - 1.5f * dp1), alpha = chickA.value,
-                        )
-                        drawCircle(
-                            Void, dp1,
-                            Offset(eggCx + 2f * dp1, ccy - 1.5f * dp1), alpha = chickA.value,
-                        )
-                    }
-
-                    // Bottom half
-                    clipRect(
-                        left = eggL - dp1, top = crackY,
-                        right = eggL + eggW + dp1, bottom = eggB + dp1,
-                    ) {
-                        drawOval(eggShell, Offset(eggL, eggT), Size(eggW, eggH), alpha = eggA.value)
-                    }
-
-                    // Top half (translated + rotated)
-                    val splitY = shellSp.value * -8f * dp1
-                    val splitRot = shellSp.value * 15f
-                    translate(top = splitY) {
-                        rotate(degrees = splitRot, pivot = Offset(eggCx, crackY)) {
-                            clipRect(
-                                left = eggL - dp1, top = eggT - dp1,
-                                right = eggL + eggW + dp1, bottom = crackY,
-                            ) {
-                                drawOval(eggShell, Offset(eggL, eggT), Size(eggW, eggH), alpha = eggA.value)
-                            }
-                        }
-                    }
-
-                    // Shell fragments
-                    if (fragP.value > 0f) {
-                        val t = fragP.value
-                        val fAlpha = (1f - t * 2f).coerceIn(0f, 1f)
-                        if (fAlpha > 0f) {
-                            fragments.forEach { frag ->
-                                val fx = eggCx + frag.dx * eggW * 0.3f + frag.vx * t * dp1 * 8f
-                                val fy = crackY + frag.dy * eggH * 0.1f + frag.vy * t * dp1 * 8f + 200f * t * t
-                                val fs = 4f * dp1
-                                val triPath = Path().apply {
-                                    moveTo(fx, fy - fs / 2); lineTo(fx - fs / 2, fy + fs / 2)
-                                    lineTo(fx + fs / 2, fy + fs / 2); close()
-                                }
-                                rotate(frag.rot * t * 3f, Offset(fx, fy)) {
-                                    drawPath(triPath, eggShell, alpha = fAlpha)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    // ── Whole egg ──
-                    drawOval(eggShell, Offset(eggL, eggT), Size(eggW, eggH), alpha = eggA.value)
-                }
-
-                // Crack line (draws on top of egg)
-                if (crackP.value > 0f) {
-                    val totalSegs = crackPts.size - 1
-                    val segsToShow = (crackP.value * totalSegs).toInt()
-                    val partial = crackP.value * totalSegs - segsToShow
-
-                    for (i in 0 until segsToShow) {
-                        drawLine(
-                            TextTertiary.copy(alpha = 0.6f), crackPts[i], crackPts[i + 1],
-                            1.5f * dp1,
-                        )
-                    }
-                    if (segsToShow < totalSegs) {
-                        val s = crackPts[segsToShow]
-                        val e = crackPts[segsToShow + 1]
-                        drawLine(
-                            TextTertiary.copy(alpha = 0.6f), s,
-                            Offset(s.x + (e.x - s.x) * partial, s.y + (e.y - s.y) * partial),
-                            1.5f * dp1,
-                        )
-                    }
+            // 4. Burst particles — 8 radial dots from completion point
+            if (burstProgress > 0f && burstProgress < 1f) {
+                val dist = burstDist * burstProgress
+                val bAlpha = 0.6f * (1f - burstProgress) * ringAlpha
+                val origin = Offset(cx, cy - radius)
+                for (i in 0 until 8) {
+                    val angle = Math.toRadians(i * 45.0)
+                    drawCircle(
+                        color = color,
+                        radius = burstDotR,
+                        center = Offset(
+                            origin.x + dist * cos(angle).toFloat(),
+                            origin.y + dist * sin(angle).toFloat(),
+                        ),
+                        alpha = bAlpha,
+                    )
                 }
             }
         }
 
-        // ── SCENE 4: Text ──
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                "Furrow",
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 4.sp,
+        // ── Ring scale transform (pulse → implosion) ─────────────────────
+        drawContext.canvas.save()
+        drawContext.canvas.translate(cx, cy)
+        drawContext.canvas.scale(ringScale.value, ringScale.value)
+        drawContext.canvas.translate(-cx, -cy)
+
+        drawRing(outerR, outerSweep.value, gardenGlow, outerLeadAlpha.value, outerFlashAlpha.value, outerStroke, outerBurstProgress.value)
+        drawRing(middleR, middleSweep.value, beeGlow, middleLeadAlpha.value, middleFlashAlpha.value, middleStroke, middleBurstProgress.value)
+        drawRing(innerR, innerSweep.value, poultryGlow, innerLeadAlpha.value, innerFlashAlpha.value, innerStroke, innerBurstProgress.value)
+
+        // Shockwaves
+        fun drawShockwave(radius: Float, color: Color, progress: Float) {
+            if (progress <= 0f || progress >= 1f) return
+            drawCircle(
+                color = color,
+                radius = 20.dp.toPx() * progress,
+                center = Offset(cx, cy - radius),
+                style = Stroke(1.dp.toPx()),
+                alpha = 0.2f * (1f - progress),
+            )
+        }
+
+        drawShockwave(outerR, gardenGlow, outerShockProgress.value)
+        drawShockwave(middleR, beeGlow, middleShockProgress.value)
+        drawShockwave(innerR, poultryGlow, innerShockProgress.value)
+
+        // Data readout labels
+        val labelStyle = TextStyle(
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = dmSansMedium,
+            letterSpacing = 3.sp,
+        )
+
+        fun drawLabel(text: String, color: Color, radius: Float, alpha: Float) {
+            if (alpha <= 0f) return
+            val layout = textMeasurer.measure(text, labelStyle)
+            drawText(
+                textLayoutResult = layout,
+                color = color,
+                alpha = alpha,
+                topLeft = Offset(
+                    cx - layout.size.width / 2f,
+                    cy - radius - 12.dp.toPx() - layout.size.height,
                 ),
-                color = TextPrimary,
-                modifier = Modifier.graphicsLayer {
-                    alpha = logoA.value
-                    translationY = logoY.value * density
-                },
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                "Grow smarter.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = TextSecondary,
-                modifier = Modifier.graphicsLayer { alpha = tagA.value },
+        }
+
+        drawLabel("GARDEN", gardenGlow, outerR, outerLabelAlpha.value)
+        drawLabel("APIARY", beeGlow, middleR, middleLabelAlpha.value)
+        drawLabel("FLOCK", poultryGlow, innerR, innerLabelAlpha.value)
+
+        drawContext.canvas.restore()
+
+        // ── Structural web lines ─────────────────────────────────────────
+        if (webLinesProgress.value > 0f) {
+            val webLen = diagonal * webLinesProgress.value
+            val webStroke = 0.5f.dp.toPx()
+            val webAngles = doubleArrayOf(0.0, 120.0, 240.0)
+            val webColors = arrayOf(gardenGlow, beeGlow, poultryGlow)
+
+            for (i in webAngles.indices) {
+                val rad = Math.toRadians(webAngles[i])
+                drawLine(
+                    color = webColors[i],
+                    start = Offset(cx, cy),
+                    end = Offset(
+                        cx + webLen * cos(rad).toFloat(),
+                        cy + webLen * sin(rad).toFloat(),
+                    ),
+                    strokeWidth = webStroke,
+                    alpha = 0.06f * ringAlpha,
+                )
+            }
+        }
+
+        // ── Text measurements ────────────────────────────────────────────
+        val titleStyle = TextStyle(
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = dmSansBold,
+            letterSpacing = titleLetterSpacing.value.sp,
+        )
+        val taglineStyle = TextStyle(
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = dmSansMedium,
+        )
+        val taglineText = "grow smarter."
+        val titleLayout = textMeasurer.measure("Furrow", titleStyle)
+        val fullTaglineLayout = textMeasurer.measure(taglineText, taglineStyle)
+
+        val titleFinalY = cy - titleLayout.size.height / 2f
+        val taglineFinalY = titleFinalY + titleLayout.size.height + 8.dp.toPx()
+        val dotsY = taglineFinalY + fullTaglineLayout.size.height + 16.dp.toPx()
+
+        // ── 7. Enhanced logo reveal line + glow ──────────────────────────
+        if (logoLineAlpha.value > 0f) {
+            val lineLeft = cx - titleLayout.size.width / 2f
+            val lineRight = lineLeft + titleLayout.size.width * logoLineProgress.value
+            val lineY = titleFinalY + titleLayout.size.height / 2f
+
+            // Glow underneath
+            drawLine(
+                color = textPrimary,
+                start = Offset(lineLeft, lineY),
+                end = Offset(lineRight, lineY),
+                strokeWidth = 6.dp.toPx(),
+                alpha = logoLineAlpha.value * 0.2f,
             )
+            // Main line
+            drawLine(
+                color = textPrimary,
+                start = Offset(lineLeft, lineY),
+                end = Offset(lineRight, lineY),
+                strokeWidth = 1.5f.dp.toPx(),
+                alpha = logoLineAlpha.value,
+            )
+        }
+
+        // ── Text exit transform ──────────────────────────────────────────
+        drawContext.canvas.save()
+        drawContext.canvas.translate(cx, cy)
+        drawContext.canvas.scale(textExitScale.value, textExitScale.value)
+        drawContext.canvas.translate(-cx, -cy)
+
+        val exitAlpha = textExitAlpha.value
+
+        // Title
+        if (titleAlpha.value > 0f) {
+            drawText(
+                textLayoutResult = titleLayout,
+                color = textPrimary,
+                alpha = titleAlpha.value * exitAlpha,
+                topLeft = Offset(
+                    cx - titleLayout.size.width / 2f,
+                    titleFinalY + titleOffsetDp.value.dp.toPx(),
+                ),
+            )
+        }
+
+        // Tagline typewriter
+        val charCount = taglineCharCount.intValue
+        if (charCount > 0) {
+            val visibleText = taglineText.substring(0, charCount)
+            val visibleLayout = textMeasurer.measure(visibleText, taglineStyle)
+            val taglineStartX = cx - fullTaglineLayout.size.width / 2f
+
+            drawText(
+                textLayoutResult = visibleLayout,
+                color = textTertiary,
+                alpha = exitAlpha,
+                topLeft = Offset(taglineStartX, taglineFinalY),
+            )
+
+            // 8. Period flash — full GardenGlow for 200ms, settle to TextTertiary
+            if (charCount == taglineText.length && periodFlashAlpha.value > 0f) {
+                val withoutPeriod = textMeasurer.measure(taglineText.dropLast(1), taglineStyle)
+                val periodLayout = textMeasurer.measure(".", taglineStyle)
+                drawText(
+                    textLayoutResult = periodLayout,
+                    color = gardenGlow,
+                    alpha = periodFlashAlpha.value * exitAlpha,
+                    topLeft = Offset(taglineStartX + withoutPeriod.size.width, taglineFinalY),
+                )
+            }
+        }
+
+        // Module dots — layered glow
+        val dotSpacing = 20.dp.toPx()
+        val dotColors = arrayOf(gardenGlow, beeGlow, poultryGlow)
+        val dotAlphas = floatArrayOf(dot1Alpha.value, dot2Alpha.value, dot3Alpha.value)
+        val dotCenters = arrayOf(
+            Offset(cx - dotSpacing, dotsY),
+            Offset(cx, dotsY),
+            Offset(cx + dotSpacing, dotsY),
+        )
+
+        for (d in 0 until 3) {
+            if (dotAlphas[d] > 0f) {
+                for (g in glowRadii.indices) {
+                    drawCircle(
+                        color = dotColors[d],
+                        radius = glowRadii[g].dp.toPx(),
+                        center = dotCenters[d],
+                        alpha = glowAlphas[g] * dotAlphas[d] * exitAlpha,
+                    )
+                }
+            }
+        }
+
+        // Connecting line between dots
+        if (connectLineProgress.value > 0f) {
+            val lineStartX = cx - dotSpacing
+            val lineEndX = lineStartX + (dotSpacing * 2f) * connectLineProgress.value
+            drawLine(
+                color = textMuted,
+                start = Offset(lineStartX, dotsY),
+                end = Offset(lineEndX, dotsY),
+                strokeWidth = 0.5f.dp.toPx(),
+                alpha = exitAlpha,
+            )
+        }
+
+        drawContext.canvas.restore()
+
+        // ── 9. Implosion screen flash ────────────────────────────────────
+        if (implosionFlashAlpha.value > 0f) {
+            drawRect(Color.White, size = size, alpha = implosionFlashAlpha.value)
         }
     }
 }

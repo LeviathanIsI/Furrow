@@ -19,6 +19,13 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
         PlantGrowingDataSeeder.seedGrowingData(db)
         seedBreedInfo(db)
         seedBeeRaceInfo(db)
+        val naCatalogStats = NACatalogImporter.seed(db)
+        println(
+            "NA catalog import: " +
+                "chickens inserted=${naCatalogStats.chickens.inserted}, matched=${naCatalogStats.chickens.matched}; " +
+                "bees inserted=${naCatalogStats.bees.inserted}, matched=${naCatalogStats.bees.matched}; " +
+                "plants inserted=${naCatalogStats.plants.inserted}, matched=${naCatalogStats.plants.matched}",
+        )
     }
 
     // ── Zone group constants ──

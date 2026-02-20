@@ -45,7 +45,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.ui.bees.DropdownSelector
 import com.furrow.app.ui.components.DeleteConfirmationDialog
-import com.furrow.app.ui.components.GlowCard
+import com.furrow.app.ui.components.InputField
+import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SecondaryButton
+import com.furrow.app.ui.components.Tag
+import com.furrow.app.ui.components.AppSectionHeader
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.PoultryGlow
@@ -89,11 +94,10 @@ fun ChickenDetailScreen(
         focusedTextColor = TextPrimary,
     )
 
-    Scaffold(
-        containerColor = Void,
+    com.furrow.app.ui.components.AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {},
+            com.furrow.app.ui.components.AppTopBar(
+                title = c?.name ?: c?.breed ?: "Chicken",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -103,9 +107,6 @@ fun ChickenDetailScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Void,
-                ),
             )
         },
     ) { padding ->
@@ -124,14 +125,12 @@ fun ChickenDetailScreen(
                     .fillMaxSize()
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 // ── Header Card ──
-                GlowCard(
+                Panel(
                     modifier = Modifier.fillMaxWidth(),
-                    glowColor = PoultryGlow,
-                    glowIntensity = 0.10f,
                 ) {
                     Text(
                         c.name ?: c.breed,
@@ -155,17 +154,11 @@ fun ChickenDetailScreen(
                             "deceased" -> StatusBad
                             else -> TextSecondary
                         }
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = statusColor.copy(alpha = 0.12f),
-                        ) {
-                            Text(
-                                c.status.replaceFirstChar { it.uppercase() },
-                                style = MaterialTheme.typography.labelSmall,
-                                color = statusColor,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            )
-                        }
+                        Tag(
+                            text = c.status.replaceFirstChar { it.uppercase() },
+                            selected = c.status == "active",
+                            accentColor = statusColor,
+                        )
                         Text(
                             "Acquired ${formatDate(c.dateAcquired)}",
                             style = MaterialTheme.typography.bodySmall,
@@ -185,24 +178,22 @@ fun ChickenDetailScreen(
                 // ── Details Section ──
                 FormSectionHeader("Details")
 
-                OutlinedTextField(
+                InputField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name (optional)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
 
-                OutlinedTextField(
+                InputField(
                     value = breed,
                     onValueChange = { breed = it },
                     label = { Text("Breed") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
 
                 DropdownSelector(
@@ -216,20 +207,20 @@ fun ChickenDetailScreen(
                 // ── Notes Section ──
                 FormSectionHeader("Notes")
 
-                OutlinedTextField(
+                InputField(
                     value = notes,
                     onValueChange = { notes = it },
                     label = { Text("Notes") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // ── Save Button ──
-                Button(
+                PrimaryButton(
+                    text = "Save changes",
                     onClick = {
                         viewModel.updateChicken(
                             c.copy(
@@ -242,30 +233,17 @@ fun ChickenDetailScreen(
                         onBack()
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PoultryGlow,
-                        contentColor = Void,
-                    ),
+                        .fillMaxWidth(),
                     enabled = breed.isNotBlank(),
-                ) {
-                    Text("Save Changes")
-                }
+                )
 
                 // ── Delete Button ──
-                OutlinedButton(
+                SecondaryButton(
+                    text = "Delete",
                     onClick = { showDeleteDialog = true },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, StatusBad),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusBad),
-                ) {
-                    Text("Delete")
-                }
+                        .fillMaxWidth(),
+                )
 
                 Spacer(modifier = Modifier.height(32.dp))
             }
@@ -287,23 +265,12 @@ fun ChickenDetailScreen(
 
 @Composable
 private fun FormSectionHeader(title: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(3.dp, 16.dp)
-                .background(PoultryGlow, RoundedCornerShape(2.dp)),
-        )
-        Text(
-            title.uppercase(),
-            style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.5.sp),
-            color = TextTertiary,
-        )
-    }
+    AppSectionHeader(title = title)
 }
 
 private fun formatDate(millis: Long): String {
     return Instant.ofEpochMilli(millis).atZone(zone).toLocalDate().format(dateFormatter)
 }
+
+
+

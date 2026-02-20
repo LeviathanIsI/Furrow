@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DatePicker
@@ -60,9 +58,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.BorderVisible
+import com.furrow.app.ui.theme.AppRadius
+import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.Graphite
+import com.furrow.app.ui.theme.Obsidian
 import com.furrow.app.ui.theme.Slate
 import com.furrow.app.ui.theme.StatusBad
 import com.furrow.app.ui.theme.TextPrimary
@@ -221,8 +222,8 @@ fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = Graphite,
-        shape = RoundedCornerShape(24.dp),
+        containerColor = Obsidian,
+        shape = RoundedCornerShape(AppRadius.input),
         title = {
             Text(
                 "Delete $itemName?",
@@ -264,51 +265,54 @@ fun FurrowBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Graphite,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        containerColor = Obsidian,
+        shape = RoundedCornerShape(topStart = AppRadius.sheet, topEnd = AppRadius.sheet),
         dragHandle = {
             Box(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 8.dp)
+                    .padding(top = AppSpacing.xs, bottom = AppSpacing.xs)
                     .size(width = 40.dp, height = 4.dp)
-                    .background(BorderVisible, RoundedCornerShape(2.dp)),
+                    .background(BorderVisible, RoundedCornerShape(AppRadius.sm)),
             )
         },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = AppSpacing.md),
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 color = TextPrimary,
-                modifier = Modifier.padding(bottom = 16.dp),
+                modifier = Modifier.padding(bottom = AppSpacing.md),
             )
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
                 content = content,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(AppSpacing.md))
             HorizontalDivider(color = BorderSubtle)
-            Button(
-                onClick = onConfirm,
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-                    .height(52.dp),
-                enabled = confirmEnabled,
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = glowColor,
-                    contentColor = Void,
-                ),
+                    .padding(vertical = AppSpacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
             ) {
-                Text(confirmText)
+                SecondaryButton(
+                    text = "Cancel",
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                )
+                PrimaryButton(
+                    text = confirmText,
+                    onClick = onConfirm,
+                    enabled = confirmEnabled,
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
     }
@@ -330,21 +334,21 @@ fun ItemActionSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = Graphite,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        containerColor = Obsidian,
+        shape = RoundedCornerShape(topStart = AppRadius.sheet, topEnd = AppRadius.sheet),
         dragHandle = {
             Box(
                 modifier = Modifier
-                    .padding(top = 12.dp, bottom = 8.dp)
+                    .padding(top = AppSpacing.xs, bottom = AppSpacing.xs)
                     .size(width = 40.dp, height = 4.dp)
-                    .background(BorderVisible, RoundedCornerShape(2.dp)),
+                    .background(BorderVisible, RoundedCornerShape(AppRadius.sm)),
             )
         },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 24.dp),
+                .padding(bottom = AppSpacing.lg),
         ) {
             Row(
                 modifier = Modifier
@@ -353,9 +357,9 @@ fun ItemActionSheet(
                         onEdit()
                         onDismiss()
                     }
-                    .padding(horizontal = 24.dp, vertical = 14.dp),
+                    .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
             ) {
                 Icon(
                     Icons.Default.Edit,
@@ -368,6 +372,7 @@ fun ItemActionSheet(
                     color = TextPrimary,
                 )
             }
+            HorizontalDivider(color = BorderSubtle)
             extraActions.forEach { action ->
                 Row(
                     modifier = Modifier
@@ -376,9 +381,9 @@ fun ItemActionSheet(
                             action.onClick()
                             onDismiss()
                         }
-                        .padding(horizontal = 24.dp, vertical = 14.dp),
+                        .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                 ) {
                     action.icon()
                     Text(
@@ -387,6 +392,7 @@ fun ItemActionSheet(
                         color = TextPrimary,
                     )
                 }
+                HorizontalDivider(color = BorderSubtle)
             }
             Row(
                 modifier = Modifier
@@ -395,9 +401,9 @@ fun ItemActionSheet(
                         onDelete()
                         onDismiss()
                     }
-                    .padding(horizontal = 24.dp, vertical = 14.dp),
+                    .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
             ) {
                 Icon(
                     Icons.Default.Delete,

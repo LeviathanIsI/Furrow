@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -16,8 +17,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,8 +41,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,11 +50,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furrow.app.ui.theme.AppRadius
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
+import com.furrow.app.ui.theme.BorderVisible
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.Graphite
@@ -90,6 +97,7 @@ fun AppScaffold(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun AppTopBar(
     title: String,
     modifier: Modifier = Modifier,
@@ -97,32 +105,52 @@ fun AppTopBar(
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = Obsidian,
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .defaultMinSize(minHeight = 68.dp)
+                    .padding(
+                        start = AppSpacing.xs,
+                        end = AppSpacing.xs,
+                        top = AppSpacing.md,
+                        bottom = AppSpacing.xs,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                navigationIcon?.invoke()
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = AppSpacing.xs),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold,
                         color = TextPrimary,
                     )
                     subtitle?.takeIf { it.isNotBlank() }?.let {
                         Text(
                             text = it,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = TextTertiary,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextSecondary,
                         )
                     }
                 }
-            },
-            navigationIcon = { navigationIcon?.invoke() },
-            actions = actions,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Void,
-                titleContentColor = TextPrimary,
-            ),
-        )
-        HorizontalDivider(thickness = 1.dp, color = BorderSubtle)
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    content = actions,
+                )
+            }
+            HorizontalDivider(thickness = 1.dp, color = BorderVisible)
+        }
     }
 }
 
@@ -175,9 +203,9 @@ fun Panel(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = Obsidian,
+        color = Charcoal,
         shape = RoundedCornerShape(AppRadius.card),
-        border = BorderStroke(1.dp, BorderSubtle),
+        border = BorderStroke(1.dp, BorderVisible),
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
@@ -193,6 +221,7 @@ fun ListRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
+    metadata: String? = null,
     trailingText: String? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -205,15 +234,24 @@ fun ListRow(
                 .then(
                     if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier,
                 )
-                .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
+                .defaultMinSize(minHeight = 60.dp)
+                .padding(horizontal = AppSpacing.md, vertical = AppSpacing.xs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
-            leadingIcon?.invoke()
+            if (leadingIcon != null) {
+                Box(
+                    modifier = Modifier.size(20.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    leadingIcon.invoke()
+                }
+            }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
                     color = TextPrimary,
                 )
                 subtitle?.takeIf { it.isNotBlank() }?.let {
@@ -221,17 +259,27 @@ fun ListRow(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
-            trailingText?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = TextTertiary,
-                )
+            Row(
+                modifier = Modifier.wrapContentWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
+            ) {
+                (metadata ?: trailingText)?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                trailing?.invoke(this)
             }
-            trailing?.invoke(this)
         }
         if (showDivider) {
             HorizontalDivider(thickness = 1.dp, color = BorderSubtle)
@@ -307,11 +355,15 @@ fun PrimaryButton(
     enabled: Boolean = true,
     height: Dp = 48.dp,
 ) {
+    val minHeight = if (height < 40.dp) 40.dp else height
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(height),
+        modifier = modifier
+            .defaultMinSize(minWidth = 80.dp)
+            .heightIn(min = minHeight),
         shape = RoundedCornerShape(AppRadius.input),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = GardenGlow,
             contentColor = Void,
@@ -319,7 +371,11 @@ fun PrimaryButton(
             disabledContentColor = Void.copy(alpha = 0.75f),
         ),
     ) {
-        Text(text)
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -331,18 +387,26 @@ fun SecondaryButton(
     enabled: Boolean = true,
     height: Dp = 48.dp,
 ) {
+    val minHeight = if (height < 40.dp) 40.dp else height
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(height),
+        modifier = modifier
+            .defaultMinSize(minWidth = 80.dp)
+            .heightIn(min = minHeight),
         shape = RoundedCornerShape(AppRadius.input),
         border = BorderStroke(1.dp, BorderSubtle),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = TextPrimary,
             disabledContentColor = TextTertiary,
         ),
     ) {
-        Text(text)
+        Text(
+            text = text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -421,6 +485,7 @@ fun EmptyState(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
+    icon: (@Composable () -> Unit)? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
@@ -431,6 +496,15 @@ fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        icon?.let {
+            Box(
+                modifier = Modifier.size(28.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                it()
+            }
+            Spacer(modifier = Modifier.height(AppSpacing.sm))
+        }
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -441,6 +515,7 @@ fun EmptyState(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
             color = TextSecondary,
+            textAlign = TextAlign.Center,
         )
         if (!actionLabel.isNullOrBlank() && onAction != null) {
             Spacer(modifier = Modifier.height(AppSpacing.md))
@@ -482,26 +557,16 @@ fun AppCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    if (onClick != null) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            onClick = onClick,
-            shape = RoundedCornerShape(16.dp),
-            color = Charcoal,
-            border = BorderStroke(1.dp, BorderSubtle),
-        ) {
-            Column(modifier = Modifier.padding(AppSpacing.md), content = content)
-        }
+    val panelModifier = if (onClick != null) {
+        modifier.clickable(onClick = onClick)
     } else {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            color = Charcoal,
-            border = BorderStroke(1.dp, BorderSubtle),
-        ) {
-            Column(modifier = Modifier.padding(AppSpacing.md), content = content)
-        }
+        modifier
     }
+    Panel(
+        modifier = panelModifier,
+        contentPadding = PaddingValues(AppSpacing.md),
+        content = content,
+    )
 }
 
 @Composable
@@ -512,27 +577,11 @@ fun AppGlowCard(
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val borderColor = if (glowEnabled) glowColor.copy(alpha = 0.38f) else BorderSubtle
-    if (onClick != null) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            onClick = onClick,
-            shape = RoundedCornerShape(16.dp),
-            color = Charcoal,
-            border = BorderStroke(1.dp, borderColor),
-        ) {
-            Column(modifier = Modifier.padding(AppSpacing.md), content = content)
-        }
-    } else {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            color = Charcoal,
-            border = BorderStroke(1.dp, borderColor),
-        ) {
-            Column(modifier = Modifier.padding(AppSpacing.md), content = content)
-        }
-    }
+    AppCard(
+        modifier = modifier,
+        onClick = onClick,
+        content = content,
+    )
 }
 
 @Composable

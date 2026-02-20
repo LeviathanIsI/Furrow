@@ -87,17 +87,17 @@ fun HiveDetailScreen(
     val inspections by viewModel.inspections.collectAsState()
     val treatments by viewModel.treatments.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("INSPECTIONS", "TREATMENTS")
+    val tabs = listOf("Inspections", "Treatments")
     var inspectionToDelete by remember { mutableStateOf<Inspection?>(null) }
     var treatmentToDelete by remember { mutableStateOf<Treatment?>(null) }
     var inspectionForAction by remember { mutableStateOf<Inspection?>(null) }
     var treatmentForAction by remember { mutableStateOf<Treatment?>(null) }
 
-    Scaffold(
-        containerColor = Void,
+    com.furrow.app.ui.components.AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {},
+            com.furrow.app.ui.components.AppTopBar(
+                title = hive?.name ?: "Hive",
+                subtitle = hive?.beeRace,
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -107,72 +107,48 @@ fun HiveDetailScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
-        },
-        floatingActionButton = {
-            hive?.let { h ->
-                FloatingActionButton(
-                    onClick = {
-                        if (selectedTab == 0) onAddInspection(h.id) else onAddTreatment(h.id)
-                    },
-                    containerColor = BeeGlow,
-                    contentColor = Void,
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
-                }
-            }
         },
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             hive?.let { h ->
-                // ── Header Card ──
-                GlowCard(
+                com.furrow.app.ui.components.Panel(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    glowColor = BeeGlow,
-                    glowIntensity = 0.12f,
+                        .padding(horizontal = 16.dp),
                 ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
-                        Text(
-                            h.name,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = TextPrimary,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            buildString {
-                                append("Queen: ${h.queenStatus.replaceFirstChar { it.uppercase() }}")
-                                append(" \u00b7 Source: ${h.source.replaceFirstChar { it.uppercase() }}")
-                                h.beeRace?.let { append(" \u00b7 Race: $it") }
+                    Text(
+                        "Queen ${h.queenStatus.replaceFirstChar { it.uppercase() }} • Source ${h.source.replaceFirstChar { it.uppercase() }}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextSecondary,
+                    )
+                    Text(
+                        "Installed ${formatDate(h.installDate)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextTertiary,
+                    )
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        com.furrow.app.ui.components.PrimaryButton(
+                            text = if (selectedTab == 0) "Add Inspection" else "Add Treatment",
+                            onClick = {
+                                if (selectedTab == 0) onAddInspection(h.id) else onAddTreatment(h.id)
                             },
-                            fontSize = 14.sp,
-                            color = TextSecondary,
-                        )
-                        Text(
-                            "Installed ${formatDate(h.installDate)}",
-                            fontSize = 12.sp,
-                            color = TextTertiary,
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // ── Tabs ──
             TabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Charcoal,
                 contentColor = TextPrimary,
-                divider = { HorizontalDivider(thickness = 0.5.dp, color = BorderSubtle) },
+                modifier = Modifier.padding(horizontal = 16.dp),
+                divider = { HorizontalDivider(thickness = 1.dp, color = BorderSubtle) },
                 indicator = { tabPositions ->
                     if (selectedTab < tabPositions.size) {
                         SecondaryIndicator(
@@ -199,7 +175,6 @@ fun HiveDetailScreen(
                 }
             }
 
-            // ── Tab Content ──
             when (selectedTab) {
                 0 -> InspectionList(
                     inspections = inspections,
@@ -272,7 +247,7 @@ private fun InspectionList(
                     )
                 },
                 title = "No inspections yet",
-                subtitle = "Tap + to log your first inspection",
+                subtitle = "Use Add Inspection to record your first check.",
                 actionLabel = "Add Inspection",
                 glowColor = BeeGlow,
                 onAction = {},
@@ -281,51 +256,31 @@ private fun InspectionList(
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 80.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(inspections, key = { it.id }) { inspection ->
-                val findings = buildInspectionFindings(inspection)
-
-                GlowCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                onLongPress(inspection)
+            item {
+                com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                    inspections.forEachIndexed { index, inspection ->
+                        val findings = buildInspectionFindings(inspection)
+                        com.furrow.app.ui.components.ListRow(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {},
+                                onLongClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    onLongPress(inspection)
+                                },
+                            ),
+                            title = formatDate(inspection.date),
+                            subtitle = listOfNotNull(
+                                findings.joinToString(" • ").takeIf { it.isNotBlank() },
+                                inspection.notes,
+                            ).joinToString(" • "),
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Search, contentDescription = null, tint = TextSecondary)
                             },
-                            indication = ripple(),
-                            interactionSource = remember { MutableInteractionSource() },
-                        ),
-                    glowColor = Color.Transparent,
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            formatDate(inspection.date),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = TextPrimary,
+                            showDivider = index != inspections.lastIndex,
                         )
-                        if (findings.isNotEmpty()) {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                findings.joinToString(" \u00b7 "),
-                                fontSize = 12.sp,
-                                color = TextSecondary,
-                            )
-                        }
-                        inspection.notes?.let {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                it,
-                                fontSize = 12.sp,
-                                color = TextTertiary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
                     }
                 }
             }
@@ -355,7 +310,7 @@ private fun TreatmentList(
                     )
                 },
                 title = "No treatments yet",
-                subtitle = "Tap + to log a treatment",
+                subtitle = "Use Add Treatment to record interventions.",
                 actionLabel = "Add Treatment",
                 glowColor = BeeGlow,
                 onAction = {},
@@ -364,68 +319,34 @@ private fun TreatmentList(
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 80.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(treatments, key = { it.id }) { treatment ->
-                GlowCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                onLongPress(treatment)
+            item {
+                com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                    treatments.forEachIndexed { index, treatment ->
+                        val details = buildString {
+                            append(treatment.type.replaceFirstChar { it.uppercase() })
+                            treatment.method?.let { append(" • Method: $it") }
+                            treatment.dose?.let { append(" • Dose: $it") }
+                            treatment.endDate?.let { append(" • Until ${formatDate(it)}") }
+                            treatment.notes?.let { append(" • $it") }
+                        }
+                        com.furrow.app.ui.components.ListRow(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {},
+                                onLongClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    onLongPress(treatment)
+                                },
+                            ),
+                            title = formatDate(treatment.date),
+                            subtitle = details,
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Vaccines, contentDescription = null, tint = TextSecondary)
                             },
-                            indication = ripple(),
-                            interactionSource = remember { MutableInteractionSource() },
-                        ),
-                    glowColor = Color.Transparent,
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            formatDate(treatment.date),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = TextPrimary,
+                            showDivider = index != treatments.lastIndex,
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            treatment.type.replaceFirstChar { it.uppercase() },
-                            fontSize = 12.sp,
-                            color = TextSecondary,
-                        )
-                        treatment.method?.let {
-                            Text(
-                                "Method: $it",
-                                fontSize = 12.sp,
-                                color = TextSecondary,
-                            )
-                        }
-                        treatment.dose?.let {
-                            Text(
-                                "Dose: $it",
-                                fontSize = 12.sp,
-                                color = TextSecondary,
-                            )
-                        }
-                        treatment.endDate?.let {
-                            Text(
-                                "Until ${formatDate(it)}",
-                                fontSize = 12.sp,
-                                color = TextTertiary,
-                            )
-                        }
-                        treatment.notes?.let {
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                it,
-                                fontSize = 12.sp,
-                                color = TextTertiary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
                     }
                 }
             }

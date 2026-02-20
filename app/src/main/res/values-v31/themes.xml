@@ -4,4 +4,5 @@
     <style name="Theme.Furrow" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/splash_bg</item>
     </style>
+
 </resources>

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.outlined.Assessment
@@ -120,17 +121,17 @@ fun HiveListScreen(
     val lastDates by viewModel.lastInspectionDates.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        containerColor = Void,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showAddDialog = true },
-                containerColor = BeeGlow,
-                contentColor = Void,
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Hive")
-            }
+    com.furrow.app.ui.components.AppScaffold(
+        topBar = {
+            com.furrow.app.ui.components.AppTopBar(
+                title = "Hives",
+                subtitle = "Inspection cadence and health",
+                actions = {
+                    IconButton(onClick = onReportsClick) {
+                        Icon(Icons.Outlined.Assessment, "Reports", tint = TextSecondary)
+                    }
+                },
+            )
         },
     ) { padding ->
         if (hives.isEmpty()) {
@@ -139,24 +140,6 @@ fun HiveListScreen(
                     .fillMaxSize()
                     .padding(padding),
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 8.dp, top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        "Hives",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        fontFamily = DmSans,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = onReportsClick) {
-                        Icon(Icons.Outlined.Assessment, "Reports", tint = TextTertiary)
-                    }
-                }
                 EmptyState(
                     icon = {
                         Icon(
@@ -166,8 +149,8 @@ fun HiveListScreen(
                             tint = BeeGlow,
                         )
                     },
-                    title = "Your first hive awaits",
-                    subtitle = "Tap + to add your first hive",
+                    title = "No hives tracked",
+                    subtitle = "Add your first hive to start inspection logs.",
                     actionLabel = "Add Hive",
                     glowColor = BeeGlow,
                     onAction = { showAddDialog = true },
@@ -178,36 +161,34 @@ fun HiveListScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 80.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 12.dp,
+                    bottom = 32.dp,
+                ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            "Hives",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                            fontFamily = DmSans,
+                item(key = "add_action") {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        com.furrow.app.ui.components.PrimaryButton(
+                            text = "Add Hive",
+                            onClick = { showAddDialog = true },
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = onReportsClick) {
-                            Icon(Icons.Outlined.Assessment, "Reports", tint = TextTertiary)
-                        }
                     }
                 }
 
-                items(hives, key = { it.id }) { hive ->
-                    HiveCard(
-                        hive = hive,
-                        lastInspectionDate = lastDates[hive.id],
-                        onClick = { onHiveClick(hive.id) },
-                    )
+                item(key = "hive_panel") {
+                    com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                        hives.forEachIndexed { index, hive ->
+                            HiveCard(
+                                hive = hive,
+                                lastInspectionDate = lastDates[hive.id],
+                                onClick = { onHiveClick(hive.id) },
+                                showDivider = index != hives.lastIndex,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -240,6 +221,7 @@ private fun HiveCard(
     hive: Hive,
     lastInspectionDate: Long?,
     onClick: () -> Unit,
+    showDivider: Boolean,
 ) {
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
@@ -249,62 +231,34 @@ private fun HiveCard(
             today,
         )
     }
-    val daysColor = when {
-        daysAgo == null -> TextTertiary
-        daysAgo <= 7 -> StatusGood
-        daysAgo <= 13 -> StatusWarn
-        else -> StatusBad
-    }
-    val daysText = if (daysAgo != null) "$daysAgo" else "\u2014"
+    val daysText = if (daysAgo != null) "$daysAgo d" else "—"
     val queenLabel = when (hive.queenStatus) {
         "present" -> "Present"
         "absent" -> "Absent"
         else -> "Unknown"
     }
 
-    GlowCard(
-        glowColor = BeeGlow,
-        glowIntensity = 0.10f,
+    com.furrow.app.ui.components.ListRow(
+        title = hive.name,
+        subtitle = "${hive.beeRace ?: "Unknown"} • Queen: $queenLabel • Installed ${formatDate(hive.installDate)}",
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.BugReport,
+                contentDescription = null,
+                tint = TextSecondary,
+            )
+        },
+        trailingText = daysText,
+        trailing = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = TextTertiary,
+            )
+        },
         onClick = onClick,
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        hive.name,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextPrimary,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        "${hive.beeRace ?: "Unknown"} \u00b7 Queen: $queenLabel",
-                        fontSize = 12.sp,
-                        color = TextSecondary,
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        "Installed ${formatDate(hive.installDate)}",
-                        fontSize = 12.sp,
-                        color = TextTertiary,
-                    )
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        daysText,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = daysColor,
-                    )
-                    Text(
-                        "days",
-                        fontSize = 10.sp,
-                        color = TextTertiary,
-                    )
-                }
-            }
-        }
-    }
+        showDivider = showDivider,
+    )
 }
 
 // ── Helper Composables ──
@@ -408,7 +362,7 @@ private fun AddHiveSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             SearchableSelector(
                 query = raceQuery,
@@ -476,7 +430,7 @@ private fun AddHiveSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
         },
     )
@@ -575,7 +529,7 @@ private fun AddCustomRaceSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             OutlinedTextField(
                 value = temperament,
@@ -584,7 +538,7 @@ private fun AddCustomRaceSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -594,7 +548,7 @@ private fun AddCustomRaceSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
                 OutlinedTextField(
                     value = miteResistance,
@@ -603,7 +557,7 @@ private fun AddCustomRaceSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -614,7 +568,7 @@ private fun AddCustomRaceSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
                 OutlinedTextField(
                     value = overwintering,
@@ -623,7 +577,7 @@ private fun AddCustomRaceSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
             }
             DropdownSelector(
@@ -639,7 +593,7 @@ private fun AddCustomRaceSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
         },
     )
@@ -670,7 +624,7 @@ internal fun DropdownSelector(label: String, options: List<String>, selected: St
                 unfocusedTextColor = TextPrimary,
                 focusedTextColor = TextPrimary,
             ),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(8.dp),
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
@@ -688,3 +642,5 @@ private val hiveDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("
 internal fun formatDate(millis: Long): String {
     return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate().format(hiveDateFormatter)
 }
+
+

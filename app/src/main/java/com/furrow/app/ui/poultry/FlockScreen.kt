@@ -145,7 +145,7 @@ fun FlockScreen(
     val dailyCounts by viewModel.dailyEggCounts.collectAsState()
 
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("EGG LOG", "FLOCK")
+    val tabs = listOf("Egg log", "Flock")
     var showAddChickenDialog by remember { mutableStateOf(false) }
     var eggLogToDelete by remember { mutableStateOf<EggLog?>(null) }
     var chickenToDelete by remember { mutableStateOf<Chicken?>(null) }
@@ -153,30 +153,21 @@ fun FlockScreen(
     var chickenForAction by remember { mutableStateOf<Chicken?>(null) }
     var chickenToEdit by remember { mutableStateOf<Chicken?>(null) }
 
-    Scaffold(
-        containerColor = Void,
-        floatingActionButton = {
-            if (selectedTab == 0) {
-                ExtendedFloatingActionButton(
-                    onClick = onAddEgg,
-                    containerColor = PoultryGlow,
-                    contentColor = Void,
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Icon(Icons.Filled.Egg, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Log Eggs")
-                }
-            } else {
-                FloatingActionButton(
-                    onClick = { showAddChickenDialog = true },
-                    containerColor = PoultryGlow,
-                    contentColor = Void,
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Chicken")
-                }
-            }
+    com.furrow.app.ui.components.AppScaffold(
+        topBar = {
+            com.furrow.app.ui.components.AppTopBar(
+                title = "Poultry",
+                subtitle = "Egg production and flock records",
+                actions = {
+                    IconButton(onClick = onReportsClick) {
+                        Icon(
+                            Icons.Outlined.Assessment,
+                            contentDescription = "Reports",
+                            tint = TextSecondary,
+                        )
+                    }
+                },
+            )
         },
     ) { padding ->
         Column(
@@ -184,85 +175,42 @@ fun FlockScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            // ── Header ──
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 8.dp, top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.End,
             ) {
-                Text(
-                    "Poultry",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                    fontFamily = DmSans,
+                com.furrow.app.ui.components.PrimaryButton(
+                    text = if (selectedTab == 0) "Log Eggs" else "Add Chicken",
+                    onClick = { if (selectedTab == 0) onAddEgg() else showAddChickenDialog = true },
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = onReportsClick) {
-                    Icon(
-                        Icons.Outlined.Assessment,
-                        contentDescription = "Reports",
-                        tint = TextTertiary,
-                    )
-                }
             }
 
-            // ── Stats Card ──
+            // ── Production Summary ──
             if (eggLogs.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                GlowCard(
+                com.furrow.app.ui.components.Panel(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    glowColor = PoultryGlow,
-                    glowIntensity = 0.12f,
+                        .padding(horizontal = 16.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            StatNumber(
-                                value = "$todayCount",
-                                label = "today",
-                                glowColor = PoultryGlow,
-                                fontSize = 48,
-                            )
-                        }
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            GlowRing(
-                                progress = (layRate ?: 0) / 100f,
-                                glowColor = PoultryGlow,
-                                size = 80.dp,
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        "${layRate ?: 0}%",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = PoultryGlow,
-                                    )
-                                    Text(
-                                        "rate",
-                                        fontSize = 10.sp,
-                                        color = TextTertiary,
-                                    )
-                                }
-                            }
-                        }
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            StatNumber(
-                                value = "$weeklyTotal",
-                                label = "this week",
-                                glowColor = TextPrimary,
-                                fontSize = 32,
-                            )
-                        }
-                    }
+                    com.furrow.app.ui.components.InlineStat(
+                        label = "Eggs today",
+                        value = todayCount.toString(),
+                    )
+                    com.furrow.app.ui.components.InlineStat(
+                        label = "This week",
+                        value = weeklyTotal.toString(),
+                    )
+                    com.furrow.app.ui.components.InlineStat(
+                        label = "Flock size",
+                        value = flockSize.toString(),
+                    )
+                    com.furrow.app.ui.components.InlineStat(
+                        label = "Lay rate",
+                        value = "${layRate ?: 0}%",
+                    )
                 }
             }
 
@@ -270,18 +218,16 @@ fun FlockScreen(
             val hasChartData = dailyCounts.any { it.count > 0 }
             if (dailyCounts.isNotEmpty() && hasChartData) {
                 Spacer(modifier = Modifier.height(12.dp))
-                GlowCard(
+                com.furrow.app.ui.components.Panel(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    glowColor = Color.Transparent,
+                        .padding(horizontal = 16.dp),
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column {
                         Text(
-                            "7-DAY EGGS",
-                            fontSize = 12.sp,
-                            color = TextTertiary,
-                            letterSpacing = 2.sp,
+                            "7-day egg trend",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = TextPrimary,
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         WeeklyEggChart(
@@ -429,48 +375,26 @@ private fun EggLogList(
         )
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 80.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 32.dp),
         ) {
-            items(eggLogs, key = { it.id }) { entry ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                onLongPress(entry)
-                            },
-                            indication = ripple(),
-                            interactionSource = remember { MutableInteractionSource() },
+            item {
+                com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                    eggLogs.forEachIndexed { index, entry ->
+                        com.furrow.app.ui.components.ListRow(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {},
+                                onLongClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    onLongPress(entry)
+                                },
+                            ),
+                            title = formatDate(entry.date),
+                            subtitle = entry.notes,
+                            trailingText = "${entry.count} eggs",
+                            showDivider = index != eggLogs.lastIndex,
                         )
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .background(StatusGood, CircleShape),
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        formatDate(entry.date),
-                        fontSize = 14.sp,
-                        color = TextPrimary,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        "${entry.count} eggs",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = PoultryGlow,
-                    )
+                    }
                 }
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    thickness = 0.5.dp,
-                    color = BorderSubtle,
-                )
             }
         }
     }
@@ -507,76 +431,39 @@ private fun ChickenList(
         )
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            items(chickens, key = { it.id }) { chicken ->
-                val breedInfo = breedInfoMap[chicken.breed]
-                val displayName = chicken.name ?: chicken.breed
-                val isActive = chicken.status == "active"
-
-                GlowCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .combinedClickable(
-                            indication = ripple(),
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = { onChickenClick(chicken.id) },
-                            onLongClick = {
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                onLongPress(chicken)
-                            },
-                        ),
-                    glowColor = Color.Transparent,
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(PoultryGlow.copy(alpha = 0.15f), CircleShape),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                chicken.breed.first().uppercase(),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = PoultryGlow,
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                displayName,
-                                fontSize = 16.sp,
-                                color = TextPrimary,
-                            )
-                            Text(
-                                "${chicken.breed} \u00b7 ${formatAge(chicken.dateAcquired)}",
-                                fontSize = 12.sp,
-                                color = TextSecondary,
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.End) {
-                            if (isActive) {
-                                Text(
-                                    "Active",
-                                    fontSize = 10.sp,
-                                    color = StatusGood,
-                                )
-                            }
+            item {
+                com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                    chickens.forEachIndexed { index, chicken ->
+                        val breedInfo = breedInfoMap[chicken.breed]
+                        val displayName = chicken.name ?: chicken.breed
+                        val subtitle = buildString {
+                            append("${chicken.breed} • ${formatAge(chicken.dateAcquired)}")
                             breedInfo?.let {
-                                if (it.eggsPerYear > 0) {
-                                    Text(
-                                        "${it.eggsPerYear} eggs/yr",
-                                        fontSize = 12.sp,
-                                        color = TextTertiary,
-                                    )
-                                }
+                                if (it.eggsPerYear > 0) append(" • ${it.eggsPerYear} eggs/yr")
                             }
                         }
+
+                        com.furrow.app.ui.components.ListRow(
+                            modifier = Modifier.combinedClickable(
+                                onClick = { onChickenClick(chicken.id) },
+                                onLongClick = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    onLongPress(chicken)
+                                },
+                            ),
+                            title = displayName,
+                            subtitle = subtitle,
+                            trailing = {
+                                com.furrow.app.ui.components.Tag(
+                                    text = chicken.status.replaceFirstChar { it.uppercase() },
+                                    selected = chicken.status == "active",
+                                )
+                            },
+                            showDivider = index != chickens.lastIndex,
+                        )
                     }
                 }
             }
@@ -731,7 +618,7 @@ private fun AddChickenSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             SearchableSelector(
                 query = breedQuery,
@@ -800,7 +687,7 @@ private fun AddChickenSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
         },
     )
@@ -907,7 +794,7 @@ private fun AddCustomBreedSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             OutlinedTextField(
                 value = eggsPerYear,
@@ -916,7 +803,7 @@ private fun AddCustomBreedSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             DropdownSelector(
                 label = "Egg Color",
@@ -939,7 +826,7 @@ private fun AddCustomBreedSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
@@ -949,7 +836,7 @@ private fun AddCustomBreedSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
                 OutlinedTextField(
                     value = coldTolerance,
@@ -958,7 +845,7 @@ private fun AddCustomBreedSheet(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(8.dp),
                 )
             }
             DropdownSelector(
@@ -975,7 +862,7 @@ private fun AddCustomBreedSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
             )
         },
     )
@@ -1019,3 +906,5 @@ private fun formatAge(dateAcquiredMillis: Long): String {
 private fun formatDate(millis: Long): String {
     return Instant.ofEpochMilli(millis).atZone(zone).toLocalDate().format(dateFormatter)
 }
+
+

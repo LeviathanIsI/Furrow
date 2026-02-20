@@ -2,6 +2,7 @@ package com.furrow.app.data.local
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.furrow.app.data.NACatalogImporter
 import com.furrow.app.data.PlantDatabaseSeeder
 
 /**
@@ -90,5 +91,17 @@ val MIGRATION_3_7 = object : Migration(3, 7) {
         // ── Seed reference data (onCreate won't fire during migration) ──
 
         PlantDatabaseSeeder.seedAllReferenceTables(db)
+    }
+}
+
+val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        val stats = NACatalogImporter.seed(db)
+        println(
+            "NA catalog migration import: " +
+                "chickens inserted=${stats.chickens.inserted}, matched=${stats.chickens.matched}; " +
+                "bees inserted=${stats.bees.inserted}, matched=${stats.bees.matched}; " +
+                "plants inserted=${stats.plants.inserted}, matched=${stats.plants.matched}",
+        )
     }
 }

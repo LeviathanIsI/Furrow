@@ -1,34 +1,23 @@
 package com.furrow.app.ui.garden
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Assessment
 import androidx.compose.material.icons.outlined.Grass
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,14 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.GardenBed
 import com.furrow.app.ui.bees.DropdownSelector
-import com.furrow.app.ui.components.AppCard
-import com.furrow.app.ui.components.AppChip
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
@@ -53,16 +38,16 @@ import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.ItemActionSheet
-import com.furrow.app.ui.theme.AppRadius
+import com.furrow.app.ui.components.ListRow
+import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.Tag
+import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.theme.AppSpacing
-import com.furrow.app.ui.theme.BorderSubtle
-import com.furrow.app.ui.theme.Charcoal
-import com.furrow.app.ui.theme.DmSans
 import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
-import com.furrow.app.ui.theme.Void
 
 @Composable
 fun GardenBedListScreen(
@@ -79,17 +64,19 @@ fun GardenBedListScreen(
     var bedToEdit by remember { mutableStateOf<GardenBed?>(null) }
 
     AppScaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { showAddDialog = true },
-                icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                text = { Text("Add Bed") },
-                containerColor = GardenGlow,
-                contentColor = Void,
-                shape = RoundedCornerShape(AppRadius.input),
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(end = AppSpacing.md, bottom = AppSpacing.md),
+        topBar = {
+            AppTopBar(
+                title = "Garden",
+                subtitle = "Beds and current workload",
+                actions = {
+                    IconButton(onClick = onReportsClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Assessment,
+                            contentDescription = "Reports",
+                            tint = TextSecondary,
+                        )
+                    }
+                },
             )
         },
     ) { padding ->
@@ -99,38 +86,12 @@ fun GardenBedListScreen(
                     .fillMaxSize()
                     .padding(padding),
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = AppSpacing.md, vertical = AppSpacing.md),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        "Garden",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        fontFamily = DmSans,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = onReportsClick) {
-                        Icon(Icons.Outlined.Assessment, "Reports", tint = TextTertiary)
-                    }
-                }
                 EmptyState(
-                    icon = {
-                        Icon(
-                            Icons.Outlined.Grass,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = GardenGlow,
-                        )
-                    },
                     title = "No garden beds yet",
-                    subtitle = "Add your first bed to start tracking plantings",
+                    subtitle = "Create a bed to start tracking plantings and harvests.",
                     actionLabel = "Add Bed",
-                    glowColor = GardenGlow,
                     onAction = { showAddDialog = true },
+                    modifier = Modifier.weight(1f),
                 )
             }
         } else {
@@ -141,49 +102,83 @@ fun GardenBedListScreen(
                 contentPadding = PaddingValues(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
-                    top = AppSpacing.xs,
+                    top = AppSpacing.md,
                     bottom = AppSpacing.xl,
                 ),
-                verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
+                verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {
-                item(key = "header") {
+                item(key = "toolbar_actions") {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = AppSpacing.xxs),
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
                     ) {
-                        Text(
-                            "Garden",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary,
-                            fontFamily = DmSans,
+                        PrimaryButton(
+                            text = "Add Bed",
+                            onClick = { showAddDialog = true },
                         )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = onReportsClick) {
-                            Icon(Icons.Outlined.Assessment, "Reports", tint = TextTertiary)
-                        }
                     }
                 }
 
-                items(beds, key = { it.id }) { bed ->
-                    BedCard(
-                        bed = bed,
-                        activePlantings = plantingCounts[bed.id] ?: 0,
-                        onClick = { onBedClick(bed.id) },
-                    )
+                item(key = "beds_panel") {
+                    Panel(contentPadding = PaddingValues(0.dp)) {
+                        beds.forEachIndexed { index, bed ->
+                            ListRow(
+                                title = bed.name,
+                                subtitle = buildString {
+                                    append(bed.type.replaceFirstChar { it.uppercase() })
+                                    bed.sunExposure?.let {
+                                        append(" • ")
+                                        append(it.replaceFirstChar { c -> c.uppercase() })
+                                    }
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Grass,
+                                        contentDescription = null,
+                                        tint = TextSecondary,
+                                    )
+                                },
+                                trailing = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
+                                    ) {
+                                        Text(
+                                            text = "${plantingCounts[bed.id] ?: 0}",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = TextTertiary,
+                                        )
+                                        IconButton(onClick = { bedForAction = bed }) {
+                                            Icon(
+                                                imageVector = Icons.Filled.MoreVert,
+                                                contentDescription = "Manage",
+                                                tint = TextTertiary,
+                                            )
+                                        }
+                                        Icon(
+                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                            contentDescription = null,
+                                            tint = TextTertiary,
+                                        )
+                                    }
+                                },
+                                onClick = { onBedClick(bed.id) },
+                                showDivider = index != beds.lastIndex,
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    // ── Dialogs & Sheets ──
-
     if (showAddDialog || bedToEdit != null) {
         AddBedSheet(
             existingBed = bedToEdit,
-            onDismiss = { showAddDialog = false; bedToEdit = null },
+            onDismiss = {
+                showAddDialog = false
+                bedToEdit = null
+            },
             onSave = { bed ->
                 if (bedToEdit != null) viewModel.updateBed(bed) else viewModel.addBed(bed)
                 showAddDialog = false
@@ -208,50 +203,6 @@ fun GardenBedListScreen(
         )
     }
 }
-
-// ── Bed Card ──
-
-@Composable
-private fun BedCard(
-    bed: GardenBed,
-    activePlantings: Int,
-    onClick: () -> Unit,
-) {
-    AppCard(
-        onClick = onClick,
-    ) {
-        Text(
-            bed.name,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
-        )
-        Spacer(modifier = Modifier.height(AppSpacing.xxs))
-        Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
-            InfoPill(bed.type.replaceFirstChar { it.uppercase() })
-            bed.sunExposure?.let {
-                InfoPill(it.replaceFirstChar { c -> c.uppercase() })
-            }
-        }
-        Spacer(modifier = Modifier.height(AppSpacing.xxs))
-        Text(
-            "$activePlantings active planting${if (activePlantings != 1) "s" else ""}",
-            fontSize = 12.sp,
-            color = TextSecondary,
-        )
-    }
-}
-
-@Composable
-private fun InfoPill(text: String) {
-    AppChip(
-        text = text,
-        selected = false,
-        accentColor = GardenGlow,
-    )
-}
-
-// ── Form Sheets ──
 
 @Composable
 private fun AddBedSheet(

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -55,6 +56,16 @@ val bottomNavScreens = listOf(Screen.Home, Screen.Bees, Screen.Poultry, Screen.G
 
 @Composable
 fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+    val navigateToBottomTab: (Screen) -> Unit = { screen ->
+        navController.navigate(screen.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route,
@@ -75,12 +86,12 @@ fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifi
         composable(Screen.Home.route) {
             HomeScreen(
                 onSettingsClick = { navController.navigate("settings") },
-                onNavigateToBees = { navController.navigate(Screen.Bees.route) },
-                onNavigateToPoultry = { navController.navigate(Screen.Poultry.route) },
-                onNavigateToGarden = { navController.navigate(Screen.Garden.route) },
+                onNavigateToBees = { navigateToBottomTab(Screen.Bees) },
+                onNavigateToPoultry = { navigateToBottomTab(Screen.Poultry) },
+                onNavigateToGarden = { navigateToBottomTab(Screen.Garden) },
                 onNavigateToEggLog = { navController.navigate("poultry/add-egg") },
-                onNavigateToInspection = { navController.navigate(Screen.Bees.route) },
-                onNavigateToHarvest = { navController.navigate(Screen.Garden.route) },
+                onNavigateToInspection = { navigateToBottomTab(Screen.Bees) },
+                onNavigateToHarvest = { navigateToBottomTab(Screen.Garden) },
             )
         }
 

@@ -56,7 +56,7 @@ import com.furrow.app.data.local.entity.WateringLog
         FertilizerLog::class,
         PestDiseaseLog::class,
     ],
-    version = 12,
+    version = 13,
     exportSchema = false,
 )
 abstract class FurrowDatabase : RoomDatabase() {

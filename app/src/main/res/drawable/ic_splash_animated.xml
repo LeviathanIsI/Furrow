@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_splash_anim_vector">
+
+    <target
+        android:name="soil_cut"
+        android:animation="@animator/splash_furrow_back_trim" />
+
+    <target
+        android:name="notch_group"
+        android:animation="@animator/splash_sprout_alpha" />
+
+    <target
+        android:name="notch_group"
+        android:animation="@animator/splash_sprout_scale_x" />
+
+    <target
+        android:name="notch_group"
+        android:animation="@animator/splash_sprout_scale_y" />
+</animated-vector>

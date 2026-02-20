@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.furrow.app.ui.theme.AppRadius
 import androidx.compose.ui.unit.dp
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
@@ -94,7 +95,7 @@ fun <T> SearchableSelector(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             colors = fieldColors,
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(AppRadius.input),
         )
         ExposedDropdownMenu(
             expanded = expanded && (items.isNotEmpty() || showAddCustom),

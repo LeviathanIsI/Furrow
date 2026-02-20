@@ -4,17 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.furrow.app.ui.splash.SplashScreen
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -24,7 +28,6 @@ import com.furrow.app.ui.components.AppNavItem
 import com.furrow.app.ui.navigation.FurrowNavGraph
 import com.furrow.app.ui.navigation.bottomNavScreens
 import com.furrow.app.ui.onboarding.OnboardingScreen
-import com.furrow.app.ui.splash.SplashScreen
 import com.furrow.app.ui.theme.FurrowTheme
 import com.furrow.app.util.NotificationPermissionScreen
 import com.furrow.app.util.RequestNotificationPermission
@@ -33,31 +36,37 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             FurrowTheme {
-                FurrowApp()
+                FurrowApp(mainViewModel = mainViewModel)
             }
         }
     }
 }
 
 @Composable
-fun FurrowApp() {
+fun FurrowApp(mainViewModel: MainViewModel) {
     var splashFinished by remember { mutableStateOf(false) }
 
     if (!splashFinished) {
         SplashScreen(onFinished = { splashFinished = true })
     } else {
-        val mainViewModel: MainViewModel = hiltViewModel()
         val hasProfile by mainViewModel.hasProfile.collectAsState()
         val notificationPromptShown by mainViewModel.notificationPromptShown.collectAsState()
 
         when (hasProfile) {
             null -> {
-                // Brief loading while Room emits.
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
+                }
             }
             false -> {
                 OnboardingScreen()

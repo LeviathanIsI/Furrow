@@ -4,17 +4,17 @@ import androidx.compose.ui.graphics.Color
 
 val Void = Color(0xFF0B0D0C)
 val Obsidian = Color(0xFF111513)
-val Charcoal = Color(0xFF161B18)
-val Graphite = Color(0xFF1E2420)
-val Slate = Color(0xFF262D28)
+val Charcoal = Color(0xFF181D1A)
+val Graphite = Color(0xFF222923)
+val Slate = Color(0xFF2A322B)
 
 val TextPrimary = Color(0xFFF4F6F4)
-val TextSecondary = Color(0xFFB8C0BA)
-val TextTertiary = Color(0xFF8C948E)
+val TextSecondary = Color(0xFFC0C7C0)
+val TextTertiary = Color(0xFF98A094)
 val TextMuted = Color(0xFF6F776F)
 
-val BorderSubtle = Color.White.copy(alpha = 0.12f)
-val BorderVisible = Color.White.copy(alpha = 0.22f)
+val BorderSubtle = Color.White.copy(alpha = 0.16f)
+val BorderVisible = Color.White.copy(alpha = 0.30f)
 val BorderFocus = Color.White.copy(alpha = 0.36f)
 val StrokeSubtle = BorderSubtle
 val StrokeMedium = BorderVisible

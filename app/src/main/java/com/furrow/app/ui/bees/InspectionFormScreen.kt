@@ -51,12 +51,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.NumberStepper
+import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.BeeGlow
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 
@@ -129,16 +132,10 @@ fun InspectionFormScreen(
         cursorColor = BeeGlow,
     )
 
-    Scaffold(
-        containerColor = Void,
+    com.furrow.app.ui.components.AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (isEditMode) "Edit Inspection" else "Add Inspection",
-                        color = TextPrimary,
-                    )
-                },
+            com.furrow.app.ui.components.AppTopBar(
+                title = if (isEditMode) "Edit inspection" else "Add inspection",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -148,7 +145,6 @@ fun InspectionFormScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
         },
     ) { padding ->
@@ -157,7 +153,7 @@ fun InspectionFormScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             DateFieldWithToggle(
@@ -242,23 +238,21 @@ fun InspectionFormScreen(
                 expanded = healthExpanded,
                 onToggle = { healthExpanded = !healthExpanded },
             ) {
-                OutlinedTextField(
+                InputField(
                     value = pestsSigns,
                     onValueChange = { pestsSigns = it },
                     label = { Text("Pest Signs") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
-                OutlinedTextField(
+                InputField(
                     value = diseasesSigns,
                     onValueChange = { diseasesSigns = it },
                     label = { Text("Disease Signs") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
             }
 
@@ -281,30 +275,29 @@ fun InspectionFormScreen(
                     selected = weatherCondition,
                     onSelect = { weatherCondition = it },
                 )
-                OutlinedTextField(
+                InputField(
                     value = feeding,
                     onValueChange = { feeding = it },
                     label = { Text("Feeding") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
-                OutlinedTextField(
+                InputField(
                     value = notes,
                     onValueChange = { notes = it },
                     label = { Text("Notes") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     colors = fieldColors,
-                    shape = RoundedCornerShape(12.dp),
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             // ── Save Button ──
-            Button(
+            PrimaryButton(
+                text = "Save inspection",
                 onClick = {
                     val inspection = Inspection(
                         id = if (isEditMode) editId else 0,
@@ -331,16 +324,8 @@ fun InspectionFormScreen(
                     onBack()
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = BeeGlow,
-                    contentColor = Void,
-                ),
-            ) {
-                Text("Save Inspection")
-            }
+                    .fillMaxWidth(),
+            )
 
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -363,21 +348,11 @@ private fun CollapsibleSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(3.dp, 16.dp)
-                        .background(BeeGlow, RoundedCornerShape(2.dp)),
-                )
-                Text(
-                    title.uppercase(),
-                    style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.5.sp),
-                    color = TextTertiary,
-                )
-            }
+            Text(
+                title,
+                style = MaterialTheme.typography.titleSmall,
+                color = TextSecondary,
+            )
             Icon(
                 if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                 contentDescription = if (expanded) "Collapse" else "Expand",
@@ -398,3 +373,5 @@ private fun CollapsibleSection(
         }
     }
 }
+
+

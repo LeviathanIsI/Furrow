@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.furrow.app.data.PlantDatabaseSeeder
 import com.furrow.app.data.local.FurrowDatabase
+import com.furrow.app.data.local.MIGRATION_12_13
 import com.furrow.app.data.local.MIGRATION_3_7
 import com.furrow.app.data.local.dao.BeeRaceInfoDao
 import com.furrow.app.data.local.dao.ChickenBreedInfoDao
@@ -49,7 +50,7 @@ object AppModule {
             context,
             FurrowDatabase::class.java,
             "furrow_database"
-        ).addMigrations(MIGRATION_3_7)
+        ).addMigrations(MIGRATION_3_7, MIGRATION_12_13)
             .fallbackToDestructiveMigration(dropAllTables = true)
             .addCallback(PlantDatabaseSeeder)
             .build()

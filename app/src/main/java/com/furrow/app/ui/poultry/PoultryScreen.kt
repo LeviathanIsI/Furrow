@@ -2,38 +2,24 @@ package com.furrow.app.ui.poultry
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.furrow.app.ui.theme.PoultryGlow
-import com.furrow.app.ui.theme.TextSecondary
+import com.furrow.app.ui.components.Panel
 
 @Composable
 fun PoultryScreen() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
-            text = "Poultry",
-            style = MaterialTheme.typography.headlineLarge,
-            color = PoultryGlow,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Track your flock and egg production",
-            style = MaterialTheme.typography.bodyLarge,
-            color = TextSecondary,
-        )
+        Panel {
+            Text("Poultry", style = MaterialTheme.typography.headlineMedium)
+            Text("Flock tracking workspace", style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }

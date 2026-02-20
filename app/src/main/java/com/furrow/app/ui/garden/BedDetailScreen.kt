@@ -20,7 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,8 +54,8 @@ import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.WateringLog
 import com.furrow.app.ui.bees.DropdownSelector
-import com.furrow.app.ui.components.AppCard
 import com.furrow.app.ui.components.AppChip
+import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
@@ -101,7 +100,7 @@ fun BedDetailScreen(
     val fertilizerLogs by viewModel.fertilizerLogs.collectAsState()
 
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("PLANTINGS", "HARVESTS", "CARE LOG")
+    val tabs = listOf("Plantings", "Harvests", "Care log")
 
     var plantingToDelete by remember { mutableStateOf<Planting?>(null) }
     var harvestToDelete by remember { mutableStateOf<HarvestLog?>(null) }
@@ -132,8 +131,8 @@ fun BedDetailScreen(
 
     AppScaffold(
         topBar = {
-            TopAppBar(
-                title = {},
+            com.furrow.app.ui.components.AppTopBar(
+                title = bed?.name ?: "Bed detail",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -143,29 +142,7 @@ fun BedDetailScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Void),
             )
-        },
-        floatingActionButton = {
-            bed?.let { b ->
-                FloatingActionButton(
-                    onClick = {
-                        when (selectedTab) {
-                            0 -> onAddPlanting(b.id)
-                            1 -> onAddHarvest(b.id)
-                            2 -> showCareLogPicker = true
-                        }
-                    },
-                    containerColor = GardenGlow,
-                    contentColor = Void,
-                    shape = RoundedCornerShape(AppRadius.input),
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .padding(end = AppSpacing.md, bottom = AppSpacing.md),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
-                }
-            }
         },
     ) { padding ->
         Column(
@@ -175,7 +152,7 @@ fun BedDetailScreen(
         ) {
             // ── Header Card ──
             bed?.let { b ->
-                AppCard(
+                Panel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = AppSpacing.md),
@@ -226,6 +203,30 @@ fun BedDetailScreen(
                                 ),
                                 color = if (selectedTab == index) TextPrimary else TextTertiary,
                             )
+                        },
+                    )
+                }
+            }
+
+            bed?.let { b ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    com.furrow.app.ui.components.PrimaryButton(
+                        text = when (selectedTab) {
+                            0 -> "Add planting"
+                            1 -> "Log harvest"
+                            else -> "Log care"
+                        },
+                        onClick = {
+                            when (selectedTab) {
+                                0 -> onAddPlanting(b.id)
+                                1 -> onAddHarvest(b.id)
+                                else -> showCareLogPicker = true
+                            }
                         },
                     )
                 }
