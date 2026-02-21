@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Forest
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Home
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Egg
 import androidx.compose.material.icons.outlined.Forest
 import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material.icons.outlined.Home
@@ -43,16 +41,29 @@ import com.furrow.app.ui.bees.HiveDetailScreen
 import com.furrow.app.ui.bees.HiveListScreen
 import com.furrow.app.ui.bees.InspectionFormScreen
 import com.furrow.app.ui.bees.TreatmentFormScreen
-import com.furrow.app.ui.components.ComingSoonScreen
+import com.furrow.app.ui.animals.AnimalDetailScreen
+import com.furrow.app.ui.animals.AnimalFormScreen
+import com.furrow.app.ui.animals.AnimalListScreen
+import com.furrow.app.ui.animals.AnimalReportsScreen
+import com.furrow.app.ui.animals.EggLogScreen
+import com.furrow.app.ui.compliance.ComplianceFormScreen
+import com.furrow.app.ui.compliance.ComplianceListScreen
+import com.furrow.app.ui.finances.FinanceFormScreen
+import com.furrow.app.ui.finances.FinanceListScreen
 import com.furrow.app.ui.garden.BedDetailScreen
 import com.furrow.app.ui.garden.GardenBedListScreen
 import com.furrow.app.ui.garden.GardenReportsScreen
 import com.furrow.app.ui.garden.HarvestLogScreen
 import com.furrow.app.ui.garden.PlantingFormScreen
 import com.furrow.app.ui.home.HomeScreen
-import com.furrow.app.ui.poultry.EggLogScreen
-import com.furrow.app.ui.poultry.FlockScreen
-import com.furrow.app.ui.poultry.PoultryReportsScreen
+import com.furrow.app.ui.land.LandFormScreen
+import com.furrow.app.ui.land.LandListScreen
+import com.furrow.app.ui.orchard.OrchardFormScreen
+import com.furrow.app.ui.orchard.OrchardListScreen
+import com.furrow.app.ui.orchard.OrchardPlantDetailScreen
+import com.furrow.app.ui.preservation.PantryScreen
+import com.furrow.app.ui.preservation.PreservationFormScreen
+import com.furrow.app.ui.preservation.PreservationListScreen
 import com.furrow.app.ui.settings.SettingsScreen
 
 sealed class Screen(
@@ -63,7 +74,6 @@ sealed class Screen(
 ) {
     data object Home : Screen("home", "Home", Icons.Filled.Home, Icons.Outlined.Home)
     data object Bees : Screen("bees", "Bees", Icons.Filled.BugReport, Icons.Outlined.BugReport)
-    data object Poultry : Screen("poultry", "Poultry", Icons.Filled.Egg, Icons.Outlined.Egg)
     data object Garden : Screen("garden", "Garden", Icons.Filled.Grass, Icons.Outlined.Grass)
     data object Animals : Screen("animals", "Animals", Icons.Filled.Pets, Icons.Outlined.Pets)
     data object Orchard : Screen("orchard", "Orchard", Icons.Filled.Forest, Icons.Outlined.Forest)
@@ -77,7 +87,6 @@ sealed class Screen(
         /** Maps FurrowModule.key to the corresponding Screen for navigation. */
         val allModuleScreens: Map<String, Screen> = mapOf(
             FurrowModule.BEES.key to Bees,
-            FurrowModule.POULTRY.key to Poultry,
             FurrowModule.GARDEN.key to Garden,
             FurrowModule.ANIMALS.key to Animals,
             FurrowModule.ORCHARD.key to Orchard,
@@ -89,7 +98,7 @@ sealed class Screen(
 
         /** All routes that should show the bottom nav bar. */
         val bottomNavRoutes: Set<String> = setOf(
-            Home.route, Bees.route, Poultry.route, Garden.route,
+            Home.route, Bees.route, Garden.route,
             Animals.route, Orchard.route, Preservation.route,
             Land.route, Finances.route, Compliance.route, More.route,
         )
@@ -146,11 +155,16 @@ fun FurrowNavGraph(
             HomeScreen(
                 onSettingsClick = { navController.navigate("settings") },
                 onNavigateToBees = { navigateToBottomTab(Screen.Bees) },
-                onNavigateToPoultry = { navigateToBottomTab(Screen.Poultry) },
                 onNavigateToGarden = { navigateToBottomTab(Screen.Garden) },
-                onNavigateToEggLog = { navController.navigate("poultry/add-egg") },
+                onNavigateToEggLog = { navController.navigate("animals/egg-log") },
                 onNavigateToInspection = { navigateToBottomTab(Screen.Bees) },
                 onNavigateToHarvest = { navigateToBottomTab(Screen.Garden) },
+                onNavigateToAnimals = { navigateToBottomTab(Screen.Animals) },
+                onNavigateToOrchard = { navigateToBottomTab(Screen.Orchard) },
+                onNavigateToPreservation = { navigateToBottomTab(Screen.Preservation) },
+                onNavigateToLand = { navigateToBottomTab(Screen.Land) },
+                onNavigateToFinances = { navigateToBottomTab(Screen.Finances) },
+                onNavigateToCompliance = { navigateToBottomTab(Screen.Compliance) },
                 enabledModules = enabledModules,
             )
         }
@@ -221,36 +235,6 @@ fun FurrowNavGraph(
             )
         }
 
-        // ── Poultry ──
-
-        composable(Screen.Poultry.route) {
-            FlockScreen(
-                onAddEgg = { navController.navigate("poultry/add-egg") },
-                onEditEgg = { editId -> navController.navigate("poultry/add-egg?editId=$editId") },
-                onAnimalClick = { },
-                onReportsClick = { navController.navigate("poultry/reports") },
-            )
-        }
-
-        composable("poultry/reports") {
-            PoultryReportsScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
-        }
-
-        composable(
-            route = "poultry/add-egg?editId={editId}",
-            arguments = listOf(
-                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
-            )
-        ) { backStackEntry ->
-            val editId = backStackEntry.arguments?.getLong("editId") ?: 0L
-            EggLogScreen(
-                editId = editId,
-                onBack = { navController.popBackStack() },
-            )
-        }
-
         // ── Garden ──
 
         composable(Screen.Garden.route) {
@@ -311,53 +295,226 @@ fun FurrowNavGraph(
             )
         }
 
-        // ── New modules (Coming Soon) ──
+        // ── Animals ──
 
         composable(Screen.Animals.route) {
-            ComingSoonScreen(
-                title = "Animals",
-                icon = FurrowModule.ANIMALS.unselectedIcon,
-                accentColor = FurrowModule.ANIMALS.accentColor,
+            AnimalListScreen(
+                onAnimalClick = { animalId -> navController.navigate("animals/$animalId") },
+                onAddAnimal = { navController.navigate("animals/add?type=animal") },
+                onAddEgg = { navController.navigate("animals/egg-log") },
+                onEditEgg = { editId -> navController.navigate("animals/egg-log?editId=$editId") },
+                onReportsClick = { navController.navigate("animals/reports") },
             )
         }
+
+        composable(
+            route = "animals/{animalId}",
+            arguments = listOf(navArgument("animalId") { type = NavType.LongType }),
+        ) {
+            AnimalDetailScreen(
+                onBack = { navController.popBackStack() },
+                onAddLog = { animalId, logType -> navController.navigate("animals/$animalId/add?type=$logType") },
+                onEditLog = { animalId, logType, editId -> navController.navigate("animals/$animalId/add?type=$logType&editId=$editId") },
+            )
+        }
+
+        composable(
+            route = "animals/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "animal" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            AnimalFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "animal",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = "animals/{animalId}/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("animalId") { type = NavType.LongType },
+                navArgument("type") { type = NavType.StringType; defaultValue = "health" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            AnimalFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "health",
+                animalId = backStackEntry.arguments?.getLong("animalId") ?: 0L,
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = "animals/egg-log?editId={editId}",
+            arguments = listOf(
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            val editId = backStackEntry.arguments?.getLong("editId") ?: 0L
+            EggLogScreen(
+                editId = editId,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable("animals/reports") {
+            AnimalReportsScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── Orchard ──
 
         composable(Screen.Orchard.route) {
-            ComingSoonScreen(
-                title = "Orchard",
-                icon = FurrowModule.ORCHARD.unselectedIcon,
-                accentColor = FurrowModule.ORCHARD.accentColor,
+            OrchardListScreen(
+                onPlantClick = { plantId -> navController.navigate("orchard/$plantId") },
+                onAddPlant = { navController.navigate("orchard/add?type=plant") },
             )
         }
+
+        composable(
+            route = "orchard/{plantId}",
+            arguments = listOf(navArgument("plantId") { type = NavType.LongType }),
+        ) {
+            OrchardPlantDetailScreen(
+                onBack = { navController.popBackStack() },
+                onAddLog = { plantId, logType -> navController.navigate("orchard/$plantId/add?type=$logType") },
+                onEditLog = { plantId, logType, editId -> navController.navigate("orchard/$plantId/add?type=$logType&editId=$editId") },
+            )
+        }
+
+        composable(
+            route = "orchard/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "plant" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            OrchardFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "plant",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = "orchard/{plantId}/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("plantId") { type = NavType.LongType },
+                navArgument("type") { type = NavType.StringType; defaultValue = "harvest" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            OrchardFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "harvest",
+                plantId = backStackEntry.arguments?.getLong("plantId") ?: 0L,
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── Preservation ──
 
         composable(Screen.Preservation.route) {
-            ComingSoonScreen(
-                title = "Preservation",
-                icon = FurrowModule.PRESERVATION.unselectedIcon,
-                accentColor = FurrowModule.PRESERVATION.accentColor,
+            PreservationListScreen(
+                onNavigateToPantry = { navController.navigate("preservation/pantry") },
+                onAddBatch = { batchType -> navController.navigate("preservation/add?type=$batchType") },
+                onEditBatch = { batchType, editId -> navController.navigate("preservation/add?type=$batchType&editId=$editId") },
             )
         }
+
+        composable("preservation/pantry") {
+            PantryScreen(
+                onBack = { navController.popBackStack() },
+                onAddPantryItem = { navController.navigate("preservation/add?type=pantry") },
+                onEditPantryItem = { editId -> navController.navigate("preservation/add?type=pantry&editId=$editId") },
+            )
+        }
+
+        composable(
+            route = "preservation/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "canning" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            PreservationFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "canning",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── Land ──
 
         composable(Screen.Land.route) {
-            ComingSoonScreen(
-                title = "Land",
-                icon = FurrowModule.LAND.unselectedIcon,
-                accentColor = FurrowModule.LAND.accentColor,
+            LandListScreen(
+                onAddItem = { itemType -> navController.navigate("land/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("land/add?type=$itemType&editId=$editId") },
             )
         }
+
+        composable(
+            route = "land/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "property" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            LandFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "property",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── Finances ──
 
         composable(Screen.Finances.route) {
-            ComingSoonScreen(
-                title = "Finances",
-                icon = FurrowModule.FINANCES.unselectedIcon,
-                accentColor = FurrowModule.FINANCES.accentColor,
+            FinanceListScreen(
+                onAddItem = { itemType -> navController.navigate("finances/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("finances/add?type=$itemType&editId=$editId") },
             )
         }
 
+        composable(
+            route = "finances/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "expense" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            FinanceFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "expense",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── Compliance ──
+
         composable(Screen.Compliance.route) {
-            ComingSoonScreen(
-                title = "Compliance",
-                icon = FurrowModule.COMPLIANCE.unselectedIcon,
-                accentColor = FurrowModule.COMPLIANCE.accentColor,
+            ComplianceListScreen(
+                onAddItem = { itemType -> navController.navigate("compliance/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("compliance/add?type=$itemType&editId=$editId") },
+            )
+        }
+
+        composable(
+            route = "compliance/add?type={type}&editId={editId}",
+            arguments = listOf(
+                navArgument("type") { type = NavType.StringType; defaultValue = "permit" },
+                navArgument("editId") { type = NavType.LongType; defaultValue = 0L },
+            ),
+        ) { backStackEntry ->
+            ComplianceFormScreen(
+                type = backStackEntry.arguments?.getString("type") ?: "permit",
+                editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
+                onBack = { navController.popBackStack() },
             )
         }
 

@@ -3,6 +3,7 @@ package com.furrow.app.data.repository
 import com.furrow.app.data.local.dao.AnimalBreedInfoDao
 import com.furrow.app.data.local.dao.AnimalDao
 import com.furrow.app.data.local.dao.BreedingRecordDao
+import com.furrow.app.data.local.dao.EggLogDao
 import com.furrow.app.data.local.dao.FeedLogDao
 import com.furrow.app.data.local.dao.FiberLogDao
 import com.furrow.app.data.local.dao.HealthRecordDao
@@ -12,6 +13,7 @@ import com.furrow.app.data.local.dao.WeightLogDao
 import com.furrow.app.data.local.entity.Animal
 import com.furrow.app.data.local.entity.AnimalBreedInfo
 import com.furrow.app.data.local.entity.BreedingRecord
+import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.data.local.entity.FeedLog
 import com.furrow.app.data.local.entity.FiberLog
 import com.furrow.app.data.local.entity.HealthRecord
@@ -33,6 +35,7 @@ class AnimalRepository @Inject constructor(
     private val weightLogDao: WeightLogDao,
     private val processingRecordDao: ProcessingRecordDao,
     private val feedLogDao: FeedLogDao,
+    private val eggLogDao: EggLogDao,
 ) {
     // --- Animals ---
 
@@ -168,4 +171,28 @@ class AnimalRepository @Inject constructor(
     suspend fun updateFeedLog(log: FeedLog) = feedLogDao.update(log)
 
     suspend fun deleteFeedLog(log: FeedLog) = feedLogDao.delete(log)
+
+    // --- Egg logs ---
+
+    fun getAllEggLogs(): Flow<List<EggLog>> = eggLogDao.getAllEggLogs()
+
+    fun getEggLogById(id: Long): Flow<EggLog?> = eggLogDao.getEggLogById(id)
+
+    fun getEggLogsForDateRange(startMillis: Long, endMillis: Long): Flow<List<EggLog>> =
+        eggLogDao.getEggLogsForDateRange(startMillis, endMillis)
+
+    fun getEggCountForDateRange(startMillis: Long, endMillis: Long): Flow<Int> =
+        eggLogDao.getEggCountForDateRange(startMillis, endMillis)
+
+    suspend fun insertEggLog(eggLog: EggLog): Long = eggLogDao.insertEggLog(eggLog)
+
+    suspend fun updateEggLog(eggLog: EggLog) = eggLogDao.updateEggLog(eggLog)
+
+    suspend fun deleteEggLog(eggLog: EggLog) = eggLogDao.deleteEggLog(eggLog)
+
+    // --- Chicken convenience ---
+
+    fun getActiveChickens(): Flow<List<Animal>> = animalDao.getActiveBySpecies("chicken")
+
+    fun getChickenBreeds(): Flow<List<AnimalBreedInfo>> = breedInfoDao.getBreedsBySpecies("chicken")
 }

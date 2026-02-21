@@ -1,4 +1,4 @@
-package com.furrow.app.ui.poultry
+package com.furrow.app.ui.animals
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,9 +26,9 @@ import com.furrow.app.ui.theme.TextPrimary
 import java.util.Locale
 
 @Composable
-fun PoultryReportsScreen(
+fun AnimalReportsScreen(
     onNavigateBack: () -> Unit,
-    viewModel: PoultryViewModel = hiltViewModel(),
+    viewModel: AnimalViewModel = hiltViewModel(),
 ) {
     val dailyEggCounts by viewModel.dailyEggCounts.collectAsState()
     val weeklyTotal by viewModel.weeklyTotal.collectAsState()
@@ -39,7 +39,7 @@ fun PoultryReportsScreen(
     AppScaffold(
         topBar = {
             AppTopBar(
-                title = "Poultry reports",
+                title = "Animal reports",
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)

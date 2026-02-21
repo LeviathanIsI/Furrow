@@ -1,11 +1,8 @@
-package com.furrow.app.ui.poultry
+package com.furrow.app.ui.animals
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,24 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,32 +33,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import com.furrow.app.data.local.entity.EggLog
+import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
-import com.furrow.app.ui.components.InputField
+import com.furrow.app.ui.theme.AnimalsGlow
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
-import com.furrow.app.ui.theme.PoultryGlow
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
-import com.furrow.app.ui.theme.Void
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EggLogScreen(
     editId: Long = 0L,
     onBack: () -> Unit,
-    viewModel: PoultryViewModel = hiltViewModel(),
+    viewModel: AnimalViewModel = hiltViewModel(),
 ) {
     val isEditMode = editId > 0L
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -78,7 +69,7 @@ fun EggLogScreen(
     var countInitialized by remember { mutableStateOf(false) }
     val view = LocalView.current
 
-    val animals by viewModel.activeAnimals.collectAsState()
+    val animals by viewModel.activeChickens.collectAsState()
 
     if (isEditMode) {
         val existingEggLog by viewModel.getEggLogById(editId).collectAsState(initial = null)
@@ -103,18 +94,18 @@ fun EggLogScreen(
     val fieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = Charcoal,
         unfocusedContainerColor = Charcoal,
-        focusedBorderColor = PoultryGlow,
+        focusedBorderColor = AnimalsGlow,
         unfocusedBorderColor = BorderSubtle,
-        focusedLabelColor = PoultryGlow,
+        focusedLabelColor = AnimalsGlow,
         unfocusedLabelColor = TextTertiary,
         focusedTextColor = TextPrimary,
         unfocusedTextColor = TextPrimary,
-        cursorColor = PoultryGlow,
+        cursorColor = AnimalsGlow,
     )
 
-    com.furrow.app.ui.components.AppScaffold(
+    AppScaffold(
         topBar = {
-            com.furrow.app.ui.components.AppTopBar(
+            AppTopBar(
                 title = if (isEditMode) "Edit egg log" else "Log eggs",
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -140,7 +131,7 @@ fun EggLogScreen(
                 dateMillis = date,
                 onDateChange = { date = it },
                 useTodayDefault = !isEditMode,
-                accentColor = PoultryGlow,
+                accentColor = AnimalsGlow,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -181,7 +172,7 @@ fun EggLogScreen(
                                 fontSize = 56.sp,
                                 fontWeight = FontWeight.Bold,
                             ),
-                            color = PoultryGlow,
+                            color = AnimalsGlow,
                         )
                         Text(
                             text = "eggs",
@@ -263,5 +254,3 @@ fun EggLogScreen(
         }
     }
 }
-
-

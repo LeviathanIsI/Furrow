@@ -145,7 +145,7 @@ object AppModule {
     @Provides
     fun provideHiveEventDao(database: FurrowDatabase): HiveEventDao = database.hiveEventDao()
 
-    // ── Poultry (legacy) ──
+    // ── Egg Logs ──
 
     @Provides
     fun provideEggLogDao(database: FurrowDatabase): EggLogDao = database.eggLogDao()

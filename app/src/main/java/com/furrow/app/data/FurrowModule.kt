@@ -4,7 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Agriculture
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Egg
 import androidx.compose.material.icons.filled.Forest
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Kitchen
@@ -14,7 +13,6 @@ import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.outlined.Agriculture
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Egg
 import androidx.compose.material.icons.outlined.Forest
 import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material.icons.outlined.Kitchen
@@ -58,22 +56,12 @@ enum class FurrowModule(
         unselectedIcon = Icons.Outlined.BugReport,
         accentColor = AccentMutedGreen,
     ),
-    POULTRY(
-        key = "poultry",
-        displayName = "Poultry",
-        category = ModuleCategory.ANIMALS,
-        enabledByDefault = true,
-        displayOrder = 1,
-        selectedIcon = Icons.Filled.Egg,
-        unselectedIcon = Icons.Outlined.Egg,
-        accentColor = AccentMutedGreen,
-    ),
     GARDEN(
         key = "garden",
         displayName = "Garden",
         category = ModuleCategory.GROWING,
         enabledByDefault = true,
-        displayOrder = 2,
+        displayOrder = 1,
         selectedIcon = Icons.Filled.Grass,
         unselectedIcon = Icons.Outlined.Grass,
         accentColor = AccentMutedGreen,
@@ -82,8 +70,8 @@ enum class FurrowModule(
         key = "animals",
         displayName = "Animals",
         category = ModuleCategory.ANIMALS,
-        enabledByDefault = false,
-        displayOrder = 3,
+        enabledByDefault = true,
+        displayOrder = 2,
         selectedIcon = Icons.Filled.Pets,
         unselectedIcon = Icons.Outlined.Pets,
         accentColor = AnimalsGlow,
@@ -93,7 +81,7 @@ enum class FurrowModule(
         displayName = "Orchard",
         category = ModuleCategory.GROWING,
         enabledByDefault = false,
-        displayOrder = 4,
+        displayOrder = 3,
         selectedIcon = Icons.Filled.Forest,
         unselectedIcon = Icons.Outlined.Forest,
         accentColor = OrchardGlow,
@@ -103,7 +91,7 @@ enum class FurrowModule(
         displayName = "Preservation",
         category = ModuleCategory.PRODUCTION,
         enabledByDefault = false,
-        displayOrder = 5,
+        displayOrder = 4,
         selectedIcon = Icons.Filled.Kitchen,
         unselectedIcon = Icons.Outlined.Kitchen,
         accentColor = PreservationGlow,
@@ -113,7 +101,7 @@ enum class FurrowModule(
         displayName = "Land",
         category = ModuleCategory.MANAGEMENT,
         enabledByDefault = false,
-        displayOrder = 6,
+        displayOrder = 5,
         selectedIcon = Icons.Filled.Landscape,
         unselectedIcon = Icons.Outlined.Landscape,
         accentColor = LandGlow,
@@ -123,7 +111,7 @@ enum class FurrowModule(
         displayName = "Finances",
         category = ModuleCategory.MANAGEMENT,
         enabledByDefault = false,
-        displayOrder = 7,
+        displayOrder = 6,
         selectedIcon = Icons.Filled.Payments,
         unselectedIcon = Icons.Outlined.Payments,
         accentColor = FinanceGlow,
@@ -133,7 +121,7 @@ enum class FurrowModule(
         displayName = "Compliance",
         category = ModuleCategory.MANAGEMENT,
         enabledByDefault = false,
-        displayOrder = 8,
+        displayOrder = 7,
         selectedIcon = Icons.Filled.Balance,
         unselectedIcon = Icons.Outlined.Balance,
         accentColor = ComplianceGlow,

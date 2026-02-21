@@ -194,7 +194,7 @@ fun SettingsScreen(
                         onClick = { viewModel.setBeeReminders(!beeReminders) },
                     )
                     ListRow(
-                        title = "Poultry reminders",
+                        title = "Animal reminders",
                         trailingText = if (poultryReminders) "On" else "Off",
                         onClick = { viewModel.setPoultryReminders(!poultryReminders) },
                     )

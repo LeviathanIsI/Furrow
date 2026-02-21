@@ -6,10 +6,15 @@ import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.PlantingWindow
 import com.furrow.app.data.local.entity.UserProfile
+import com.furrow.app.data.repository.AnimalRepository
 import com.furrow.app.data.repository.BeeRepository
+import com.furrow.app.data.repository.ComplianceRepository
+import com.furrow.app.data.repository.FinanceRepository
 import com.furrow.app.data.repository.GardenRepository
+import com.furrow.app.data.repository.LandRepository
+import com.furrow.app.data.repository.OrchardRepository
 import com.furrow.app.data.repository.PlantRepository
-import com.furrow.app.data.repository.PoultryRepository
+import com.furrow.app.data.repository.PreservationRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,10 +35,15 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     beeRepository: BeeRepository,
-    poultryRepository: PoultryRepository,
     gardenRepository: GardenRepository,
     private val plantRepository: PlantRepository,
     userProfileRepository: UserProfileRepository,
+    animalRepository: AnimalRepository,
+    orchardRepository: OrchardRepository,
+    preservationRepository: PreservationRepository,
+    landRepository: LandRepository,
+    financeRepository: FinanceRepository,
+    complianceRepository: ComplianceRepository,
 ) : ViewModel() {
 
     private val zone = ZoneId.systemDefault()
@@ -41,11 +51,7 @@ class HomeViewModel @Inject constructor(
     private val currentMonth = today.monthValue
     private val todayStartMillis = today.atStartOfDay(zone).toInstant().toEpochMilli()
     private val todayEndMillis = today.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1
-    private val yesterdayStart = today.minusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
-    private val yesterdayEnd = todayStartMillis - 1
     private val weekStart = today.minusDays(6).atStartOfDay(zone).toInstant().toEpochMilli()
-    private val lastWeekStart = today.minusDays(13).atStartOfDay(zone).toInstant().toEpochMilli()
-    private val lastWeekEnd = weekStart - 1
 
     // ── User Profile ──
 
@@ -124,62 +130,6 @@ class HomeViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BeeInsights(0, null, null, 0))
 
-    // ── Poultry ──
-
-    data class PoultryInsights(
-        val yesterdayEggs: Int,
-        val todayEggs: Int,
-        val thisWeekTotal: Int,
-        val lastWeekTotal: Int,
-        val weeklyAvg: Double,
-        val flockSize: Int,
-        val layRatePercent: Int?,
-        val trendDirection: TrendDirection,
-        val expectedWeeklyEggs: Double,
-    )
-
-    enum class TrendDirection { UP, DOWN, FLAT }
-
-    val poultryInsights: StateFlow<PoultryInsights> = combine(
-        poultryRepository.getEggCountForDateRange(yesterdayStart, yesterdayEnd),
-        poultryRepository.getEggCountForDateRange(todayStartMillis, todayEndMillis),
-        poultryRepository.getEggCountForDateRange(weekStart, todayEndMillis),
-        poultryRepository.getEggCountForDateRange(lastWeekStart, lastWeekEnd),
-        combine(
-            poultryRepository.getActiveAnimals(),
-            poultryRepository.getAllBreeds().map { breeds -> breeds.associateBy { it.name } },
-        ) { animals, breedMap ->
-            val expectedWeekly = animals.sumOf { animal ->
-                val breed = breedMap[animal.breed]
-                (breed?.eggsPerYear ?: 0) / 52.0
-            }
-            Triple(animals.size, expectedWeekly, animals)
-        },
-    ) { yesterday, todayEggs, thisWeek, lastWeek, (birds, expectedWeekly, _) ->
-        val avg = thisWeek / 7.0
-        val trend = when {
-            thisWeek > lastWeek -> TrendDirection.UP
-            thisWeek < lastWeek -> TrendDirection.DOWN
-            else -> TrendDirection.FLAT
-        }
-        val layRate = if (birds > 0) ((todayEggs.toDouble() / birds) * 100).toInt() else null
-        PoultryInsights(
-            yesterdayEggs = yesterday,
-            todayEggs = todayEggs,
-            thisWeekTotal = thisWeek,
-            lastWeekTotal = lastWeek,
-            weeklyAvg = avg,
-            flockSize = birds,
-            layRatePercent = layRate,
-            trendDirection = trend,
-            expectedWeeklyEggs = expectedWeekly,
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        PoultryInsights(0, 0, 0, 0, 0.0, 0, null, TrendDirection.FLAT, 0.0),
-    )
-
     // ── Garden ──
 
     data class GardenInsights(
@@ -239,6 +189,155 @@ class HomeViewModel @Inject constructor(
         SharingStarted.WhileSubscribed(5000),
         GardenInsights(0, 0, 0, null, null, 0, 0),
     )
+
+    // ── Animals (includes egg stats from former Poultry) ──
+
+    data class AnimalInsights(
+        val totalActive: Int,
+        val speciesCount: Int,
+        val upcomingBirths: Int,
+        val activeWithdrawals: Int,
+        val chickenCount: Int,
+        val todayEggs: Int,
+        val thisWeekTotal: Int,
+        val layRatePercent: Int?,
+    )
+
+    private val nowMillis = Instant.now().toEpochMilli()
+
+    val animalInsights: StateFlow<AnimalInsights> = combine(
+        combine(
+            animalRepository.getActiveAnimals(),
+            animalRepository.getUpcomingBirths(nowMillis),
+            animalRepository.getActiveWithdrawals(nowMillis),
+        ) { animals, births, withdrawals -> Triple(animals, births, withdrawals) },
+        combine(
+            animalRepository.getActiveChickens(),
+            animalRepository.getEggCountForDateRange(todayStartMillis, todayEndMillis),
+            animalRepository.getEggCountForDateRange(weekStart, todayEndMillis),
+        ) { chickens, todayEggs, weekTotal -> Triple(chickens, todayEggs, weekTotal) },
+    ) { (animals, births, withdrawals), (chickens, todayEggs, weekTotal) ->
+        val chickenCount = chickens.size
+        val layRate = if (chickenCount > 0) ((todayEggs.toDouble() / chickenCount) * 100).toInt() else null
+
+        AnimalInsights(
+            totalActive = animals.size,
+            speciesCount = animals.map { it.species }.distinct().size,
+            upcomingBirths = births.size,
+            activeWithdrawals = withdrawals.size,
+            chickenCount = chickenCount,
+            todayEggs = todayEggs,
+            thisWeekTotal = weekTotal,
+            layRatePercent = layRate,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AnimalInsights(0, 0, 0, 0, 0, 0, 0, null))
+
+    // ── Orchard ──
+
+    data class OrchardInsights(
+        val plantCount: Int,
+        val totalHarvestLbs: Double,
+    )
+
+    val orchardInsights: StateFlow<OrchardInsights> = combine(
+        orchardRepository.getAllPlants(),
+        orchardRepository.getAllHarvests(),
+    ) { plants, harvests ->
+        OrchardInsights(
+            plantCount = plants.size,
+            totalHarvestLbs = harvests.sumOf { it.yieldLbs ?: 0.0 },
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), OrchardInsights(0, 0.0))
+
+    // ── Preservation ──
+
+    data class PreservationInsights(
+        val totalBatches: Int,
+        val pantryInStock: Int,
+        val expiringSoon: Int,
+    )
+
+    private val thirtyDaysFromNow = today.plusDays(30).atStartOfDay(zone).toInstant().toEpochMilli()
+
+    val preservationInsights: StateFlow<PreservationInsights> = combine(
+        preservationRepository.getAllCanningBatches().map { it.size },
+        preservationRepository.getAllDehydratingBatches().map { it.size },
+        preservationRepository.getAllFermentingBatches().map { it.size },
+        preservationRepository.getAllFreezingBatches().map { it.size },
+        combine(
+            preservationRepository.getAllSmokingCuringBatches().map { it.size },
+            preservationRepository.getInStockPantryItems(),
+            preservationRepository.getExpiringSoonPantryItems(thirtyDaysFromNow),
+        ) { smoking, inStock, expiring -> Triple(smoking, inStock.size, expiring.size) },
+    ) { canning, dehydrating, fermenting, freezing, (smoking, inStock, expiring) ->
+        PreservationInsights(
+            totalBatches = canning + dehydrating + fermenting + freezing + smoking,
+            pantryInStock = inStock,
+            expiringSoon = expiring,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PreservationInsights(0, 0, 0))
+
+    // ── Land ──
+
+    data class LandInsights(
+        val propertyCount: Int,
+        val totalAcreage: Double,
+        val structureCount: Int,
+    )
+
+    val landInsights: StateFlow<LandInsights> = combine(
+        landRepository.getAllProperties(),
+        landRepository.getAllStructures(),
+    ) { properties, structures ->
+        LandInsights(
+            propertyCount = properties.size,
+            totalAcreage = properties.sumOf { it.totalAcreage ?: 0.0 },
+            structureCount = structures.size,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), LandInsights(0, 0.0, 0))
+
+    // ── Finances ──
+
+    data class FinanceInsights(
+        val monthExpenses: Double,
+        val monthRevenue: Double,
+        val netIncome: Double,
+    )
+
+    private val monthStartMillis = today.withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli()
+    private val monthEndMillis = today.plusMonths(1).withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1
+
+    val financeInsights: StateFlow<FinanceInsights> = combine(
+        financeRepository.getExpenseTotalForDateRange(monthStartMillis, monthEndMillis),
+        financeRepository.getRevenueTotalForDateRange(monthStartMillis, monthEndMillis),
+    ) { expenses, revenue ->
+        val exp = expenses ?: 0.0
+        val rev = revenue ?: 0.0
+        FinanceInsights(
+            monthExpenses = exp,
+            monthRevenue = rev,
+            netIncome = rev - exp,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FinanceInsights(0.0, 0.0, 0.0))
+
+    // ── Compliance ──
+
+    data class ComplianceInsights(
+        val totalPermits: Int,
+        val expiringSoon: Int,
+    )
+
+    private val ninetyDaysFromNow = today.plusDays(90).atStartOfDay(zone).toInstant().toEpochMilli()
+
+    val complianceInsights: StateFlow<ComplianceInsights> = combine(
+        complianceRepository.getAllLicensePermits(),
+        complianceRepository.getLicensePermitsExpiringSoon(ninetyDaysFromNow),
+    ) { permits, expiring ->
+        ComplianceInsights(
+            totalPermits = permits.size,
+            expiringSoon = expiring.size,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ComplianceInsights(0, 0))
 }
 
 private const val INSPECTION_CYCLE_DAYS = 7L

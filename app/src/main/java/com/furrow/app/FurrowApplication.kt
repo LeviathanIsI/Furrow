@@ -36,11 +36,11 @@ class FurrowApplication : Application(), Configuration.Provider {
                     description = "Hive inspections, treatments, and seasonal tasks"
                 },
                 NotificationChannel(
-                    "furrow_poultry",
-                    "Poultry",
+                    "furrow_animals",
+                    "Animals",
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ).apply {
-                    description = "Egg logging reminders and flock alerts"
+                    description = "Egg logging reminders, flock alerts, and animal tracking"
                 },
                 NotificationChannel(
                     "furrow_garden",

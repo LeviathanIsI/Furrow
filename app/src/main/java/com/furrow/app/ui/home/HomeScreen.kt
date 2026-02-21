@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Agriculture
 import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.EggAlt
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -53,22 +52,37 @@ import java.util.Locale
 fun HomeScreen(
     onSettingsClick: () -> Unit = {},
     onNavigateToBees: () -> Unit = {},
-    onNavigateToPoultry: () -> Unit = {},
     onNavigateToGarden: () -> Unit = {},
     onNavigateToEggLog: () -> Unit = {},
     onNavigateToInspection: (() -> Unit)? = null,
     onNavigateToHarvest: (() -> Unit)? = null,
+    onNavigateToAnimals: () -> Unit = {},
+    onNavigateToOrchard: () -> Unit = {},
+    onNavigateToPreservation: () -> Unit = {},
+    onNavigateToLand: () -> Unit = {},
+    onNavigateToFinances: () -> Unit = {},
+    onNavigateToCompliance: () -> Unit = {},
     enabledModules: Set<String> = emptySet(),
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val bees by viewModel.beeInsights.collectAsState()
-    val poultry by viewModel.poultryInsights.collectAsState()
     val garden by viewModel.gardenInsights.collectAsState()
+    val animals by viewModel.animalInsights.collectAsState()
+    val orchard by viewModel.orchardInsights.collectAsState()
+    val preservation by viewModel.preservationInsights.collectAsState()
+    val land by viewModel.landInsights.collectAsState()
+    val finances by viewModel.financeInsights.collectAsState()
+    val compliance by viewModel.complianceInsights.collectAsState()
     val seasonalTip by viewModel.seasonalTip.collectAsState()
 
     val beesEnabled = "bees" in enabledModules
-    val poultryEnabled = "poultry" in enabledModules
     val gardenEnabled = "garden" in enabledModules
+    val animalsEnabled = "animals" in enabledModules
+    val orchardEnabled = "orchard" in enabledModules
+    val preservationEnabled = "preservation" in enabledModules
+    val landEnabled = "land" in enabledModules
+    val financesEnabled = "finances" in enabledModules
+    val complianceEnabled = "compliance" in enabledModules
 
     Column(
         modifier = Modifier
@@ -94,7 +108,7 @@ fun HomeScreen(
         )
 
         // Dashboard stats — only show stats for enabled modules
-        if (beesEnabled || poultryEnabled || gardenEnabled) {
+        if (beesEnabled || animalsEnabled || gardenEnabled) {
             Panel(
                 modifier = Modifier.padding(horizontal = AppSpacing.md),
                 contentPadding = PaddingValues(0.dp),
@@ -120,12 +134,12 @@ fun HomeScreen(
                             label = "Hives",
                         )
                     }
-                    if (beesEnabled && poultryEnabled) VerticalDividerThin()
-                    if (poultryEnabled) {
+                    if ((gardenEnabled || beesEnabled) && animalsEnabled) VerticalDividerThin()
+                    if (animalsEnabled) {
                         DashboardStat(
                             modifier = Modifier.weight(1f),
-                            value = poultry.flockSize.toString(),
-                            label = "Flock",
+                            value = animals.totalActive.toString(),
+                            label = "Animals",
                         )
                     }
                 }
@@ -144,6 +158,12 @@ fun HomeScreen(
                         InlineStat(
                             label = "Hives due for inspection",
                             value = bees.hivesNeedingInspection.toString(),
+                        )
+                    }
+                    if (animalsEnabled && animals.chickenCount > 0) {
+                        InlineStat(
+                            label = "Eggs today",
+                            value = animals.todayEggs.toString(),
                         )
                     }
                 }
@@ -166,7 +186,7 @@ fun HomeScreen(
         }
 
         // Activity summary — only show enabled modules
-        if (beesEnabled || poultryEnabled || gardenEnabled) {
+        if (beesEnabled || animalsEnabled || gardenEnabled) {
             Panel(
                 modifier = Modifier.padding(horizontal = AppSpacing.md),
                 contentPadding = PaddingValues(0.dp),
@@ -185,7 +205,7 @@ fun HomeScreen(
                             "Inspection cycle is on track"
                         },
                         metadata = if (bees.hivesNeedingInspection > 0) "Due" else "OK",
-                        showDivider = gardenEnabled || poultryEnabled,
+                        showDivider = gardenEnabled || animalsEnabled,
                     )
                 }
                 if (gardenEnabled) {
@@ -197,14 +217,19 @@ fun HomeScreen(
                             "No immediate harvest actions"
                         },
                         metadata = if (garden.readyToHarvestCount > 0) "Ready" else "Queue",
-                        showDivider = poultryEnabled,
+                        showDivider = animalsEnabled,
                     )
                 }
-                if (poultryEnabled) {
+                if (animalsEnabled) {
+                    val subtitle = if (animals.chickenCount > 0) {
+                        "${animals.totalActive} active \u2022 ${animals.todayEggs} eggs today"
+                    } else {
+                        "${animals.totalActive} active animals"
+                    }
                     ListRow(
-                        title = "Poultry",
-                        subtitle = "${poultry.todayEggs} eggs logged today",
-                        metadata = if (poultry.todayEggs > 0) "Active" else "Log",
+                        title = "Animals",
+                        subtitle = subtitle,
+                        metadata = if (animals.todayEggs > 0) "Active" else if (animals.totalActive > 0) "OK" else "Log",
                         showDivider = false,
                     )
                 }
@@ -230,7 +255,7 @@ fun HomeScreen(
                     ListRow(
                         title = "Bees",
                         subtitle = if (bees.hiveCount > 0) {
-                            "${bees.hiveCount} hives • ${bees.hivesNeedingInspection} need inspection"
+                            "${bees.hiveCount} hives \u2022 ${bees.hivesNeedingInspection} need inspection"
                         } else {
                             "No hives tracked yet"
                         },
@@ -265,42 +290,26 @@ fun HomeScreen(
                 }
             }
 
-            if (poultryEnabled) {
+            if (animalsEnabled) {
                 moduleRows.add {
-                    ListRow(
-                        title = "Poultry",
-                        subtitle = if (poultry.flockSize > 0) {
-                            "${poultry.todayEggs} eggs today • ${poultry.thisWeekTotal} this week"
+                    val subtitle = if (animals.totalActive > 0) {
+                        if (animals.chickenCount > 0) {
+                            "${animals.totalActive} active \u2022 ${animals.todayEggs} eggs today"
                         } else {
-                            "No flock tracked yet"
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.EggAlt,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = TextSecondary,
-                            )
-                        },
-                        trailing = {
-                            Row(
-                                modifier = Modifier.wrapContentWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
-                            ) {
-                                PrimaryButton(
-                                    text = "Log",
-                                    onClick = onNavigateToEggLog,
-                                )
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = TextTertiary,
-                                )
-                            }
-                        },
-                        onClick = onNavigateToPoultry,
+                            "${animals.totalActive} active \u2022 ${animals.speciesCount} species"
+                        }
+                    } else {
+                        "No animals tracked yet"
+                    }
+                    val buttonText = if (animals.chickenCount > 0) "Log" else "Add"
+                    val buttonAction = if (animals.chickenCount > 0) onNavigateToEggLog else onNavigateToAnimals
+                    ModuleRow(
+                        title = "Animals",
+                        subtitle = subtitle,
+                        icon = FurrowModule.ANIMALS.unselectedIcon,
+                        buttonText = buttonText,
+                        onClick = onNavigateToAnimals,
+                        onButtonClick = buttonAction,
                     )
                 }
             }
@@ -310,7 +319,7 @@ fun HomeScreen(
                     ListRow(
                         title = "Garden",
                         subtitle = if (garden.activePlantings > 0) {
-                            "${garden.activePlantings} active • ${garden.readyToHarvestCount} ready to harvest"
+                            "${garden.activePlantings} active \u2022 ${garden.readyToHarvestCount} ready to harvest"
                         } else {
                             "No active plantings yet"
                         },
@@ -345,22 +354,87 @@ fun HomeScreen(
                 }
             }
 
-            // New modules that are enabled but not yet implemented
-            val newModuleKeys = listOf("animals", "orchard", "preservation", "land", "finances", "compliance")
-            newModuleKeys.filter { it in enabledModules }.forEach { key ->
-                val module = FurrowModule.fromKey(key) ?: return@forEach
+            if (orchardEnabled) {
                 moduleRows.add {
-                    ListRow(
-                        title = module.displayName,
-                        subtitle = "Coming soon",
-                        leadingIcon = {
-                            Icon(
-                                imageVector = module.unselectedIcon,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                                tint = TextSecondary,
-                            )
+                    ModuleRow(
+                        title = "Orchard",
+                        subtitle = if (orchard.plantCount > 0) {
+                            "${orchard.plantCount} plants \u2022 ${"%.1f".format(orchard.totalHarvestLbs)} lbs harvested"
+                        } else {
+                            "No orchard plants yet"
                         },
+                        icon = FurrowModule.ORCHARD.unselectedIcon,
+                        buttonText = "Add",
+                        onClick = onNavigateToOrchard,
+                        onButtonClick = onNavigateToOrchard,
+                    )
+                }
+            }
+
+            if (preservationEnabled) {
+                moduleRows.add {
+                    ModuleRow(
+                        title = "Preservation",
+                        subtitle = if (preservation.totalBatches > 0) {
+                            "${preservation.totalBatches} batches \u2022 ${preservation.pantryInStock} in pantry"
+                        } else {
+                            "No preservation batches yet"
+                        },
+                        icon = FurrowModule.PRESERVATION.unselectedIcon,
+                        buttonText = "Add",
+                        onClick = onNavigateToPreservation,
+                        onButtonClick = onNavigateToPreservation,
+                    )
+                }
+            }
+
+            if (landEnabled) {
+                moduleRows.add {
+                    ModuleRow(
+                        title = "Land",
+                        subtitle = if (land.propertyCount > 0) {
+                            "${land.propertyCount} properties \u2022 ${"%.1f".format(land.totalAcreage)} acres"
+                        } else {
+                            "No properties tracked yet"
+                        },
+                        icon = FurrowModule.LAND.unselectedIcon,
+                        buttonText = "Add",
+                        onClick = onNavigateToLand,
+                        onButtonClick = onNavigateToLand,
+                    )
+                }
+            }
+
+            if (financesEnabled) {
+                moduleRows.add {
+                    ModuleRow(
+                        title = "Finances",
+                        subtitle = if (finances.monthExpenses > 0 || finances.monthRevenue > 0) {
+                            "Net: ${"$%.0f".format(finances.netIncome)} this month"
+                        } else {
+                            "No financial records yet"
+                        },
+                        icon = FurrowModule.FINANCES.unselectedIcon,
+                        buttonText = "Log",
+                        onClick = onNavigateToFinances,
+                        onButtonClick = onNavigateToFinances,
+                    )
+                }
+            }
+
+            if (complianceEnabled) {
+                moduleRows.add {
+                    ModuleRow(
+                        title = "Compliance",
+                        subtitle = if (compliance.totalPermits > 0) {
+                            "${compliance.totalPermits} permits" + if (compliance.expiringSoon > 0) " \u2022 ${compliance.expiringSoon} expiring" else ""
+                        } else {
+                            "No permits tracked yet"
+                        },
+                        icon = FurrowModule.COMPLIANCE.unselectedIcon,
+                        buttonText = "Add",
+                        onClick = onNavigateToCompliance,
+                        onButtonClick = onNavigateToCompliance,
                     )
                 }
             }
@@ -404,5 +478,47 @@ private fun VerticalDividerThin() {
             .width(1.dp)
             .height(36.dp)
             .background(BorderSubtle),
+    )
+}
+
+@Composable
+private fun ModuleRow(
+    title: String,
+    subtitle: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    buttonText: String,
+    onClick: () -> Unit,
+    onButtonClick: () -> Unit,
+) {
+    ListRow(
+        title = title,
+        subtitle = subtitle,
+        leadingIcon = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = TextSecondary,
+            )
+        },
+        trailing = {
+            Row(
+                modifier = Modifier.wrapContentWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
+            ) {
+                PrimaryButton(
+                    text = buttonText,
+                    onClick = onButtonClick,
+                )
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = TextTertiary,
+                )
+            }
+        },
+        onClick = onClick,
     )
 }

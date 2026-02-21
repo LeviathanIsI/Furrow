@@ -19,6 +19,7 @@ object AnimalBreedInfoSeeder {
         "horse" to 340,
         "alpaca" to 345,
         "llama" to 350,
+        "donkey" to 365,
     )
 
     // ── Helper ──
@@ -76,6 +77,10 @@ object AnimalBreedInfoSeeder {
         seedPigs(db)
         seedCattle(db)
         seedRabbits(db)
+        seedHorses(db)
+        seedAlpacas(db)
+        seedLlamas(db)
+        seedDonkeys(db)
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -598,5 +603,176 @@ object AnimalBreedInfoSeeder {
             gestationDays = 31, matureWeightLbs = 3.5,
             heatTolerance = 2, coldTolerance = 3,
             notes = "Distinctive wool mane around head, small and social")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  HORSES
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedHorses(db: SupportSQLiteDatabase) {
+        a(db, "horse", "Quarter Horse",
+            purpose = "riding/ranch", temperament = "Calm, versatile",
+            gestationDays = 340, matureWeightLbs = 1100.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Most popular breed in the US, excels at ranch work, sprinting, and trail riding")
+
+        a(db, "horse", "Thoroughbred",
+            purpose = "riding/sport", temperament = "Spirited, athletic",
+            gestationDays = 340, matureWeightLbs = 1100.0,
+            heatTolerance = 3, coldTolerance = 3,
+            notes = "Premier racing breed, also used for eventing, jumping, and dressage")
+
+        a(db, "horse", "Arabian",
+            purpose = "riding/endurance", temperament = "Intelligent, spirited",
+            gestationDays = 340, matureWeightLbs = 950.0,
+            heatTolerance = 5, coldTolerance = 2,
+            notes = "Oldest pure breed, exceptional endurance, compact and refined")
+
+        a(db, "horse", "Morgan",
+            purpose = "riding/driving", temperament = "Willing, versatile",
+            gestationDays = 340, matureWeightLbs = 1000.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Versatile American breed, strong for its size, good for beginners")
+
+        a(db, "horse", "Paint",
+            purpose = "riding/ranch", temperament = "Calm, friendly",
+            gestationDays = 340, matureWeightLbs = 1100.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Stock horse build with distinctive coat patterns, related to Quarter Horse")
+
+        a(db, "horse", "Appaloosa",
+            purpose = "riding/ranch", temperament = "Hardy, independent",
+            gestationDays = 340, matureWeightLbs = 1050.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Spotted coat patterns, developed by Nez Perce, versatile ranch horse")
+
+        a(db, "horse", "Tennessee Walker",
+            purpose = "riding/gaited", temperament = "Gentle, smooth",
+            gestationDays = 340, matureWeightLbs = 1050.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Naturally gaited running walk, extremely smooth ride, great for trail")
+
+        a(db, "horse", "Draft (Clydesdale)",
+            purpose = "draft/farm", temperament = "Gentle, willing",
+            gestationDays = 340, matureWeightLbs = 1800.0,
+            heatTolerance = 2, coldTolerance = 4,
+            notes = "Heavy draft breed, feathered legs, used for farm work and driving")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  ALPACAS
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedAlpacas(db: SupportSQLiteDatabase) {
+        a(db, "alpaca", "Huacaya",
+            purpose = "fiber", temperament = "Gentle, curious",
+            gestationDays = 345, fiberYieldLbs = 7.0,
+            matureWeightLbs = 175.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Most common type, dense crimpy fleece, teddy-bear appearance")
+
+        a(db, "alpaca", "Suri",
+            purpose = "fiber", temperament = "Gentle, elegant",
+            gestationDays = 345, fiberYieldLbs = 6.0,
+            matureWeightLbs = 175.0,
+            heatTolerance = 3, coldTolerance = 3,
+            notes = "Long silky locks that drape, rarer and more valuable fiber")
+
+        a(db, "alpaca", "Huacaya (fine fiber)",
+            purpose = "fiber", temperament = "Gentle, calm",
+            gestationDays = 345, fiberYieldLbs = 5.0,
+            matureWeightLbs = 150.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Selected for ultra-fine fiber under 20 microns, premium fleece")
+
+        a(db, "alpaca", "Huacaya (color)",
+            purpose = "fiber", temperament = "Gentle, friendly",
+            gestationDays = 345, fiberYieldLbs = 6.5,
+            matureWeightLbs = 170.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Bred for natural color variety: black, brown, fawn, gray, rose gray")
+
+        a(db, "alpaca", "Suri (silky)",
+            purpose = "fiber", temperament = "Alert, gentle",
+            gestationDays = 345, fiberYieldLbs = 5.5,
+            matureWeightLbs = 165.0,
+            heatTolerance = 3, coldTolerance = 3,
+            notes = "Selected for luster and drape, highly prized by hand spinners")
+
+        a(db, "alpaca", "Miniature",
+            purpose = "pet/fiber", temperament = "Very gentle, friendly",
+            gestationDays = 345, fiberYieldLbs = 3.0,
+            matureWeightLbs = 100.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Smaller frame under 32 inches, popular as pets and therapy animals")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  LLAMAS
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedLlamas(db: SupportSQLiteDatabase) {
+        a(db, "llama", "Classic",
+            purpose = "packing/guard", temperament = "Calm, alert",
+            gestationDays = 350, matureWeightLbs = 350.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Shorter coat, athletic build, excellent pack and livestock guardian")
+
+        a(db, "llama", "Woolly",
+            purpose = "fiber/guard", temperament = "Gentle, calm",
+            gestationDays = 350, fiberYieldLbs = 6.0,
+            matureWeightLbs = 400.0,
+            heatTolerance = 2, coldTolerance = 5,
+            notes = "Dense double coat, more fiber production, needs regular shearing")
+
+        a(db, "llama", "Silky",
+            purpose = "fiber", temperament = "Gentle, friendly",
+            gestationDays = 350, fiberYieldLbs = 5.0,
+            matureWeightLbs = 375.0,
+            heatTolerance = 2, coldTolerance = 4,
+            notes = "Fine silky fiber similar to suri alpaca, less common")
+
+        a(db, "llama", "Suri",
+            purpose = "fiber", temperament = "Alert, gentle",
+            gestationDays = 350, fiberYieldLbs = 5.5,
+            matureWeightLbs = 375.0,
+            heatTolerance = 2, coldTolerance = 4,
+            notes = "Long pencil locks of fiber, rare, prized for luxury textiles")
+
+        a(db, "llama", "Miniature",
+            purpose = "pet/guard", temperament = "Very friendly, gentle",
+            gestationDays = 350, matureWeightLbs = 200.0,
+            heatTolerance = 3, coldTolerance = 4,
+            notes = "Under 38 inches, popular as pets, therapy animals, and small flock guardians")
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  DONKEYS
+    // ═══════════════════════════════════════════════════════════════
+
+    private fun seedDonkeys(db: SupportSQLiteDatabase) {
+        a(db, "donkey", "Standard",
+            purpose = "guard/pack", temperament = "Calm, loyal",
+            gestationDays = 365, matureWeightLbs = 500.0,
+            heatTolerance = 5, coldTolerance = 3,
+            notes = "36-54 inches, excellent livestock guardian and pack animal, easy keeper")
+
+        a(db, "donkey", "Miniature",
+            purpose = "pet/companion", temperament = "Friendly, affectionate",
+            gestationDays = 365, matureWeightLbs = 250.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Under 36 inches, popular as pets and companion animals, gentle with children")
+
+        a(db, "donkey", "Mammoth",
+            purpose = "draft/breeding", temperament = "Gentle, strong",
+            gestationDays = 365, matureWeightLbs = 1100.0,
+            heatTolerance = 4, coldTolerance = 3,
+            notes = "Over 54 inches, used for mule production and draft work, rare breed")
+
+        a(db, "donkey", "Poitou",
+            purpose = "breeding/draft", temperament = "Docile, calm",
+            gestationDays = 365, matureWeightLbs = 950.0,
+            heatTolerance = 3, coldTolerance = 3,
+            notes = "French breed with long shaggy coat (cadenette), critically endangered, prized for mule production")
     }
 }
