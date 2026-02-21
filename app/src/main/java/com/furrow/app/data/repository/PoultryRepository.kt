@@ -1,10 +1,10 @@
 package com.furrow.app.data.repository
 
-import com.furrow.app.data.local.dao.ChickenBreedInfoDao
-import com.furrow.app.data.local.dao.ChickenDao
+import com.furrow.app.data.local.dao.AnimalBreedInfoDao
+import com.furrow.app.data.local.dao.AnimalDao
 import com.furrow.app.data.local.dao.EggLogDao
-import com.furrow.app.data.local.entity.Chicken
-import com.furrow.app.data.local.entity.ChickenBreedInfo
+import com.furrow.app.data.local.entity.Animal
+import com.furrow.app.data.local.entity.AnimalBreedInfo
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.data.local.entity.FeedLog
 import kotlinx.coroutines.flow.Flow
@@ -13,37 +13,37 @@ import javax.inject.Singleton
 
 @Singleton
 class PoultryRepository @Inject constructor(
-    private val chickenDao: ChickenDao,
+    private val animalDao: AnimalDao,
     private val eggLogDao: EggLogDao,
-    private val breedInfoDao: ChickenBreedInfoDao,
+    private val breedInfoDao: AnimalBreedInfoDao,
 ) {
     // --- Breed reference data ---
 
-    fun getAllBreeds(): Flow<List<ChickenBreedInfo>> = breedInfoDao.getAllBreeds()
+    fun getAllBreeds(): Flow<List<AnimalBreedInfo>> = breedInfoDao.getBreedsBySpecies("chicken")
 
-    fun getBreedByName(name: String): Flow<ChickenBreedInfo?> = breedInfoDao.getBreedByName(name)
+    fun getBreedByName(name: String): Flow<AnimalBreedInfo?> = breedInfoDao.getBreedByName(name)
 
-    fun searchBreeds(query: String): Flow<List<ChickenBreedInfo>> = breedInfoDao.searchBreeds(query)
+    fun searchBreeds(query: String): Flow<List<AnimalBreedInfo>> = breedInfoDao.searchBreeds(query)
 
-    suspend fun insertBreed(breed: ChickenBreedInfo): Long = breedInfoDao.insert(breed)
+    suspend fun insertBreed(breed: AnimalBreedInfo): Long = breedInfoDao.insert(breed)
 
-    suspend fun updateBreed(breed: ChickenBreedInfo) = breedInfoDao.update(breed)
+    suspend fun updateBreed(breed: AnimalBreedInfo) = breedInfoDao.update(breed)
 
-    suspend fun deleteBreed(breed: ChickenBreedInfo) = breedInfoDao.delete(breed)
+    suspend fun deleteBreed(breed: AnimalBreedInfo) = breedInfoDao.delete(breed)
 
-    // --- Chickens ---
+    // --- Animals (chickens) ---
 
-    fun getActiveChickens(): Flow<List<Chicken>> = chickenDao.getActiveChickens()
+    fun getActiveAnimals(): Flow<List<Animal>> = animalDao.getActiveBySpecies("chicken")
 
-    fun getAllChickens(): Flow<List<Chicken>> = chickenDao.getAll()
+    fun getAllAnimals(): Flow<List<Animal>> = animalDao.getBySpecies("chicken")
 
-    fun getChickenById(id: Long): Flow<Chicken?> = chickenDao.getById(id)
+    fun getAnimalById(id: Long): Flow<Animal?> = animalDao.getById(id)
 
-    suspend fun insertChicken(chicken: Chicken): Long = chickenDao.insert(chicken)
+    suspend fun insertAnimal(animal: Animal): Long = animalDao.insert(animal)
 
-    suspend fun updateChicken(chicken: Chicken) = chickenDao.update(chicken)
+    suspend fun updateAnimal(animal: Animal) = animalDao.update(animal)
 
-    suspend fun deleteChicken(chicken: Chicken) = chickenDao.delete(chicken)
+    suspend fun deleteAnimal(animal: Animal) = animalDao.delete(animal)
 
     // --- Egg logs ---
 

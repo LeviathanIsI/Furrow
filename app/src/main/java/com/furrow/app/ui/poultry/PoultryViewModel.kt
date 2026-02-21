@@ -1,23 +1,20 @@
 package com.furrow.app.ui.poultry
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furrow.app.data.local.entity.Chicken
-import com.furrow.app.data.local.entity.ChickenBreedInfo
+import com.furrow.app.data.local.entity.Animal
+import com.furrow.app.data.local.entity.AnimalBreedInfo
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.PoultryRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.TextStyle
@@ -34,10 +31,7 @@ data class DailyEggCount(
 class PoultryViewModel @Inject constructor(
     private val repository: PoultryRepository,
     private val userProfileRepository: UserProfileRepository,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    private val chickenId: Long? = savedStateHandle.get<Long>("chickenId")
 
     private val zone = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
@@ -49,10 +43,10 @@ class PoultryViewModel @Inject constructor(
 
     // -- Breed reference data --
 
-    val allBreeds: StateFlow<List<ChickenBreedInfo>> = repository.getAllBreeds()
+    val allBreeds: StateFlow<List<AnimalBreedInfo>> = repository.getAllBreeds()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val breedInfoMap: StateFlow<Map<String, ChickenBreedInfo>> = allBreeds.map { breeds ->
+    val breedInfoMap: StateFlow<Map<String, AnimalBreedInfo>> = allBreeds.map { breeds ->
         breeds.associateBy { it.name }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
@@ -61,7 +55,7 @@ class PoultryViewModel @Inject constructor(
 
     // -- Flock list --
 
-    val activeChickens: StateFlow<List<Chicken>> = repository.getActiveChickens()
+    val activeAnimals: StateFlow<List<Animal>> = repository.getActiveAnimals()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // -- Egg logs --
@@ -94,7 +88,7 @@ class PoultryViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val flockSize: StateFlow<Int> = activeChickens.map { it.size }
+    val flockSize: StateFlow<Int> = activeAnimals.map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     val layRatePercent: StateFlow<Int?> = combine(todayEggCount, flockSize) { eggs, birds ->
@@ -107,19 +101,12 @@ class PoultryViewModel @Inject constructor(
     // -- Expected weekly production from breed data --
 
     val expectedWeeklyEggs: StateFlow<Double> =
-        combine(activeChickens, breedInfoMap) { chickens, breeds ->
-            chickens.sumOf { chicken ->
-                val breed = breeds[chicken.breed]
+        combine(activeAnimals, breedInfoMap) { animals, breeds ->
+            animals.sumOf { animal ->
+                val breed = breeds[animal.breed]
                 (breed?.eggsPerYear ?: 0) / 52.0
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
-
-    // -- Chicken detail (driven by chickenId nav arg) --
-
-    val selectedChicken: StateFlow<Chicken?> = chickenId?.let {
-        repository.getChickenById(it)
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-    } ?: MutableStateFlow(null)
 
     // -- Lookups for edit mode --
 
@@ -131,16 +118,16 @@ class PoultryViewModel @Inject constructor(
         viewModelScope.launch { repository.insertEggLog(eggLog) }
     }
 
-    fun addChicken(chicken: Chicken) {
-        viewModelScope.launch { repository.insertChicken(chicken) }
+    fun addAnimal(animal: Animal) {
+        viewModelScope.launch { repository.insertAnimal(animal) }
     }
 
-    fun updateChicken(chicken: Chicken) {
-        viewModelScope.launch { repository.updateChicken(chicken) }
+    fun updateAnimal(animal: Animal) {
+        viewModelScope.launch { repository.updateAnimal(animal) }
     }
 
-    fun deleteChicken(chicken: Chicken) {
-        viewModelScope.launch { repository.deleteChicken(chicken) }
+    fun deleteAnimal(animal: Animal) {
+        viewModelScope.launch { repository.deleteAnimal(animal) }
     }
 
     fun updateEggLog(eggLog: EggLog) {
@@ -151,15 +138,15 @@ class PoultryViewModel @Inject constructor(
         viewModelScope.launch { repository.deleteEggLog(eggLog) }
     }
 
-    fun insertBreed(breed: ChickenBreedInfo) {
+    fun insertBreed(breed: AnimalBreedInfo) {
         viewModelScope.launch { repository.insertBreed(breed) }
     }
 
-    fun updateBreed(breed: ChickenBreedInfo) {
+    fun updateBreed(breed: AnimalBreedInfo) {
         viewModelScope.launch { repository.updateBreed(breed) }
     }
 
-    fun deleteBreed(breed: ChickenBreedInfo) {
+    fun deleteBreed(breed: AnimalBreedInfo) {
         viewModelScope.launch { repository.deleteBreed(breed) }
     }
 }

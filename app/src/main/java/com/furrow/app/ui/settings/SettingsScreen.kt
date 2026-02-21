@@ -33,6 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.furrow.app.data.FurrowModule
+import com.furrow.app.data.ModuleCategory
 import com.furrow.app.data.ZoneLookup
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
@@ -40,6 +42,7 @@ import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.TextPrimary
@@ -61,6 +64,11 @@ fun SettingsScreen(
     val beeReminders by viewModel.beeReminders.collectAsState()
     val poultryReminders by viewModel.poultryReminders.collectAsState()
     val gardenReminders by viewModel.gardenReminders.collectAsState()
+
+    val modulePrefs by viewModel.modulePreferences.collectAsState()
+    val enabledSet = remember(modulePrefs) {
+        modulePrefs.filter { it.enabled }.map { it.moduleName }.toSet()
+    }
 
     val context = LocalContext.current
     val hasNotificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -142,6 +150,35 @@ fun SettingsScreen(
                     enabled = isValid && hasChanged,
                     modifier = Modifier.fillMaxWidth(),
                 )
+            }
+
+            // ── Modules ──
+
+            Panel {
+                Text("Modules", style = MaterialTheme.typography.titleMedium)
+                ModuleCategory.entries.forEach { category ->
+                    val modules = FurrowModule.entries
+                        .filter { it.category == category }
+                        .sortedBy { it.displayOrder }
+                    if (modules.isNotEmpty()) {
+                        Text(
+                            category.label,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextSecondary,
+                            modifier = Modifier.padding(top = AppSpacing.xs),
+                        )
+                        modules.forEach { module ->
+                            ToggleRow(
+                                label = module.displayName,
+                                checked = module.key in enabledSet,
+                                accentColor = module.accentColor,
+                                onCheckedChange = { enabled ->
+                                    viewModel.setModuleEnabled(module.key, enabled)
+                                },
+                            )
+                        }
+                    }
+                }
             }
 
             Panel(contentPadding = PaddingValues(0.dp)) {

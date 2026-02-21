@@ -3,7 +3,9 @@ package com.furrow.app.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.ZoneLookup
+import com.furrow.app.data.local.entity.UserModulePreference
 import com.furrow.app.data.local.entity.UserProfile
+import com.furrow.app.data.repository.ModulePreferenceRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.util.NotificationPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val repository: UserProfileRepository,
     private val notificationPreferences: NotificationPreferences,
+    private val modulePreferenceRepository: ModulePreferenceRepository,
 ) : ViewModel() {
 
     val profile: StateFlow<UserProfile?> = repository.getProfile()
@@ -30,6 +33,10 @@ class SettingsViewModel @Inject constructor(
 
     val gardenReminders: StateFlow<Boolean> = notificationPreferences.gardenReminders
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
+    val modulePreferences: StateFlow<List<UserModulePreference>> =
+        modulePreferenceRepository.getAll()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun updateZipCode(zipCode: String) {
         val newProfile = ZoneLookup.deriveProfile(zipCode) ?: return
@@ -48,5 +55,11 @@ class SettingsViewModel @Inject constructor(
 
     fun setGardenReminders(enabled: Boolean) {
         viewModelScope.launch { notificationPreferences.setGardenReminders(enabled) }
+    }
+
+    fun setModuleEnabled(moduleName: String, enabled: Boolean) {
+        viewModelScope.launch {
+            modulePreferenceRepository.setEnabled(moduleName, enabled)
+        }
     }
 }

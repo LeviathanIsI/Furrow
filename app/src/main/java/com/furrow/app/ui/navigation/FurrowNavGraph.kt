@@ -6,14 +6,28 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Egg
+import androidx.compose.material.icons.filled.Forest
 import androidx.compose.material.icons.filled.Grass
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Kitchen
+import androidx.compose.material.icons.filled.Landscape
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.Pets
+import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Egg
+import androidx.compose.material.icons.outlined.Forest
 import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Kitchen
+import androidx.compose.material.icons.outlined.Landscape
+import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material.icons.outlined.Payments
+import androidx.compose.material.icons.outlined.Pets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,18 +37,19 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.furrow.app.data.FurrowModule
 import com.furrow.app.ui.bees.BeeReportsScreen
 import com.furrow.app.ui.bees.HiveDetailScreen
 import com.furrow.app.ui.bees.HiveListScreen
 import com.furrow.app.ui.bees.InspectionFormScreen
 import com.furrow.app.ui.bees.TreatmentFormScreen
+import com.furrow.app.ui.components.ComingSoonScreen
 import com.furrow.app.ui.garden.BedDetailScreen
 import com.furrow.app.ui.garden.GardenBedListScreen
 import com.furrow.app.ui.garden.GardenReportsScreen
 import com.furrow.app.ui.garden.HarvestLogScreen
 import com.furrow.app.ui.garden.PlantingFormScreen
 import com.furrow.app.ui.home.HomeScreen
-import com.furrow.app.ui.poultry.ChickenDetailScreen
 import com.furrow.app.ui.poultry.EggLogScreen
 import com.furrow.app.ui.poultry.FlockScreen
 import com.furrow.app.ui.poultry.PoultryReportsScreen
@@ -50,12 +65,56 @@ sealed class Screen(
     data object Bees : Screen("bees", "Bees", Icons.Filled.BugReport, Icons.Outlined.BugReport)
     data object Poultry : Screen("poultry", "Poultry", Icons.Filled.Egg, Icons.Outlined.Egg)
     data object Garden : Screen("garden", "Garden", Icons.Filled.Grass, Icons.Outlined.Grass)
+    data object Animals : Screen("animals", "Animals", Icons.Filled.Pets, Icons.Outlined.Pets)
+    data object Orchard : Screen("orchard", "Orchard", Icons.Filled.Forest, Icons.Outlined.Forest)
+    data object Preservation : Screen("preservation", "Preservation", Icons.Filled.Kitchen, Icons.Outlined.Kitchen)
+    data object Land : Screen("land", "Land", Icons.Filled.Landscape, Icons.Outlined.Landscape)
+    data object Finances : Screen("finances", "Finances", Icons.Filled.Payments, Icons.Outlined.Payments)
+    data object Compliance : Screen("compliance", "Compliance", Icons.Filled.Balance, Icons.Outlined.Balance)
+    data object More : Screen("more", "More", Icons.Filled.MoreHoriz, Icons.Outlined.MoreHoriz)
+
+    companion object {
+        /** Maps FurrowModule.key to the corresponding Screen for navigation. */
+        val allModuleScreens: Map<String, Screen> = mapOf(
+            FurrowModule.BEES.key to Bees,
+            FurrowModule.POULTRY.key to Poultry,
+            FurrowModule.GARDEN.key to Garden,
+            FurrowModule.ANIMALS.key to Animals,
+            FurrowModule.ORCHARD.key to Orchard,
+            FurrowModule.PRESERVATION.key to Preservation,
+            FurrowModule.LAND.key to Land,
+            FurrowModule.FINANCES.key to Finances,
+            FurrowModule.COMPLIANCE.key to Compliance,
+        )
+
+        /** All routes that should show the bottom nav bar. */
+        val bottomNavRoutes: Set<String> = setOf(
+            Home.route, Bees.route, Poultry.route, Garden.route,
+            Animals.route, Orchard.route, Preservation.route,
+            Land.route, Finances.route, Compliance.route, More.route,
+        )
+    }
 }
 
-val bottomNavScreens = listOf(Screen.Home, Screen.Bees, Screen.Poultry, Screen.Garden)
+/**
+ * Builds the list of bottom nav screens based on enabled module keys (display-order).
+ * Always starts with Home. If more than 4 modules enabled, shows first 3 + More.
+ */
+fun buildBottomNavScreens(enabledModuleKeys: List<String>): List<Screen> {
+    val moduleScreens = enabledModuleKeys.mapNotNull { Screen.allModuleScreens[it] }
+    return if (moduleScreens.size <= 4) {
+        listOf(Screen.Home) + moduleScreens
+    } else {
+        listOf(Screen.Home) + moduleScreens.take(3) + Screen.More
+    }
+}
 
 @Composable
-fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+fun FurrowNavGraph(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    enabledModules: Set<String> = emptySet(),
+) {
     val navigateToBottomTab: (Screen) -> Unit = { screen ->
         navController.navigate(screen.route) {
             popUpTo(navController.graph.findStartDestination().id) {
@@ -92,6 +151,7 @@ fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifi
                 onNavigateToEggLog = { navController.navigate("poultry/add-egg") },
                 onNavigateToInspection = { navigateToBottomTab(Screen.Bees) },
                 onNavigateToHarvest = { navigateToBottomTab(Screen.Garden) },
+                enabledModules = enabledModules,
             )
         }
 
@@ -167,7 +227,7 @@ fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifi
             FlockScreen(
                 onAddEgg = { navController.navigate("poultry/add-egg") },
                 onEditEgg = { editId -> navController.navigate("poultry/add-egg?editId=$editId") },
-                onChickenClick = { chickenId -> navController.navigate("poultry/$chickenId") },
+                onAnimalClick = { },
                 onReportsClick = { navController.navigate("poultry/reports") },
             )
         }
@@ -187,15 +247,6 @@ fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifi
             val editId = backStackEntry.arguments?.getLong("editId") ?: 0L
             EggLogScreen(
                 editId = editId,
-                onBack = { navController.popBackStack() },
-            )
-        }
-
-        composable(
-            route = "poultry/{chickenId}",
-            arguments = listOf(navArgument("chickenId") { type = NavType.LongType })
-        ) {
-            ChickenDetailScreen(
                 onBack = { navController.popBackStack() },
             )
         }
@@ -257,6 +308,69 @@ fun FurrowNavGraph(navController: NavHostController, modifier: Modifier = Modifi
                 bedId = bedId,
                 editId = editId,
                 onBack = { navController.popBackStack() },
+            )
+        }
+
+        // ── New modules (Coming Soon) ──
+
+        composable(Screen.Animals.route) {
+            ComingSoonScreen(
+                title = "Animals",
+                icon = FurrowModule.ANIMALS.unselectedIcon,
+                accentColor = FurrowModule.ANIMALS.accentColor,
+            )
+        }
+
+        composable(Screen.Orchard.route) {
+            ComingSoonScreen(
+                title = "Orchard",
+                icon = FurrowModule.ORCHARD.unselectedIcon,
+                accentColor = FurrowModule.ORCHARD.accentColor,
+            )
+        }
+
+        composable(Screen.Preservation.route) {
+            ComingSoonScreen(
+                title = "Preservation",
+                icon = FurrowModule.PRESERVATION.unselectedIcon,
+                accentColor = FurrowModule.PRESERVATION.accentColor,
+            )
+        }
+
+        composable(Screen.Land.route) {
+            ComingSoonScreen(
+                title = "Land",
+                icon = FurrowModule.LAND.unselectedIcon,
+                accentColor = FurrowModule.LAND.accentColor,
+            )
+        }
+
+        composable(Screen.Finances.route) {
+            ComingSoonScreen(
+                title = "Finances",
+                icon = FurrowModule.FINANCES.unselectedIcon,
+                accentColor = FurrowModule.FINANCES.accentColor,
+            )
+        }
+
+        composable(Screen.Compliance.route) {
+            ComingSoonScreen(
+                title = "Compliance",
+                icon = FurrowModule.COMPLIANCE.unselectedIcon,
+                accentColor = FurrowModule.COMPLIANCE.accentColor,
+            )
+        }
+
+        // ── More (overflow hub) ──
+
+        composable(Screen.More.route) {
+            MoreScreen(
+                enabledModules = enabledModules,
+                onModuleClick = { moduleKey ->
+                    Screen.allModuleScreens[moduleKey]?.let { screen ->
+                        navigateToBottomTab(screen)
+                    }
+                },
             )
         }
     }

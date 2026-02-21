@@ -68,8 +68,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.furrow.app.data.local.entity.Chicken
-import com.furrow.app.data.local.entity.ChickenBreedInfo
+import com.furrow.app.data.local.entity.Animal
+import com.furrow.app.data.local.entity.AnimalBreedInfo
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.bees.DropdownSelector
 import com.furrow.app.ui.components.DateFieldWithToggle
@@ -107,12 +107,12 @@ private enum class ClimateBadge(val label: String) {
     NOT_IDEAL("Not ideal"),
 }
 
-private fun climateBadgeFor(breed: ChickenBreedInfo, zoneGroup: String?): ClimateBadge {
+private fun climateBadgeFor(breed: AnimalBreedInfo, zoneGroup: String?): ClimateBadge {
     if (zoneGroup == null) return ClimateBadge.MANAGEABLE
     val relevantTolerance = when (zoneGroup) {
-        "hot", "warm" -> breed.heatTolerance
-        "cold", "extreme_cold" -> breed.coldTolerance
-        "moderate" -> minOf(breed.heatTolerance, breed.coldTolerance)
+        "hot", "warm" -> breed.heatTolerance ?: 3
+        "cold", "extreme_cold" -> breed.coldTolerance ?: 3
+        "moderate" -> minOf(breed.heatTolerance ?: 3, breed.coldTolerance ?: 3)
         else -> 3
     }
     return when {
@@ -129,12 +129,12 @@ private fun climateBadgeFor(breed: ChickenBreedInfo, zoneGroup: String?): Climat
 fun FlockScreen(
     onAddEgg: () -> Unit,
     onEditEgg: (Long) -> Unit,
-    onChickenClick: (Long) -> Unit,
+    onAnimalClick: (Long) -> Unit,
     onReportsClick: () -> Unit,
     viewModel: PoultryViewModel = hiltViewModel(),
 ) {
     val eggLogs by viewModel.eggLogs.collectAsState()
-    val chickens by viewModel.activeChickens.collectAsState()
+    val animals by viewModel.activeAnimals.collectAsState()
     val todayCount by viewModel.todayEggCount.collectAsState()
     val weeklyTotal by viewModel.weeklyTotal.collectAsState()
     val flockSize by viewModel.flockSize.collectAsState()
@@ -146,12 +146,12 @@ fun FlockScreen(
 
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Egg log", "Flock")
-    var showAddChickenDialog by remember { mutableStateOf(false) }
+    var showAddAnimalDialog by remember { mutableStateOf(false) }
     var eggLogToDelete by remember { mutableStateOf<EggLog?>(null) }
-    var chickenToDelete by remember { mutableStateOf<Chicken?>(null) }
+    var animalToDelete by remember { mutableStateOf<Animal?>(null) }
     var eggLogForAction by remember { mutableStateOf<EggLog?>(null) }
-    var chickenForAction by remember { mutableStateOf<Chicken?>(null) }
-    var chickenToEdit by remember { mutableStateOf<Chicken?>(null) }
+    var animalForAction by remember { mutableStateOf<Animal?>(null) }
+    var animalToEdit by remember { mutableStateOf<Animal?>(null) }
 
     com.furrow.app.ui.components.AppScaffold(
         topBar = {
@@ -183,7 +183,7 @@ fun FlockScreen(
             ) {
                 com.furrow.app.ui.components.PrimaryButton(
                     text = if (selectedTab == 0) "Log Eggs" else "Add Chicken",
-                    onClick = { if (selectedTab == 0) onAddEgg() else showAddChickenDialog = true },
+                    onClick = { if (selectedTab == 0) onAddEgg() else showAddAnimalDialog = true },
                 )
             }
 
@@ -282,12 +282,12 @@ fun FlockScreen(
                         onAddEgg = onAddEgg,
                         onLongPress = { eggLogForAction = it },
                     )
-                    1 -> ChickenList(
-                        chickens = chickens,
+                    1 -> AnimalList(
+                        animals = animals,
                         breedInfoMap = breedInfoMap,
-                        onChickenClick = onChickenClick,
-                        onAddChicken = { showAddChickenDialog = true },
-                        onLongPress = { chickenForAction = it },
+                        onAnimalClick = onAnimalClick,
+                        onAddAnimal = { showAddAnimalDialog = true },
+                        onLongPress = { animalForAction = it },
                     )
                 }
             }
@@ -296,16 +296,16 @@ fun FlockScreen(
 
     // ── Sheets & Dialogs ──
 
-    if (showAddChickenDialog || chickenToEdit != null) {
+    if (showAddAnimalDialog || animalToEdit != null) {
         AddChickenSheet(
-            existingChicken = chickenToEdit,
+            existingAnimal = animalToEdit,
             breeds = allBreeds,
             zoneGroup = userProfile?.zoneGroup,
-            onDismiss = { showAddChickenDialog = false; chickenToEdit = null },
-            onSave = { chicken ->
-                if (chickenToEdit != null) viewModel.updateChicken(chicken) else viewModel.addChicken(chicken)
-                showAddChickenDialog = false
-                chickenToEdit = null
+            onDismiss = { showAddAnimalDialog = false; animalToEdit = null },
+            onSave = { animal ->
+                if (animalToEdit != null) viewModel.updateAnimal(animal) else viewModel.addAnimal(animal)
+                showAddAnimalDialog = false
+                animalToEdit = null
             },
             onInsertBreed = { breed -> viewModel.insertBreed(breed) },
             onUpdateBreed = { breed -> viewModel.updateBreed(breed) },
@@ -321,11 +321,11 @@ fun FlockScreen(
         )
     }
 
-    chickenToDelete?.let { chicken ->
+    animalToDelete?.let { animal ->
         DeleteConfirmationDialog(
-            itemName = chicken.name ?: chicken.breed,
-            onConfirm = { viewModel.deleteChicken(chicken); chickenToDelete = null },
-            onDismiss = { chickenToDelete = null },
+            itemName = animal.name ?: animal.breed,
+            onConfirm = { viewModel.deleteAnimal(animal); animalToDelete = null },
+            onDismiss = { animalToDelete = null },
         )
     }
 
@@ -337,11 +337,11 @@ fun FlockScreen(
         )
     }
 
-    chickenForAction?.let { chicken ->
+    animalForAction?.let { animal ->
         ItemActionSheet(
-            onDismiss = { chickenForAction = null },
-            onEdit = { chickenToEdit = chicken },
-            onDelete = { chickenToDelete = chicken },
+            onDismiss = { animalForAction = null },
+            onEdit = { animalToEdit = animal },
+            onDelete = { animalToDelete = animal },
         )
     }
 }
@@ -404,16 +404,16 @@ private fun EggLogList(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ChickenList(
-    chickens: List<Chicken>,
-    breedInfoMap: Map<String, ChickenBreedInfo>,
-    onChickenClick: (Long) -> Unit,
-    onAddChicken: () -> Unit,
-    onLongPress: (Chicken) -> Unit,
+private fun AnimalList(
+    animals: List<Animal>,
+    breedInfoMap: Map<String, AnimalBreedInfo>,
+    onAnimalClick: (Long) -> Unit,
+    onAddAnimal: () -> Unit,
+    onLongPress: (Animal) -> Unit,
 ) {
     val view = LocalView.current
 
-    if (chickens.isEmpty()) {
+    if (animals.isEmpty()) {
         EmptyState(
             icon = {
                 Icon(
@@ -427,7 +427,7 @@ private fun ChickenList(
             subtitle = "Add your first bird to start tracking",
             actionLabel = "Add Chicken",
             glowColor = PoultryGlow,
-            onAction = onAddChicken,
+            onAction = onAddAnimal,
         )
     } else {
         LazyColumn(
@@ -436,33 +436,34 @@ private fun ChickenList(
         ) {
             item {
                 com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
-                    chickens.forEachIndexed { index, chicken ->
-                        val breedInfo = breedInfoMap[chicken.breed]
-                        val displayName = chicken.name ?: chicken.breed
+                    animals.forEachIndexed { index, animal ->
+                        val breedInfo = breedInfoMap[animal.breed]
+                        val displayName = animal.name ?: animal.breed
                         val subtitle = buildString {
-                            append("${chicken.breed} • ${formatAge(chicken.dateAcquired)}")
+                            append("${animal.breed} • ${formatAge(animal.acquisitionDate)}")
                             breedInfo?.let {
-                                if (it.eggsPerYear > 0) append(" • ${it.eggsPerYear} eggs/yr")
+                                val eggs = it.eggsPerYear ?: 0
+                                if (eggs > 0) append(" • $eggs eggs/yr")
                             }
                         }
 
                         com.furrow.app.ui.components.ListRow(
                             modifier = Modifier.combinedClickable(
-                                onClick = { onChickenClick(chicken.id) },
+                                onClick = { onAnimalClick(animal.id) },
                                 onLongClick = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(chicken)
+                                    onLongPress(animal)
                                 },
                             ),
                             title = displayName,
                             subtitle = subtitle,
                             trailing = {
                                 com.furrow.app.ui.components.Tag(
-                                    text = chicken.status.replaceFirstChar { it.uppercase() },
-                                    selected = chicken.status == "active",
+                                    text = animal.status.replaceFirstChar { it.uppercase() },
+                                    selected = animal.status == "active",
                                 )
                             },
-                            showDivider = index != chickens.lastIndex,
+                            showDivider = index != animals.lastIndex,
                         )
                     }
                 }
@@ -542,33 +543,33 @@ private fun WeeklyEggChart(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddChickenSheet(
-    existingChicken: Chicken? = null,
-    breeds: List<ChickenBreedInfo>,
+    existingAnimal: Animal? = null,
+    breeds: List<AnimalBreedInfo>,
     zoneGroup: String?,
     onDismiss: () -> Unit,
-    onSave: (Chicken) -> Unit,
-    onInsertBreed: (ChickenBreedInfo) -> Unit,
-    onUpdateBreed: (ChickenBreedInfo) -> Unit,
-    onDeleteBreed: (ChickenBreedInfo) -> Unit,
+    onSave: (Animal) -> Unit,
+    onInsertBreed: (AnimalBreedInfo) -> Unit,
+    onUpdateBreed: (AnimalBreedInfo) -> Unit,
+    onDeleteBreed: (AnimalBreedInfo) -> Unit,
 ) {
-    val isEditMode = existingChicken != null
-    var name by remember { mutableStateOf(existingChicken?.name ?: "") }
-    var breed by remember { mutableStateOf(existingChicken?.breed ?: "") }
-    var breedQuery by remember { mutableStateOf(existingChicken?.breed ?: "") }
-    var status by remember { mutableStateOf(existingChicken?.status ?: "active") }
-    var notes by remember { mutableStateOf(existingChicken?.notes ?: "") }
-    var dateAcquired by remember { mutableLongStateOf(existingChicken?.dateAcquired ?: System.currentTimeMillis()) }
+    val isEditMode = existingAnimal != null
+    var name by remember { mutableStateOf(existingAnimal?.name ?: "") }
+    var breed by remember { mutableStateOf(existingAnimal?.breed ?: "") }
+    var breedQuery by remember { mutableStateOf(existingAnimal?.breed ?: "") }
+    var status by remember { mutableStateOf(existingAnimal?.status ?: "active") }
+    var notes by remember { mutableStateOf(existingAnimal?.notes ?: "") }
+    var dateAcquired by remember { mutableLongStateOf(existingAnimal?.acquisitionDate ?: System.currentTimeMillis()) }
     var showAddCustomBreed by remember { mutableStateOf(false) }
     var customBreedInitialName by remember { mutableStateOf("") }
-    var breedToEdit by remember { mutableStateOf<ChickenBreedInfo?>(null) }
-    var breedToDelete by remember { mutableStateOf<ChickenBreedInfo?>(null) }
+    var breedToEdit by remember { mutableStateOf<AnimalBreedInfo?>(null) }
+    var breedToDelete by remember { mutableStateOf<AnimalBreedInfo?>(null) }
 
     val filteredBreeds = remember(breeds, breedQuery, zoneGroup) {
         val query = breedQuery.lowercase()
         breeds
             .filter { query.isEmpty() || it.name.lowercase().contains(query) }
             .sortedWith(
-                compareBy<ChickenBreedInfo> { b ->
+                compareBy<AnimalBreedInfo> { b ->
                     when (climateBadgeFor(b, zoneGroup)) {
                         ClimateBadge.GREAT -> 0
                         ClimateBadge.MANAGEABLE -> 1
@@ -599,11 +600,12 @@ private fun AddChickenSheet(
         onConfirm = {
             if (breed.isNotBlank()) {
                 onSave(
-                    Chicken(
-                        id = existingChicken?.id ?: 0,
+                    Animal(
+                        id = existingAnimal?.id ?: 0,
+                        species = "chicken",
                         name = name.ifBlank { null },
                         breed = breed.trim(),
-                        dateAcquired = dateAcquired,
+                        acquisitionDate = dateAcquired,
                         status = status,
                         notes = notes.ifBlank { null },
                     ),
@@ -649,15 +651,16 @@ private fun AddChickenSheet(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(b.name, style = MaterialTheme.typography.bodyLarge)
-                            if (b.eggsPerYear > 0) {
+                            val eggs = b.eggsPerYear ?: 0
+                            if (eggs > 0) {
                                 Text(
-                                    "${b.eggsPerYear} eggs/yr",
+                                    "$eggs eggs/yr",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = TextTertiary,
                                 )
                             } else {
                                 Text(
-                                    b.purpose.replaceFirstChar { it.uppercase() },
+                                    (b.purpose ?: "").replaceFirstChar { it.uppercase() },
                                     style = MaterialTheme.typography.labelSmall,
                                     color = TextTertiary,
                                 )
@@ -728,10 +731,10 @@ private fun AddChickenSheet(
 
 @Composable
 private fun AddCustomBreedSheet(
-    existingBreed: ChickenBreedInfo?,
+    existingBreed: AnimalBreedInfo?,
     initialName: String,
     onDismiss: () -> Unit,
-    onSave: (ChickenBreedInfo) -> Unit,
+    onSave: (AnimalBreedInfo) -> Unit,
 ) {
     var breedName by remember { mutableStateOf(existingBreed?.name ?: initialName) }
     var eggsPerYear by remember { mutableStateOf(existingBreed?.eggsPerYear?.toString() ?: "250") }
@@ -744,7 +747,7 @@ private fun AddCustomBreedSheet(
     var heatTolerance by remember { mutableStateOf(existingBreed?.heatTolerance?.toString() ?: "3") }
     var coldTolerance by remember { mutableStateOf(existingBreed?.coldTolerance?.toString() ?: "3") }
     var broodiness by remember { mutableStateOf(existingBreed?.broodiness ?: "low") }
-    var climateNotes by remember { mutableStateOf(existingBreed?.climateNotes ?: "") }
+    var climateNotes by remember { mutableStateOf(existingBreed?.notes ?: "") }
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
         unfocusedContainerColor = Charcoal,
@@ -767,8 +770,9 @@ private fun AddCustomBreedSheet(
         onConfirm = {
             if (breedName.isNotBlank()) {
                 onSave(
-                    ChickenBreedInfo(
+                    AnimalBreedInfo(
                         id = existingBreed?.id ?: 0,
+                        species = "chicken",
                         name = breedName.trim(),
                         eggsPerYear = eggsPerYear.toIntOrNull() ?: 250,
                         eggColor = eggColor,
@@ -780,7 +784,7 @@ private fun AddCustomBreedSheet(
                         heatTolerance = heatTolerance.toIntOrNull() ?: 3,
                         coldTolerance = coldTolerance.toIntOrNull() ?: 3,
                         broodiness = broodiness,
-                        climateNotes = climateNotes.ifBlank { null },
+                        notes = climateNotes.ifBlank { null },
                         isCustom = true,
                     ),
                 )
@@ -906,5 +910,3 @@ private fun formatAge(dateAcquiredMillis: Long): String {
 private fun formatDate(millis: Long): String {
     return Instant.ofEpochMilli(millis).atZone(zone).toLocalDate().format(dateFormatter)
 }
-
-

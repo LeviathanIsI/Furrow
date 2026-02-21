@@ -27,6 +27,13 @@ val BeeGlow = AccentMutedGreen
 val PoultryGlow = AccentMutedGreen
 val GardenGlow = AccentMutedGreen
 
+val AnimalsGlow = Color(0xFFB08968)
+val OrchardGlow = Color(0xFF8FA87A)
+val PreservationGlow = Color(0xFFC17E5A)
+val LandGlow = Color(0xFF7A8E6E)
+val FinanceGlow = Color(0xFF8E9E7A)
+val ComplianceGlow = Color(0xFF7A8B9E)
+
 val StatusGood = AccentMutedGreen
 val StatusWarn = Color(0xFFC19A57)
 val StatusBad = Color(0xFFCA6C67)

@@ -146,14 +146,14 @@ class HomeViewModel @Inject constructor(
         poultryRepository.getEggCountForDateRange(weekStart, todayEndMillis),
         poultryRepository.getEggCountForDateRange(lastWeekStart, lastWeekEnd),
         combine(
-            poultryRepository.getActiveChickens(),
+            poultryRepository.getActiveAnimals(),
             poultryRepository.getAllBreeds().map { breeds -> breeds.associateBy { it.name } },
-        ) { chickens, breedMap ->
-            val expectedWeekly = chickens.sumOf { chicken ->
-                val breed = breedMap[chicken.breed]
+        ) { animals, breedMap ->
+            val expectedWeekly = animals.sumOf { animal ->
+                val breed = breedMap[animal.breed]
                 (breed?.eggsPerYear ?: 0) / 52.0
             }
-            Triple(chickens.size, expectedWeekly, chickens)
+            Triple(animals.size, expectedWeekly, animals)
         },
     ) { yesterday, todayEggs, thisWeek, lastWeek, (birds, expectedWeekly, _) ->
         val avg = thisWeek / 7.0

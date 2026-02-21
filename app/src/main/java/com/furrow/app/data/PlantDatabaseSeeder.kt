@@ -18,6 +18,7 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
         seedExpandedPlants(db)
         PlantGrowingDataSeeder.seedGrowingData(db)
         seedBreedInfo(db)
+        AnimalBreedInfoSeeder.seedBreeds(db)
         seedBeeRaceInfo(db)
         val naCatalogStats = NACatalogImporter.seed(db)
         println(
@@ -26,6 +27,21 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
                 "bees inserted=${naCatalogStats.bees.inserted}, matched=${naCatalogStats.bees.matched}; " +
                 "plants inserted=${naCatalogStats.plants.inserted}, matched=${naCatalogStats.plants.matched}",
         )
+        seedModulePreferences(db)
+    }
+
+    private fun seedModulePreferences(db: SupportSQLiteDatabase) {
+        com.furrow.app.data.FurrowModule.entries.forEach { module ->
+            db.execSQL(
+                """INSERT OR IGNORE INTO user_module_preferences (module_name, enabled, display_order)
+                   VALUES (?, ?, ?)""",
+                arrayOf<Any?>(
+                    module.key,
+                    if (module.enabledByDefault) 1 else 0,
+                    module.displayOrder,
+                ),
+            )
+        }
     }
 
     // ── Zone group constants ──
@@ -1910,9 +1926,9 @@ object PlantDatabaseSeeder : RoomDatabase.Callback() {
         heat: Int, cold: Int, broodiness: String, climateNotes: String? = null,
     ) {
         db.execSQL(
-            """INSERT INTO chicken_breed_info (name, eggsPerYear, eggColor, eggSize, weight, purpose,
-               temperament, combType, heatTolerance, coldTolerance, broodiness, climateNotes, isCustom)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)""",
+            """INSERT INTO animal_breed_info (species, name, eggs_per_year, egg_color, egg_size, weight, purpose,
+               temperament, comb_type, heat_tolerance, cold_tolerance, broodiness, notes, is_custom)
+               VALUES ('chicken',?,?,?,?,?,?,?,?,?,?,?,?,0)""",
             arrayOf<Any?>(
                 name, eggsPerYear, eggColor, eggSize, weight, purpose,
                 temperament, combType, heat, cold, broodiness, climateNotes,

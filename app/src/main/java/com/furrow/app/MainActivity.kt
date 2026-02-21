@@ -26,7 +26,8 @@ import com.furrow.app.ui.MainViewModel
 import com.furrow.app.ui.components.AppBottomNav
 import com.furrow.app.ui.components.AppNavItem
 import com.furrow.app.ui.navigation.FurrowNavGraph
-import com.furrow.app.ui.navigation.bottomNavScreens
+import com.furrow.app.ui.navigation.Screen
+import com.furrow.app.ui.navigation.buildBottomNavScreens
 import com.furrow.app.ui.onboarding.OnboardingScreen
 import com.furrow.app.ui.theme.FurrowTheme
 import com.furrow.app.util.NotificationPermissionScreen
@@ -90,7 +91,7 @@ fun FurrowApp(mainViewModel: MainViewModel) {
                         onSkipClick = { mainViewModel.onNotificationPromptDone() },
                     )
                 } else {
-                    MainContent()
+                    MainContent(mainViewModel = mainViewModel)
                 }
             }
         }
@@ -98,15 +99,21 @@ fun FurrowApp(mainViewModel: MainViewModel) {
 }
 
 @Composable
-private fun MainContent() {
+private fun MainContent(mainViewModel: MainViewModel) {
     val navController = rememberNavController()
+    val enabledModulesOrdered by mainViewModel.enabledModulesOrdered.collectAsState()
+    val enabledModuleKeys by mainViewModel.enabledModuleKeys.collectAsState()
+
+    val bottomNavScreens = remember(enabledModulesOrdered) {
+        buildBottomNavScreens(enabledModulesOrdered)
+    }
 
     androidx.compose.material3.Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            val showBottomNav = currentRoute in bottomNavScreens.map { it.route }
+            val showBottomNav = currentRoute in Screen.bottomNavRoutes
             if (showBottomNav) {
                 val items = bottomNavScreens.map {
                     AppNavItem(
@@ -135,6 +142,7 @@ private fun MainContent() {
         FurrowNavGraph(
             navController = navController,
             modifier = Modifier.padding(innerPadding),
+            enabledModules = enabledModuleKeys,
         )
     }
 }

@@ -255,7 +255,7 @@ private fun AddBedSheet(
             )
             DropdownSelector(
                 label = "Type",
-                options = listOf("raised bed", "grow bag", "in-ground", "container"),
+                options = listOf("raised bed", "grow bag", "in-ground", "container", "mixed"),
                 selected = type,
                 onSelect = { type = it },
                 accentColor = GardenGlow,

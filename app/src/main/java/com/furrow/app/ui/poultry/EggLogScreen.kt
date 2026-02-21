@@ -78,7 +78,7 @@ fun EggLogScreen(
     var countInitialized by remember { mutableStateOf(false) }
     val view = LocalView.current
 
-    val chickens by viewModel.activeChickens.collectAsState()
+    val animals by viewModel.activeAnimals.collectAsState()
 
     if (isEditMode) {
         val existingEggLog by viewModel.getEggLogById(editId).collectAsState(initial = null)
@@ -93,9 +93,9 @@ fun EggLogScreen(
         }
     }
 
-    LaunchedEffect(chickens) {
-        if (!countInitialized && chickens.isNotEmpty()) {
-            count = chickens.size
+    LaunchedEffect(animals) {
+        if (!countInitialized && animals.isNotEmpty()) {
+            count = animals.size
             countInitialized = true
         }
     }

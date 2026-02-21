@@ -35,7 +35,7 @@ object NACatalogImporter {
         items: JSONArray,
         stats: CatalogCategoryStats,
     ) {
-        val existingNames = readNormalizedNameSet(db, "chicken_breed_info", "name")
+        val existingNames = readNormalizedNameSet(db, "animal_breed_info", "name", "species = 'chicken'")
         val seen = mutableSetOf<String>()
 
         for (i in 0 until items.length()) {
@@ -71,17 +71,17 @@ object NACatalogImporter {
                 else -> 120
             }
 
-            val climateNotes = composeNotes(scientific, tags, notes)
+            val combinedNotes = composeNotes(scientific, tags, notes)
             val weight = if (sizeClass.equals("bantam", ignoreCase = true)) "2 lb" else "6 lb"
             val broodiness = if (purposeContains(primaryPurpose, "broody")) "high" else "moderate"
             val heatTolerance = if (tags.any { it.equals("commercial", ignoreCase = true) }) 4 else 3
             val coldTolerance = if (tags.any { it.equals("heritage", ignoreCase = true) }) 4 else 3
 
             db.execSQL(
-                """INSERT INTO chicken_breed_info
-                   (name, eggsPerYear, eggColor, eggSize, weight, purpose, temperament,
-                    combType, heatTolerance, coldTolerance, broodiness, climateNotes, isCustom)
-                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)""",
+                """INSERT INTO animal_breed_info
+                   (species, name, eggs_per_year, egg_color, egg_size, weight, purpose, temperament,
+                    comb_type, heat_tolerance, cold_tolerance, broodiness, notes, is_custom)
+                   VALUES ('chicken',?,?,?,?,?,?,?,?,?,?,?,?,0)""",
                 arrayOf<Any?>(
                     commonName,
                     eggsPerYear,
@@ -94,7 +94,7 @@ object NACatalogImporter {
                     heatTolerance,
                     coldTolerance,
                     broodiness,
-                    climateNotes,
+                    combinedNotes,
                 ),
             )
 
@@ -255,9 +255,11 @@ object NACatalogImporter {
         db: SupportSQLiteDatabase,
         table: String,
         nameColumn: String,
+        whereClause: String? = null,
     ): MutableSet<String> {
         val out = mutableSetOf<String>()
-        db.query("SELECT $nameColumn FROM $table").use { cursor ->
+        val sql = if (whereClause != null) "SELECT $nameColumn FROM $table WHERE $whereClause" else "SELECT $nameColumn FROM $table"
+        db.query(sql).use { cursor ->
             while (cursor.moveToNext()) {
                 val value = cursor.getString(0) ?: continue
                 val normalized = normalize(value)
