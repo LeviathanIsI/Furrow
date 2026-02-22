@@ -8,19 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Animal
+import com.furrow.app.data.local.entity.AnimalBreedInfo
 import com.furrow.app.data.local.entity.BreedingRecord
 import com.furrow.app.data.local.entity.FeedLog
 import com.furrow.app.data.local.entity.HealthRecord
@@ -46,6 +41,7 @@ import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.theme.AnimalsGlow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
@@ -158,11 +154,15 @@ private fun AnimalForm(
     modifier: Modifier = Modifier,
 ) {
     var name by remember { mutableStateOf("") }
+    var speciesQuery by remember { mutableStateOf("") }
     var species by remember { mutableStateOf("") }
+    var breedQuery by remember { mutableStateOf("") }
     var breed by remember { mutableStateOf("") }
-    var sex by remember { mutableStateOf("unknown") }
+    var sexQuery by remember { mutableStateOf("Unknown") }
+    var sex by remember { mutableStateOf("Unknown") }
     var tagId by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf("active") }
+    var statusQuery by remember { mutableStateOf("Active") }
+    var status by remember { mutableStateOf("Active") }
     var dob by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var useDob by remember { mutableStateOf(false) }
     var acquisitionDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -175,10 +175,14 @@ private fun AnimalForm(
             existing?.let {
                 name = it.name ?: ""
                 species = it.species
+                speciesQuery = it.species.replaceFirstChar { c -> c.uppercase() }
                 breed = it.breed
-                sex = it.sex
+                breedQuery = it.breed
+                sex = it.sex.replaceFirstChar { c -> c.uppercase() }
+                sexQuery = it.sex.replaceFirstChar { c -> c.uppercase() }
                 tagId = it.tagId ?: ""
-                status = it.status
+                status = it.status.replaceFirstChar { c -> c.uppercase() }
+                statusQuery = it.status.replaceFirstChar { c -> c.uppercase() }
                 if (it.dob != null) {
                     dob = it.dob
                     useDob = true
@@ -197,6 +201,8 @@ private fun AnimalForm(
             .padding(horizontal = AppSpacing.md),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
+        val breeds by viewModel.getBreedsForSpecies(species).collectAsState(initial = emptyList())
+
         Spacer(modifier = Modifier.height(AppSpacing.xs))
 
         InputField(
@@ -207,26 +213,61 @@ private fun AnimalForm(
             accentColor = AnimalsGlow,
         )
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = speciesQuery,
+            onQueryChange = { speciesQuery = it },
+            items = ModuleCatalogData.SPECIES.filter {
+                it.contains(speciesQuery, ignoreCase = true)
+            },
+            onItemSelected = {
+                species = it.trim().lowercase()
+                speciesQuery = it
+                breedQuery = ""
+                breed = ""
+            },
             label = "Species *",
-            options = ModuleCatalogData.SPECIES,
-            selected = species,
-            onSelect = { species = it },
-        )
-
-        InputField(
-            value = breed,
-            onValueChange = { breed = it },
-            label = { Text("Breed") },
-            singleLine = true,
+            nameSelector = { it },
             accentColor = AnimalsGlow,
+            onAddCustom = {
+                species = it.trim().lowercase()
+                speciesQuery = it.replaceFirstChar { c -> c.uppercase() }
+                breedQuery = ""
+                breed = ""
+            },
         )
 
-        SimpleDropdown(
+        SearchableSelector<AnimalBreedInfo>(
+            query = breedQuery,
+            onQueryChange = { breedQuery = it },
+            items = breeds.filter {
+                it.name.contains(breedQuery, ignoreCase = true)
+            },
+            onItemSelected = {
+                breed = it.name
+                breedQuery = it.name
+            },
+            label = "Breed",
+            nameSelector = { it.name },
+            accentColor = AnimalsGlow,
+            onAddCustom = {
+                breed = it.trim()
+                breedQuery = it.trim()
+            },
+        )
+
+        SearchableSelector(
+            query = sexQuery,
+            onQueryChange = { sexQuery = it },
+            items = listOf("Male", "Female", "Unknown").filter {
+                it.contains(sexQuery, ignoreCase = true)
+            },
+            onItemSelected = {
+                sex = it
+                sexQuery = it
+            },
             label = "Sex",
-            options = listOf("male", "female", "unknown"),
-            selected = sex,
-            onSelect = { sex = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
         )
 
         InputField(
@@ -237,11 +278,19 @@ private fun AnimalForm(
             accentColor = AnimalsGlow,
         )
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = statusQuery,
+            onQueryChange = { statusQuery = it },
+            items = listOf("Active", "Sold", "Deceased", "Culled").filter {
+                it.contains(statusQuery, ignoreCase = true)
+            },
+            onItemSelected = {
+                status = it
+                statusQuery = it
+            },
             label = "Status",
-            options = listOf("active", "sold", "deceased", "culled"),
-            selected = status,
-            onSelect = { status = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
         )
 
         if (useDob || isEditMode) {
@@ -365,11 +414,17 @@ private fun HealthForm(
     ) {
         Spacer(modifier = Modifier.height(AppSpacing.xs))
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = recordType,
+            onQueryChange = { recordType = it },
+            items = ModuleCatalogData.HEALTH_RECORD_TYPES.filter {
+                it.contains(recordType, ignoreCase = true)
+            },
+            onItemSelected = { recordType = it },
             label = "Type *",
-            options = ModuleCatalogData.HEALTH_RECORD_TYPES,
-            selected = recordType,
-            onSelect = { recordType = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
+            onAddCustom = { recordType = it },
         )
 
         DateFieldWithToggle(
@@ -396,11 +451,17 @@ private fun HealthForm(
             accentColor = AnimalsGlow,
         )
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = route,
+            onQueryChange = { route = it },
+            items = ModuleCatalogData.ADMINISTRATION_ROUTES.filter {
+                it.contains(route, ignoreCase = true)
+            },
+            onItemSelected = { route = it },
             label = "Route",
-            options = ModuleCatalogData.ADMINISTRATION_ROUTES,
-            selected = route,
-            onSelect = { route = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
+            onAddCustom = { route = it },
         )
 
         InputField(
@@ -532,11 +593,17 @@ private fun BreedingForm(
             accentColor = AnimalsGlow,
         )
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = method,
+            onQueryChange = { method = it },
+            items = ModuleCatalogData.BREEDING_METHODS.filter {
+                it.contains(method, ignoreCase = true)
+            },
+            onItemSelected = { method = it },
             label = "Method",
-            options = ModuleCatalogData.BREEDING_METHODS,
-            selected = method,
-            onSelect = { method = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
+            onAddCustom = { method = it },
         )
 
         DateFieldWithToggle(
@@ -700,11 +767,17 @@ private fun FeedForm(
             accentColor = AnimalsGlow,
         )
 
-        SimpleDropdown(
+        SearchableSelector(
+            query = feedType,
+            onQueryChange = { feedType = it },
+            items = ModuleCatalogData.FEED_TYPES.filter {
+                it.contains(feedType, ignoreCase = true)
+            },
+            onItemSelected = { feedType = it },
             label = "Feed Type",
-            options = ModuleCatalogData.FEED_TYPES,
-            selected = feedType,
-            onSelect = { feedType = it },
+            nameSelector = { it },
+            accentColor = AnimalsGlow,
+            onAddCustom = { feedType = it },
         )
 
         InputField(
@@ -768,47 +841,3 @@ private fun FeedForm(
     }
 }
 
-// ── Simple Dropdown ──────────────────────────────────────────────────────────
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SimpleDropdown(
-    label: String,
-    options: List<String>,
-    selected: String,
-    onSelect: (String) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-        OutlinedTextField(
-            value = selected.replaceFirstChar { it.uppercase() },
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
-                .fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Charcoal,
-                focusedContainerColor = Charcoal,
-                unfocusedBorderColor = BorderSubtle,
-                focusedBorderColor = AnimalsGlow,
-                unfocusedLabelColor = TextTertiary,
-                focusedLabelColor = AnimalsGlow,
-                cursorColor = AnimalsGlow,
-                unfocusedTextColor = TextPrimary,
-                focusedTextColor = TextPrimary,
-            ),
-            shape = RoundedCornerShape(8.dp),
-        )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option.replaceFirstChar { it.uppercase() }) },
-                    onClick = { onSelect(option); expanded = false },
-                )
-            }
-        }
-    }
-}

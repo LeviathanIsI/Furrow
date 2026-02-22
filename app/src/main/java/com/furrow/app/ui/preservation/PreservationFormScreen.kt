@@ -33,12 +33,12 @@ import com.furrow.app.data.local.entity.FreezingBatch
 import com.furrow.app.data.local.entity.PantryItem
 import com.furrow.app.data.local.entity.SmokingCuringBatch
 import com.furrow.app.data.ModuleCatalogData
-import com.furrow.app.ui.bees.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.PreservationGlow
@@ -74,7 +74,7 @@ private fun CanningForm(
     viewModel: PreservationViewModel,
 ) {
     var recipeName by remember { mutableStateOf("") }
-    var method by remember { mutableStateOf("water bath") }
+    var method by remember { mutableStateOf("Water Bath") }
     var jarSize by remember { mutableStateOf("") }
     var jarCount by remember { mutableStateOf("") }
     var dateProcessed by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -86,7 +86,7 @@ private fun CanningForm(
         LaunchedEffect(existing) {
             existing?.let {
                 recipeName = it.recipeName
-                method = it.method ?: "water bath"
+                method = it.method ?: "Water Bath"
                 jarSize = it.jarSize ?: ""
                 jarCount = it.jarCount?.toString() ?: ""
                 dateProcessed = it.dateProcessed
@@ -107,20 +107,30 @@ private fun CanningForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = method,
+            onQueryChange = { method = it },
+            items = ModuleCatalogData.CANNING_METHODS.filter {
+                it.contains(method, ignoreCase = true)
+            },
+            onItemSelected = { method = it },
             label = "Method",
-            options = ModuleCatalogData.CANNING_METHODS,
-            selected = method,
-            onSelect = { method = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { method = it },
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = jarSize,
+            onQueryChange = { jarSize = it },
+            items = ModuleCatalogData.JAR_SIZES.filter {
+                it.contains(jarSize, ignoreCase = true)
+            },
+            onItemSelected = { jarSize = it },
             label = "Jar Size",
-            options = ModuleCatalogData.JAR_SIZES,
-            selected = jarSize,
-            onSelect = { jarSize = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { jarSize = it },
         )
 
         InputField(
@@ -139,12 +149,17 @@ private fun CanningForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = storageLocation,
+            onQueryChange = { storageLocation = it },
+            items = ModuleCatalogData.STORAGE_LOCATIONS.filter {
+                it.contains(storageLocation, ignoreCase = true)
+            },
+            onItemSelected = { storageLocation = it },
             label = "Storage Location",
-            options = ModuleCatalogData.STORAGE_LOCATIONS,
-            selected = storageLocation,
-            onSelect = { storageLocation = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { storageLocation = it },
         )
 
         InputField(
@@ -350,20 +365,30 @@ private fun FermentingForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = method,
+            onQueryChange = { method = it },
+            items = ModuleCatalogData.FERMENTATION_METHODS.filter {
+                it.contains(method, ignoreCase = true)
+            },
+            onItemSelected = { method = it },
             label = "Method",
-            options = ModuleCatalogData.FERMENTATION_METHODS,
-            selected = method,
-            onSelect = { method = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { method = it },
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = vesselType,
+            onQueryChange = { vesselType = it },
+            items = ModuleCatalogData.VESSEL_TYPES.filter {
+                it.contains(vesselType, ignoreCase = true)
+            },
+            onItemSelected = { vesselType = it },
             label = "Vessel Type",
-            options = ModuleCatalogData.VESSEL_TYPES,
-            selected = vesselType,
-            onSelect = { vesselType = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { vesselType = it },
         )
 
         DateFieldWithToggle(
@@ -471,12 +496,17 @@ private fun FreezingForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = packagingMethod,
+            onQueryChange = { packagingMethod = it },
+            items = ModuleCatalogData.PACKAGING_METHODS.filter {
+                it.contains(packagingMethod, ignoreCase = true)
+            },
+            onItemSelected = { packagingMethod = it },
             label = "Packaging Method",
-            options = ModuleCatalogData.PACKAGING_METHODS,
-            selected = packagingMethod,
-            onSelect = { packagingMethod = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { packagingMethod = it },
         )
 
         ToggleRow(
@@ -564,12 +594,17 @@ private fun SmokingForm(
     val title = if (isEditMode) "Edit Smoking Batch" else "Add Smoking Batch"
 
     FormScaffold(title = title, onBack = onBack) {
-        InputField(
-            value = meatType,
-            onValueChange = { meatType = it },
-            label = { Text("Meat Type") },
-            singleLine = true,
+        SearchableSelector(
+            query = meatType,
+            onQueryChange = { meatType = it },
+            items = ModuleCatalogData.MEAT_TYPES.filter {
+                it.contains(meatType, ignoreCase = true)
+            },
+            onItemSelected = { meatType = it },
+            label = "Meat Type",
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { meatType = it },
         )
 
         InputField(
@@ -588,20 +623,30 @@ private fun SmokingForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = cureType,
+            onQueryChange = { cureType = it },
+            items = ModuleCatalogData.CURE_TYPES.filter {
+                it.contains(cureType, ignoreCase = true)
+            },
+            onItemSelected = { cureType = it },
             label = "Cure Type",
-            options = ModuleCatalogData.CURE_TYPES,
-            selected = cureType,
-            onSelect = { cureType = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { cureType = it },
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = method,
+            onQueryChange = { method = it },
+            items = ModuleCatalogData.SMOKING_METHODS.filter {
+                it.contains(method, ignoreCase = true)
+            },
+            onItemSelected = { method = it },
             label = "Method",
-            options = ModuleCatalogData.SMOKING_METHODS,
-            selected = method,
-            onSelect = { method = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { method = it },
         )
 
         DateFieldWithToggle(
@@ -612,12 +657,17 @@ private fun SmokingForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = smokeWood,
+            onQueryChange = { smokeWood = it },
+            items = ModuleCatalogData.SMOKE_WOODS.filter {
+                it.contains(smokeWood, ignoreCase = true)
+            },
+            onItemSelected = { smokeWood = it },
             label = "Smoke Wood",
-            options = ModuleCatalogData.SMOKE_WOODS,
-            selected = smokeWood,
-            onSelect = { smokeWood = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { smokeWood = it },
         )
 
         InputField(
@@ -673,7 +723,7 @@ private fun PantryForm(
     var hasDateProduced by remember { mutableStateOf(true) }
     var expirationDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var hasExpirationDate by remember { mutableStateOf(false) }
-    var status by remember { mutableStateOf("in_stock") }
+    var status by remember { mutableStateOf("In Stock") }
 
     if (isEditMode) {
         val existing by viewModel.getPantryItemById(editId).collectAsState(initial = null)
@@ -712,12 +762,17 @@ private fun PantryForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = category,
+            onQueryChange = { category = it },
+            items = ModuleCatalogData.PANTRY_CATEGORIES.filter {
+                it.contains(category, ignoreCase = true)
+            },
+            onItemSelected = { category = it },
             label = "Category",
-            options = ModuleCatalogData.PANTRY_CATEGORIES,
-            selected = category,
-            onSelect = { category = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { category = it },
         )
 
         InputField(
@@ -728,20 +783,30 @@ private fun PantryForm(
             accentColor = PreservationGlow,
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = unit,
+            onQueryChange = { unit = it },
+            items = ModuleCatalogData.PANTRY_UNITS.filter {
+                it.contains(unit, ignoreCase = true)
+            },
+            onItemSelected = { unit = it },
             label = "Unit",
-            options = ModuleCatalogData.PANTRY_UNITS,
-            selected = unit,
-            onSelect = { unit = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { unit = it },
         )
 
-        DropdownSelector(
+        SearchableSelector(
+            query = storageLocation,
+            onQueryChange = { storageLocation = it },
+            items = ModuleCatalogData.STORAGE_LOCATIONS.filter {
+                it.contains(storageLocation, ignoreCase = true)
+            },
+            onItemSelected = { storageLocation = it },
             label = "Storage Location",
-            options = ModuleCatalogData.STORAGE_LOCATIONS,
-            selected = storageLocation,
-            onSelect = { storageLocation = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { storageLocation = it },
         )
 
         ToggleRow(
@@ -783,12 +848,17 @@ private fun PantryForm(
             )
         }
 
-        DropdownSelector(
+        SearchableSelector(
+            query = status,
+            onQueryChange = { status = it },
+            items = ModuleCatalogData.PANTRY_STATUSES.filter {
+                it.contains(status, ignoreCase = true)
+            },
+            onItemSelected = { status = it },
             label = "Status",
-            options = listOf("in_stock", "consumed", "expired", "donated"),
-            selected = status,
-            onSelect = { status = it },
+            nameSelector = { it },
             accentColor = PreservationGlow,
+            onAddCustom = { status = it },
         )
 
         Spacer(modifier = Modifier.height(AppSpacing.xs))

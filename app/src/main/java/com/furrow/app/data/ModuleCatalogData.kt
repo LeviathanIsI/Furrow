@@ -11,28 +11,28 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val SPECIES = listOf(
-        "chicken", "duck", "turkey", "goose", "quail",
-        "goat", "sheep", "pig", "cow", "rabbit",
-        "horse", "alpaca", "llama", "donkey",
+        "Chicken", "Duck", "Turkey", "Goose", "Quail",
+        "Goat", "Sheep", "Pig", "Cow", "Rabbit",
+        "Horse", "Alpaca", "Llama", "Donkey",
     )
 
     val HEALTH_RECORD_TYPES = listOf(
-        "vaccination", "deworming", "antibiotic", "anti-inflammatory",
-        "vitamin/mineral", "injury", "illness", "hoof care", "dental",
-        "reproductive exam", "other",
+        "Vaccination", "Deworming", "Antibiotic", "Anti-Inflammatory",
+        "Vitamin/Mineral", "Injury", "Illness", "Hoof Care", "Dental",
+        "Reproductive Exam", "Other",
     )
 
     val ADMINISTRATION_ROUTES = listOf(
-        "oral", "SQ", "IM", "topical", "intramammary", "pour-on", "other",
+        "Oral", "SQ", "IM", "Topical", "Intramammary", "Pour-On", "Other",
     )
 
     val BREEDING_METHODS = listOf(
-        "natural", "AI", "embryo transfer", "other",
+        "Natural", "AI", "Embryo Transfer", "Other",
     )
 
     val FEED_TYPES = listOf(
-        "hay", "grain", "pellet", "mineral", "supplement",
-        "pasture", "silage", "browse", "other",
+        "Hay", "Grain", "Pellet", "Mineral", "Supplement",
+        "Pasture", "Silage", "Browse", "Other",
     )
 
     // ═══════════════════════════════════════════════════════════════
@@ -40,29 +40,29 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val ORCHARD_CATEGORIES = listOf(
-        "pome fruit", "stone fruit", "vine", "bramble",
-        "berry", "tree nut", "warm climate",
+        "Pome Fruit", "Stone Fruit", "Vine", "Bramble",
+        "Berry", "Tree Nut", "Warm Climate",
     )
 
     val PRUNING_TYPES = listOf(
-        "dormant", "summer", "training", "renewal", "thinning", "corrective",
+        "Dormant", "Summer", "Training", "Renewal", "Thinning", "Corrective",
     )
 
     val PRUNING_METHODS = listOf(
-        "hand pruners", "loppers", "pruning saw", "hedge shears", "mechanical",
+        "Hand Pruners", "Loppers", "Pruning Saw", "Hedge Shears", "Mechanical",
     )
 
     val SPRAY_TIMINGS = listOf(
-        "dormant", "delayed dormant", "green tip", "pink", "bloom",
-        "petal fall", "cover spray", "pre-harvest", "post-harvest",
+        "Dormant", "Delayed Dormant", "Green Tip", "Pink", "Bloom",
+        "Petal Fall", "Cover Spray", "Pre-Harvest", "Post-Harvest",
     )
 
     val FRUIT_QUALITIES = listOf(
-        "excellent", "good", "fair", "poor",
+        "Excellent", "Good", "Fair", "Poor",
     )
 
     val GRAFT_TYPES = listOf(
-        "whip and tongue", "cleft", "bark", "bud", "bridge", "side veneer",
+        "Whip and Tongue", "Cleft", "Bark", "Bud", "Bridge", "Side Veneer",
     )
 
     // ═══════════════════════════════════════════════════════════════
@@ -70,48 +70,137 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val CANNING_METHODS = listOf(
-        "water bath", "pressure", "steam",
+        "Water Bath", "Pressure Canner", "Steam Canner",
     )
 
     val JAR_SIZES = listOf(
-        "4 oz", "half-pint", "pint", "quart", "half-gallon",
+        "4 Oz (Quarter Pint)",
+        "8 Oz (Half Pint)",
+        "8 Oz (Half Pint, Wide Mouth)",
+        "12 Oz (Three-Quarter Pint)",
+        "16 Oz (Pint, Regular Mouth)",
+        "16 Oz (Pint, Wide Mouth)",
+        "24 Oz (Pint and a Half)",
+        "32 Oz (Quart, Regular Mouth)",
+        "32 Oz (Quart, Wide Mouth)",
+        "64 Oz (Half Gallon)",
     )
 
-    val FERMENTATION_METHODS = listOf(
-        "lacto-ferment", "vinegar pickle", "alcohol", "mixed",
-    )
-
-    val VESSEL_TYPES = listOf(
-        "mason jar", "crock", "airlock jar", "bucket", "carboy",
-    )
-
-    val PACKAGING_METHODS = listOf(
-        "vacuum seal", "freezer bag", "freezer paper", "rigid container", "ice cube tray",
-    )
-
-    val CURE_TYPES = listOf(
-        "dry cure", "wet brine", "equilibrium cure",
-    )
-
-    val SMOKE_WOODS = listOf(
-        "hickory", "mesquite", "apple", "cherry", "oak", "maple", "pecan", "alder",
-    )
-
-    val SMOKING_METHODS = listOf(
-        "hot smoke", "cold smoke", "smoke roast",
-    )
-
-    val PANTRY_CATEGORIES = listOf(
-        "canned goods", "dried goods", "fermented", "frozen",
-        "smoked/cured", "fresh", "condiments", "beverages", "other",
-    )
-
-    val PANTRY_UNITS = listOf(
-        "jar", "can", "bag", "lb", "oz", "each", "quart", "pint", "gallon", "bunch",
+    val CANNING_RECIPE_CATEGORIES = listOf(
+        "Jam", "Jelly", "Preserves", "Marmalade", "Fruit Butter",
+        "Fruit in Syrup", "Pie Filling", "Applesauce",
+        "Pickles (Fermented)", "Pickles (Fresh Pack/Quick)",
+        "Relish", "Chutney", "Salsa",
+        "Tomato Sauce", "Tomatoes (Whole/Crushed/Diced)",
+        "Pasta/Pizza Sauce", "Hot Sauce", "BBQ Sauce", "Ketchup",
+        "Fruit Juice",
+        "Soup (Pressure Only)", "Broth/Stock (Pressure Only)",
+        "Vegetables (Pressure Only)", "Beans (Pressure Only)",
+        "Meat - Raw Pack (Pressure Only)", "Meat - Hot Pack (Pressure Only)",
+        "Poultry (Pressure Only)", "Fish/Seafood (Pressure Only)",
+        "Stew/Chili (Pressure Only)", "Spaghetti Sauce with Meat (Pressure Only)",
     )
 
     val STORAGE_LOCATIONS = listOf(
-        "pantry", "cellar", "refrigerator", "root cellar", "freezer",
+        "Pantry Shelf", "Root Cellar", "Basement Shelf",
+        "Kitchen Cabinet", "Climate-Controlled Closet",
+        "Garage Shelf (Climate-Controlled)", "Dedicated Pantry Room",
+        "Barn/Outbuilding", "Refrigerator", "Freezer",
+    )
+
+    val DEHYDRATING_PRODUCT_CATEGORIES = listOf(
+        "Fruit Leather", "Dried Fruit (Sliced)", "Dried Berries",
+        "Dried Vegetables", "Dried Herbs",
+        "Dried Peppers (Hot)", "Dried Peppers (Sweet)",
+        "Sun-Dried Tomatoes", "Dried Mushrooms",
+        "Dried Garlic", "Dried Onion",
+        "Jerky (Beef)", "Jerky (Poultry)", "Jerky (Venison/Game)",
+        "Dried Citrus Wheels", "Fruit/Vegetable Powder",
+        "Backpacking/Camp Meals", "Pet Treats",
+        "Dried Flowers (Edible)", "Dried Beans/Legumes",
+        "Crackers/Flatbread",
+    )
+
+    val FERMENTATION_METHODS = listOf(
+        "Lacto-Fermentation (Salt Brine)", "Lacto-Fermentation (Dry Salt)",
+        "Vinegar Pickling", "Alcohol Fermentation",
+        "Acetic Acid Fermentation",
+        "Kombucha (1st Ferment)", "Kombucha (2nd Ferment)",
+        "Water Kefir", "Milk Kefir", "Yogurt Culturing", "Cheese Making",
+        "Sourdough", "Tepache", "Mead", "Fruit Wine", "Hard Cider",
+        "Beer/Ale Brewing", "Hot Sauce Fermentation",
+        "Fermented Honey Garlic", "Ginger Bug", "Koji (Aspergillus)",
+    )
+
+    val VESSEL_TYPES = listOf(
+        "Mason Jar", "Mason Jar w/ Airlock Lid",
+        "Open Crock", "Water-Sealed Crock",
+        "Food-Grade Bucket", "Glass Carboy", "PET Carboy",
+        "Wooden Barrel", "Fido-Style Bail Jar",
+        "Continuous Brew Vessel", "SS Conical Fermenter",
+        "Ceramic Kimchi Pot (Onggi)", "Fermentation Weight + Jar",
+    )
+
+    val PACKAGING_METHODS = listOf(
+        "Vacuum Sealed Bag", "Freezer Bag (Ziplock)",
+        "Freezer Paper", "Plastic Wrap + Aluminum Foil",
+        "Mason Jar (Wide Mouth)", "Rigid Plastic Container",
+        "Ice Cube Tray Then Bag", "Silicone Mold Then Bag",
+        "Butcher Paper", "Mylar Bag (Heat Sealed)",
+        "Tray Pack / Flash Freeze", "Cryovac / Shrink Wrap",
+        "Wax-Coated Box",
+    )
+
+    val CURE_TYPES = listOf(
+        "Dry Cure (Rub)", "Wet Cure (Brine)", "Injection Cure",
+        "Combination (Inject + Rub)", "Equilibrium Cure",
+        "No Cure (Fresh Smoke)", "Sugar Cure", "Salt Box Cure",
+    )
+
+    val SMOKING_METHODS = listOf(
+        "Cold Smoke", "Hot Smoke", "Warm Smoke",
+        "Smoke Roast", "Low and Slow BBQ",
+    )
+
+    val SMOKE_WOODS = listOf(
+        "Hickory", "Mesquite", "Oak (Red or White)",
+        "Apple", "Cherry", "Pecan", "Maple", "Alder",
+        "Peach", "Plum", "Mulberry",
+        "Citrus (Orange/Lemon/Grapefruit)", "Grapevine",
+        "Olive", "Walnut", "Whiskey Barrel Chips", "Competition Blend",
+    )
+
+    val MEAT_TYPES = listOf(
+        "Beef - Brisket", "Beef - Chuck Roast", "Beef - Short Ribs", "Beef - Tri-Tip",
+        "Pork - Shoulder/Butt", "Pork - Spare Ribs", "Pork - Baby Back Ribs",
+        "Pork - Belly/Bacon", "Pork - Loin/Tenderloin", "Pork - Ham (Whole Leg)",
+        "Chicken - Whole", "Chicken - Leg Quarters", "Chicken - Wings",
+        "Turkey - Whole", "Turkey - Breast",
+        "Duck - Whole",
+        "Lamb - Leg", "Lamb - Shoulder",
+        "Venison - Roast", "Venison - Jerky",
+        "Wild Hog/Boar", "Goat", "Rabbit",
+        "Fish - Salmon", "Fish - Trout", "Fish - Mullet", "Fish - Snapper/Grouper",
+        "Sausage - Fresh", "Sausage - Cured",
+        "Cheese", "Nuts (Pecans, Almonds)",
+        "Vegetables", "Salt", "Hard-Boiled Eggs",
+    )
+
+    val PANTRY_CATEGORIES = listOf(
+        "Canned Goods", "Dried Goods", "Fermented", "Frozen",
+        "Smoked/Cured", "Fresh", "Condiments", "Beverages",
+        "Baked Goods", "Grains/Flour", "Oils/Vinegars",
+        "Herbs/Spices", "Dairy", "Eggs", "Honey", "Other",
+    )
+
+    val PANTRY_UNITS = listOf(
+        "Jar", "Can", "Bag", "Lb", "Oz", "Kg", "Each",
+        "Quart", "Pint", "Gallon", "Half-Gallon",
+        "Bunch", "Dozen", "Bushel", "Flat",
+    )
+
+    val PANTRY_STATUSES = listOf(
+        "In Stock", "Consumed", "Expired", "Donated",
     )
 
     // ═══════════════════════════════════════════════════════════════
@@ -119,46 +208,46 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val STRUCTURE_TYPES = listOf(
-        "barn", "shed", "coop", "greenhouse", "high tunnel", "cold frame",
-        "pump house", "equipment storage", "workshop", "roadside stand",
-        "root cellar", "smokehouse",
+        "Barn", "Shed", "Coop", "Greenhouse", "High Tunnel", "Cold Frame",
+        "Pump House", "Equipment Storage", "Workshop", "Roadside Stand",
+        "Root Cellar", "Smokehouse",
     )
 
     val FENCE_TYPES = listOf(
-        "woven wire", "electric net", "high-tensile electric", "board",
-        "welded wire", "barbed wire", "chain link", "split rail", "post and rail",
+        "Woven Wire", "Electric Net", "High-Tensile Electric", "Board",
+        "Welded Wire", "Barbed Wire", "Chain Link", "Split Rail", "Post and Rail",
     )
 
     val WATER_SOURCE_TYPES = listOf(
-        "well", "municipal", "pond", "creek", "rain catchment",
-        "cistern", "spring", "irrigation ditch",
+        "Well", "Municipal", "Pond", "Creek", "Rain Catchment",
+        "Cistern", "Spring", "Irrigation Ditch",
     )
 
     val PUMP_TYPES = listOf(
-        "submersible", "jet", "solar", "hand", "none",
+        "Submersible", "Jet", "Solar", "Hand", "None",
     )
 
     val COMPOST_TYPES = listOf(
-        "hot", "cold", "vermicompost", "bokashi", "sheet/lasagna", "tumbler",
+        "Hot", "Cold", "Vermicompost", "Bokashi", "Sheet/Lasagna", "Tumbler",
     )
 
     val COMPOST_STAGES = listOf(
-        "fresh", "active", "curing", "finished",
+        "Fresh", "Active", "Curing", "Finished",
     )
 
     val SOIL_TEXTURES = listOf(
-        "sand", "loamy sand", "sandy loam", "loam", "silt loam", "silt",
-        "sandy clay loam", "clay loam", "silty clay loam",
-        "sandy clay", "silty clay", "clay",
+        "Sand", "Loamy Sand", "Sandy Loam", "Loam", "Silt Loam", "Silt",
+        "Sandy Clay Loam", "Clay Loam", "Silty Clay Loam",
+        "Sandy Clay", "Silty Clay", "Clay",
     )
 
     val FORAGE_TYPES = listOf(
-        "grass", "legume", "mixed", "browse", "annual",
+        "Grass", "Legume", "Mixed", "Browse", "Annual",
     )
 
     val ZONING_TYPES = listOf(
-        "agricultural", "residential", "rural", "commercial",
-        "mixed use", "conservation", "other",
+        "Agricultural", "Residential", "Rural", "Commercial",
+        "Mixed Use", "Conservation", "Other",
     )
 
     // ═══════════════════════════════════════════════════════════════
@@ -166,36 +255,36 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val EXPENSE_CATEGORIES = listOf(
-        "seeds & plants", "feed", "fertilizer & lime", "machine hire",
-        "repairs & maintenance", "supplies", "utilities",
-        "veterinary & medicine", "fuel & oil", "labor", "insurance",
-        "rent & lease", "taxes", "interest", "depreciation",
-        "storage & warehousing", "marketing", "custom hire",
-        "freight & trucking", "other",
+        "Seeds & Plants", "Feed", "Fertilizer & Lime", "Machine Hire",
+        "Repairs & Maintenance", "Supplies", "Utilities",
+        "Veterinary & Medicine", "Fuel & Oil", "Labor", "Insurance",
+        "Rent & Lease", "Taxes", "Interest", "Depreciation",
+        "Storage & Warehousing", "Marketing", "Custom Hire",
+        "Freight & Trucking", "Other",
     )
 
     val PAYMENT_METHODS = listOf(
-        "cash", "check", "credit card", "debit card", "ACH/wire", "barter", "other",
+        "Cash", "Check", "Credit Card", "Debit Card", "ACH/Wire", "Barter", "Other",
     )
 
     val PRODUCT_CATEGORIES = listOf(
-        "produce", "eggs", "meat", "dairy", "honey", "fiber",
-        "value-added", "plants/nursery", "hay/feed", "firewood", "other",
+        "Produce", "Eggs", "Meat", "Dairy", "Honey", "Fiber",
+        "Value-Added", "Plants/Nursery", "Hay/Feed", "Firewood", "Other",
     )
 
     val SALES_CHANNELS = listOf(
-        "farm gate", "farmers market", "CSA", "wholesale", "online",
-        "restaurant", "co-op", "roadside stand", "other",
+        "Farm Gate", "Farmers Market", "CSA", "Wholesale", "Online",
+        "Restaurant", "Co-Op", "Roadside Stand", "Other",
     )
 
     val UNITS = listOf(
-        "lb", "oz", "kg", "dozen", "each", "bushel",
-        "gallon", "quart", "pint", "head", "flat", "bunch", "cord", "other",
+        "Lb", "Oz", "Kg", "Dozen", "Each", "Bushel",
+        "Gallon", "Quart", "Pint", "Head", "Flat", "Bunch", "Cord", "Other",
     )
 
     val MILEAGE_PURPOSES = listOf(
-        "farm supply run", "market/delivery", "veterinary", "equipment repair",
-        "banking", "meeting/training", "inspection", "other",
+        "Farm Supply Run", "Market/Delivery", "Veterinary", "Equipment Repair",
+        "Banking", "Meeting/Training", "Inspection", "Other",
     )
 
     // ═══════════════════════════════════════════════════════════════
@@ -203,24 +292,24 @@ object ModuleCatalogData {
     // ═══════════════════════════════════════════════════════════════
 
     val PERMIT_TYPES = listOf(
-        "food sales", "meat processing", "egg handling", "dairy", "water use",
-        "pesticide applicator", "zoning/land use", "farmers market",
-        "organic certification", "business license", "cottage food",
-        "food handler", "other",
+        "Food Sales", "Meat Processing", "Egg Handling", "Dairy", "Water Use",
+        "Pesticide Applicator", "Zoning/Land Use", "Farmers Market",
+        "Organic Certification", "Business License", "Cottage Food",
+        "Food Handler", "Other",
     )
 
     val INSPECTION_OUTCOMES = listOf(
-        "passed", "failed", "conditional", "pending",
-        "corrective action required", "reinspection scheduled",
+        "Passed", "Failed", "Conditional", "Pending",
+        "Corrective Action Required", "Reinspection Scheduled",
     )
 
     val DOCUMENT_TYPES = listOf(
-        "permit", "license", "certificate", "insurance", "test result",
-        "training record", "plan/protocol", "receipt/invoice", "other",
+        "Permit", "License", "Certificate", "Insurance", "Test Result",
+        "Training Record", "Plan/Protocol", "Receipt/Invoice", "Other",
     )
 
     val SALES_PRODUCT_TYPES = listOf(
-        "produce", "eggs", "meat", "dairy", "honey",
-        "value-added", "baked goods", "other",
+        "Produce", "Eggs", "Meat", "Dairy", "Honey",
+        "Value-Added", "Baked Goods", "Other",
     )
 }

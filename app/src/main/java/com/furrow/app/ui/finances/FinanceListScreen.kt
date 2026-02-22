@@ -21,7 +21,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -36,7 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.BarterTrade
 import com.furrow.app.data.local.entity.Expense
@@ -174,10 +176,11 @@ fun FinanceListScreen(
 
             // -- Tab Row --
             item(key = "tabs") {
-                TabRow(
+                ScrollableTabRow(
                     selectedTabIndex = selectedTab,
                     containerColor = Charcoal,
                     contentColor = TextPrimary,
+                    edgePadding = 16.dp,
                     indicator = { tabPositions ->
                         if (selectedTab < tabPositions.size) {
                             TabRowDefaults.SecondaryIndicator(
@@ -195,8 +198,12 @@ fun FinanceListScreen(
                             text = {
                                 Text(
                                     text = tab.label,
-                                    style = MaterialTheme.typography.labelMedium,
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        fontSize = 11.sp,
+                                    ),
                                     color = if (selectedTab == index) TextPrimary else TextTertiary,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                             },
                         )

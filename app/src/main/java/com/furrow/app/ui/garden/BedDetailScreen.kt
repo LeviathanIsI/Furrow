@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -202,6 +203,8 @@ fun BedDetailScreen(
                                     letterSpacing = 1.2.sp,
                                 ),
                                 color = if (selectedTab == index) TextPrimary else TextTertiary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                     )
@@ -546,7 +549,7 @@ private fun WateringFormSheet(
             )
             DropdownSelector(
                 label = "Method",
-                options = listOf("", "hose", "drip", "sprinkler", "watering can", "rain"),
+                options = listOf("", "Hose", "Drip", "Sprinkler", "Watering Can", "Rain"),
                 selected = method,
                 onSelect = { method = it },
                 accentColor = GardenGlow,
@@ -671,14 +674,14 @@ private fun PestDiseaseFormSheet(
     onDismiss: () -> Unit,
     onSave: (type: String, name: String, severity: String, treatment: String?, notes: String?) -> Unit,
 ) {
-    var type by remember { mutableStateOf("pest") }
+    var type by remember { mutableStateOf("Pest") }
     var name by remember { mutableStateOf("") }
-    var severity by remember { mutableStateOf("moderate") }
+    var severity by remember { mutableStateOf("Moderate") }
     var treatment by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
     val suggestions = remember(type, commonPests, commonDiseases) {
-        val source = if (type == "pest") commonPests else commonDiseases
+        val source = if (type == "Pest") commonPests else commonDiseases
         source?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList()
     }
 
@@ -704,7 +707,7 @@ private fun PestDiseaseFormSheet(
             )
             DropdownSelector(
                 label = "Type",
-                options = listOf("pest", "disease"),
+                options = listOf("Pest", "Disease"),
                 selected = type,
                 onSelect = { type = it; name = "" },
                 accentColor = GardenGlow,
@@ -712,7 +715,7 @@ private fun PestDiseaseFormSheet(
             AppTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text(if (type == "pest") "Pest Name" else "Disease Name") },
+                label = { Text(if (type == "Pest") "Pest Name" else "Disease Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = fieldColors,
@@ -745,7 +748,7 @@ private fun PestDiseaseFormSheet(
             }
             DropdownSelector(
                 label = "Severity",
-                options = listOf("low", "moderate", "severe"),
+                options = listOf("Low", "Moderate", "Severe"),
                 selected = severity,
                 onSelect = { severity = it },
                 accentColor = GardenGlow,

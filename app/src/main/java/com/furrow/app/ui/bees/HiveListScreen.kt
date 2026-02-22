@@ -296,8 +296,8 @@ private fun AddHiveSheet(
     val isEditMode = existingHive != null
     var name by remember { mutableStateOf(existingHive?.name ?: "") }
     var installDate by remember { mutableLongStateOf(existingHive?.installDate ?: System.currentTimeMillis()) }
-    var queenStatus by remember { mutableStateOf(existingHive?.queenStatus ?: "unknown") }
-    var source by remember { mutableStateOf(existingHive?.source ?: "package") }
+    var queenStatus by remember { mutableStateOf(existingHive?.queenStatus ?: "Unknown") }
+    var source by remember { mutableStateOf(existingHive?.source ?: "Package") }
     var notes by remember { mutableStateOf(existingHive?.notes ?: "") }
     var selectedRace by remember { mutableStateOf(existingHive?.beeRace) }
     var raceQuery by remember { mutableStateOf(existingHive?.beeRace ?: "") }
@@ -413,13 +413,13 @@ private fun AddHiveSheet(
             )
             DropdownSelector(
                 label = "Queen Status",
-                options = listOf("present", "absent", "unknown"),
+                options = listOf("Present", "Absent", "Unknown"),
                 selected = queenStatus,
                 onSelect = { queenStatus = it },
             )
             DropdownSelector(
                 label = "Source",
-                options = listOf("package", "nuc", "swarm", "split"),
+                options = listOf("Package", "Nuc", "Swarm", "Split"),
                 selected = source,
                 onSelect = { source = it },
             )
@@ -482,7 +482,7 @@ private fun AddCustomRaceSheet(
     var miteResistance by remember { mutableStateOf(existingRace?.miteResistance?.toString() ?: "3") }
     var swarmingTendency by remember { mutableStateOf(existingRace?.swarmingTendency?.toString() ?: "3") }
     var overwintering by remember { mutableStateOf(existingRace?.overwinteringAbility?.toString() ?: "3") }
-    var climateSuitability by remember { mutableStateOf(existingRace?.climateSuitability ?: "moderate") }
+    var climateSuitability by remember { mutableStateOf(existingRace?.climateSuitability ?: "Moderate") }
     var raceNotes by remember { mutableStateOf(existingRace?.notes ?: "") }
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
@@ -582,7 +582,7 @@ private fun AddCustomRaceSheet(
             }
             DropdownSelector(
                 label = "Climate Suitability",
-                options = listOf("cold", "moderate", "warm", "hot", "all climates"),
+                options = listOf("Cold", "Moderate", "Warm", "Hot", "All Climates"),
                 selected = climateSuitability,
                 onSelect = { climateSuitability = it },
             )

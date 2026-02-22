@@ -36,12 +36,13 @@ import com.furrow.app.data.local.entity.OrchardPlant
 import com.furrow.app.data.local.entity.PruningLog
 import com.furrow.app.data.local.entity.SprayLog
 import com.furrow.app.data.ModuleCatalogData
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.data.OrchardCatalogData
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.OrchardGlow
@@ -159,11 +160,11 @@ private fun PlantForm(
 ) {
     var species by remember { mutableStateOf("") }
     var variety by remember { mutableStateOf("") }
-    var category by remember { mutableStateOf("pome fruit") }
+    var category by remember { mutableStateOf("Pome Fruit") }
     var rootstock by remember { mutableStateOf("") }
     var plantingYear by remember { mutableStateOf("") }
     var chillHoursRequired by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf("dormant") }
+    var status by remember { mutableStateOf("Dormant") }
     var notes by remember { mutableStateOf("") }
 
     if (isEditMode) {
@@ -182,36 +183,73 @@ private fun PlantForm(
         }
     }
 
-    InputField(
-        value = species,
-        onValueChange = { species = it },
-        label = { Text("Species") },
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
+    val speciesDefaults = OrchardCatalogData.forSpecies(species)
+    val rootstockOptions = speciesDefaults?.commonRootstocks ?: emptyList()
+    val varietyOptions = OrchardCatalogData.varietiesForSpecies(species)
+
+    SearchableSelector(
+        query = species,
+        onQueryChange = { species = it },
+        items = OrchardCatalogData.SPECIES_NAMES.filter {
+            it.contains(species, ignoreCase = true)
+        },
+        onItemSelected = {
+            species = it
+            variety = ""
+            val defaults = OrchardCatalogData.forSpecies(it)
+            if (defaults != null) category = defaults.category
+        },
+        label = "Species",
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { species = it; variety = "" },
     )
-    InputField(
-        value = variety,
-        onValueChange = { variety = it },
-        label = { Text("Variety") },
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
-        accentColor = OrchardGlow,
-    )
-    DropdownSelector(
+    if (varietyOptions.isNotEmpty()) {
+        SearchableSelector(
+            query = variety,
+            onQueryChange = { variety = it },
+            items = varietyOptions.filter {
+                it.contains(variety, ignoreCase = true)
+            },
+            onItemSelected = { variety = it },
+            label = "Variety",
+            nameSelector = { it },
+            accentColor = OrchardGlow,
+            onAddCustom = { variety = it },
+        )
+    } else {
+        InputField(
+            value = variety,
+            onValueChange = { variety = it },
+            label = { Text("Variety") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            accentColor = OrchardGlow,
+        )
+    }
+    SearchableSelector(
+        query = category,
+        onQueryChange = { category = it },
+        items = ModuleCatalogData.ORCHARD_CATEGORIES.filter {
+            it.contains(category, ignoreCase = true)
+        },
+        onItemSelected = { category = it },
         label = "Category",
-        options = ModuleCatalogData.ORCHARD_CATEGORIES,
-        selected = category,
-        onSelect = { category = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { category = it },
     )
-    InputField(
-        value = rootstock,
-        onValueChange = { rootstock = it },
-        label = { Text("Rootstock") },
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
+    SearchableSelector(
+        query = rootstock,
+        onQueryChange = { rootstock = it },
+        items = rootstockOptions.filter {
+            it.contains(rootstock, ignoreCase = true)
+        },
+        onItemSelected = { rootstock = it },
+        label = "Rootstock",
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { rootstock = it },
     )
     InputField(
         value = plantingYear,
@@ -231,11 +269,15 @@ private fun PlantForm(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         accentColor = OrchardGlow,
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = status,
+        onQueryChange = { status = it },
+        items = listOf("Dormant", "Growing", "Producing", "Removed").filter {
+            it.contains(status, ignoreCase = true)
+        },
+        onItemSelected = { status = it },
         label = "Status",
-        options = listOf("dormant", "growing", "producing", "removed"),
-        selected = status,
-        onSelect = { status = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
     )
     InputField(
@@ -315,12 +357,17 @@ private fun HarvestForm(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         accentColor = OrchardGlow,
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = fruitQuality,
+        onQueryChange = { fruitQuality = it },
+        items = ModuleCatalogData.FRUIT_QUALITIES.filter {
+            it.contains(fruitQuality, ignoreCase = true)
+        },
+        onItemSelected = { fruitQuality = it },
         label = "Fruit Quality",
-        options = ModuleCatalogData.FRUIT_QUALITIES,
-        selected = fruitQuality,
-        onSelect = { fruitQuality = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { fruitQuality = it },
     )
     InputField(
         value = destination,
@@ -385,19 +432,29 @@ private fun PruningForm(
         useTodayDefault = !isEditMode,
         accentColor = OrchardGlow,
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = pruningType,
+        onQueryChange = { pruningType = it },
+        items = ModuleCatalogData.PRUNING_TYPES.filter {
+            it.contains(pruningType, ignoreCase = true)
+        },
+        onItemSelected = { pruningType = it },
         label = "Pruning Type",
-        options = ModuleCatalogData.PRUNING_TYPES,
-        selected = pruningType,
-        onSelect = { pruningType = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { pruningType = it },
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = method,
+        onQueryChange = { method = it },
+        items = ModuleCatalogData.PRUNING_METHODS.filter {
+            it.contains(method, ignoreCase = true)
+        },
+        onItemSelected = { method = it },
         label = "Method",
-        options = ModuleCatalogData.PRUNING_METHODS,
-        selected = method,
-        onSelect = { method = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { method = it },
     )
     InputField(
         value = notes,
@@ -474,12 +531,17 @@ private fun SprayForm(
         singleLine = true,
         accentColor = OrchardGlow,
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = timing,
+        onQueryChange = { timing = it },
+        items = ModuleCatalogData.SPRAY_TIMINGS.filter {
+            it.contains(timing, ignoreCase = true)
+        },
+        onItemSelected = { timing = it },
         label = "Timing",
-        options = ModuleCatalogData.SPRAY_TIMINGS,
-        selected = timing,
-        onSelect = { timing = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { timing = it },
     )
     InputField(
         value = activeIngredient,
@@ -622,7 +684,7 @@ private fun GraftingForm(
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var scionSource by remember { mutableStateOf("") }
     var graftType by remember { mutableStateOf("") }
-    var success by remember { mutableStateOf("pending") }
+    var success by remember { mutableStateOf("Pending") }
 
     if (isEditMode) {
         val existing by viewModel.getGraftingLogById(editId).collectAsState(initial = null)
@@ -631,7 +693,7 @@ private fun GraftingForm(
                 date = it.date
                 scionSource = it.scionSource ?: ""
                 graftType = it.graftType ?: ""
-                success = it.success ?: "pending"
+                success = it.success ?: "Pending"
             }
         }
     }
@@ -651,18 +713,27 @@ private fun GraftingForm(
         singleLine = true,
         accentColor = OrchardGlow,
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = graftType,
+        onQueryChange = { graftType = it },
+        items = ModuleCatalogData.GRAFT_TYPES.filter {
+            it.contains(graftType, ignoreCase = true)
+        },
+        onItemSelected = { graftType = it },
         label = "Graft Type",
-        options = ModuleCatalogData.GRAFT_TYPES,
-        selected = graftType,
-        onSelect = { graftType = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
+        onAddCustom = { graftType = it },
     )
-    DropdownSelector(
+    SearchableSelector(
+        query = success,
+        onQueryChange = { success = it },
+        items = listOf("Pending", "Successful", "Failed").filter {
+            it.contains(success, ignoreCase = true)
+        },
+        onItemSelected = { success = it },
         label = "Success",
-        options = listOf("pending", "successful", "failed"),
-        selected = success,
-        onSelect = { success = it },
+        nameSelector = { it },
         accentColor = OrchardGlow,
     )
 

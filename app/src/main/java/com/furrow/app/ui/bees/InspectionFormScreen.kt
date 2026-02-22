@@ -76,10 +76,10 @@ fun InspectionFormScreen(
     var queenSeen by remember { mutableStateOf(false) }
     var queenCells by remember { mutableStateOf(false) }
     var eggsLarvae by remember { mutableStateOf(false) }
-    var temperament by remember { mutableStateOf("calm") }
-    var broodPattern by remember { mutableStateOf("solid") }
-    var honeyStores by remember { mutableStateOf("moderate") }
-    var pollenStores by remember { mutableStateOf("moderate") }
+    var temperament by remember { mutableStateOf("Calm") }
+    var broodPattern by remember { mutableStateOf("Solid") }
+    var honeyStores by remember { mutableStateOf("Moderate") }
+    var pollenStores by remember { mutableStateOf("Moderate") }
     var pestsSigns by remember { mutableStateOf("") }
     var diseasesSigns by remember { mutableStateOf("") }
     var frameCount by remember { mutableIntStateOf(0) }
@@ -88,7 +88,7 @@ fun InspectionFormScreen(
     var feeding by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var weatherTemp by remember { mutableIntStateOf(70) }
-    var weatherCondition by remember { mutableStateOf("sunny") }
+    var weatherCondition by remember { mutableStateOf("Sunny") }
 
     if (isEditMode) {
         val existingInspection by viewModel.getInspectionById(editId).collectAsState(initial = null)
@@ -98,10 +98,10 @@ fun InspectionFormScreen(
                 queenSeen = it.queenSeen
                 queenCells = it.queenCells
                 eggsLarvae = it.eggsLarvae
-                temperament = it.temperament ?: "calm"
-                broodPattern = it.broodPattern ?: "solid"
-                honeyStores = it.honeyStores ?: "moderate"
-                pollenStores = it.pollenStores ?: "moderate"
+                temperament = it.temperament ?: "Calm"
+                broodPattern = it.broodPattern ?: "Solid"
+                honeyStores = it.honeyStores ?: "Moderate"
+                pollenStores = it.pollenStores ?: "Moderate"
                 pestsSigns = it.pestsSigns ?: ""
                 diseasesSigns = it.diseasesSigns ?: ""
                 frameCount = it.frameCount ?: 0
@@ -110,7 +110,7 @@ fun InspectionFormScreen(
                 feeding = it.feeding ?: ""
                 notes = it.notes ?: ""
                 weatherTemp = it.weatherTemp ?: 70
-                weatherCondition = it.weatherCondition ?: "sunny"
+                weatherCondition = it.weatherCondition ?: "Sunny"
             }
         }
     }
@@ -174,13 +174,13 @@ fun InspectionFormScreen(
                 ToggleRow("Eggs / Larvae", eggsLarvae) { eggsLarvae = it }
                 DropdownSelector(
                     label = "Temperament",
-                    options = listOf("calm", "nervous", "aggressive"),
+                    options = listOf("Calm", "Nervous", "Aggressive"),
                     selected = temperament,
                     onSelect = { temperament = it },
                 )
                 DropdownSelector(
                     label = "Brood Pattern",
-                    options = listOf("solid", "spotty", "none"),
+                    options = listOf("Solid", "Spotty", "None"),
                     selected = broodPattern,
                     onSelect = { broodPattern = it },
                 )
@@ -194,13 +194,13 @@ fun InspectionFormScreen(
             ) {
                 DropdownSelector(
                     label = "Honey Stores",
-                    options = listOf("heavy", "moderate", "light", "none"),
+                    options = listOf("Heavy", "Moderate", "Light", "None"),
                     selected = honeyStores,
                     onSelect = { honeyStores = it },
                 )
                 DropdownSelector(
                     label = "Pollen Stores",
-                    options = listOf("heavy", "moderate", "light", "none"),
+                    options = listOf("Heavy", "Moderate", "Light", "None"),
                     selected = pollenStores,
                     onSelect = { pollenStores = it },
                 )
@@ -271,7 +271,7 @@ fun InspectionFormScreen(
                 )
                 DropdownSelector(
                     label = "Weather",
-                    options = listOf("sunny", "cloudy", "overcast", "rainy", "windy"),
+                    options = listOf("Sunny", "Cloudy", "Overcast", "Rainy", "Windy"),
                     selected = weatherCondition,
                     onSelect = { weatherCondition = it },
                 )

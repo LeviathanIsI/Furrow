@@ -22,7 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -35,7 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.CanningBatch
 import com.furrow.app.data.local.entity.DehydratingBatch
@@ -145,10 +147,11 @@ fun PreservationListScreen(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Charcoal,
                 contentColor = TextPrimary,
+                edgePadding = 16.dp,
                 divider = { HorizontalDivider(thickness = 0.5.dp, color = BorderSubtle) },
                 indicator = { tabPositions ->
                     if (selectedTab < tabPositions.size) {
@@ -166,9 +169,13 @@ fun PreservationListScreen(
                         text = {
                             Text(
                                 tab.label,
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontSize = 11.sp,
+                                ),
                                 fontWeight = if (selectedTab == index) FontWeight.SemiBold else FontWeight.Normal,
                                 color = if (selectedTab == index) PreservationGlow else TextSecondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                     )

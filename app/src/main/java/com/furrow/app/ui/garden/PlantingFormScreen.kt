@@ -88,8 +88,8 @@ fun PlantingFormScreen(
     var varietyQuery by remember { mutableStateOf("") }
     var selectedPlantId by remember { mutableStateOf<Long?>(null) }
     var datePlanted by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    var source by remember { mutableStateOf("seed") }
-    var status by remember { mutableStateOf("growing") }
+    var source by remember { mutableStateOf("Seed") }
+    var status by remember { mutableStateOf("Growing") }
     var notes by remember { mutableStateOf("") }
     var seedsPlanted by remember { mutableStateOf("") }
     var showAddCustomPlant by remember { mutableStateOf(false) }
@@ -298,13 +298,13 @@ fun PlantingFormScreen(
 
             DropdownSelector(
                 label = "Source",
-                options = listOf("seed", "transplant", "cutting"),
+                options = listOf("Seed", "Transplant", "Cutting"),
                 selected = source,
                 onSelect = { source = it },
                 accentColor = GardenGlow,
             )
 
-            if (source == "seed") {
+            if (source == "Seed") {
                 AppTextField(
                     value = seedsPlanted,
                     onValueChange = { seedsPlanted = it.filter { c -> c.isDigit() } },
@@ -328,7 +328,7 @@ fun PlantingFormScreen(
 
             DropdownSelector(
                 label = "Status",
-                options = listOf("growing", "producing", "finished", "failed"),
+                options = listOf("Growing", "Producing", "Finished", "Failed"),
                 selected = status,
                 onSelect = { status = it },
                 accentColor = GardenGlow,
@@ -350,7 +350,7 @@ fun PlantingFormScreen(
                 text = "Save Planting",
                 onClick = {
                     val matchedPlant = allPlants.firstOrNull { it.name == plantName.trim() }
-                    val expectedGermDate = if (source == "seed" && matchedPlant?.germinationDaysMin != null) {
+                    val expectedGermDate = if (source == "Seed" && matchedPlant?.germinationDaysMin != null) {
                         val plantedInstant = Instant.ofEpochMilli(datePlanted)
                             .atZone(ZoneId.systemDefault()).toLocalDate()
                         val expectedDate = plantedInstant.plusDays(matchedPlant.germinationDaysMin.toLong())
@@ -367,7 +367,7 @@ fun PlantingFormScreen(
                         source = source,
                         status = status,
                         notes = notes.ifBlank { null },
-                        seedsPlanted = if (source == "seed") seedsPlanted.toIntOrNull() else null,
+                        seedsPlanted = if (source == "Seed") seedsPlanted.toIntOrNull() else null,
                         expectedGerminationDate = expectedGermDate,
                     )
                     if (isEditMode) viewModel.updatePlanting(planting) else viewModel.addPlanting(planting)
@@ -448,13 +448,13 @@ private fun AddCustomPlantSheet(
     onSave: (PlantInfo) -> Unit,
 ) {
     var name by remember { mutableStateOf(existingPlant?.name ?: initialName) }
-    var category by remember { mutableStateOf(existingPlant?.category ?: "vegetable") }
+    var category by remember { mutableStateOf(existingPlant?.category ?: "Vegetable") }
     var minZone by remember { mutableStateOf(existingPlant?.minZone?.toString() ?: "3") }
     var maxZone by remember { mutableStateOf(existingPlant?.maxZone?.toString() ?: "10") }
     var daysMin by remember { mutableStateOf(existingPlant?.daysToHarvestMin?.toString() ?: "60") }
     var daysMax by remember { mutableStateOf(existingPlant?.daysToHarvestMax?.toString() ?: "90") }
-    var sun by remember { mutableStateOf(existingPlant?.sunRequirement ?: "full sun") }
-    var water by remember { mutableStateOf(existingPlant?.waterFrequency ?: "moderate") }
+    var sun by remember { mutableStateOf(existingPlant?.sunRequirement ?: "Full Sun") }
+    var water by remember { mutableStateOf(existingPlant?.waterFrequency ?: "Moderate") }
     var containerSuitable by remember { mutableStateOf(existingPlant?.containerSuitable ?: true) }
     var containerGallons by remember { mutableStateOf(existingPlant?.containerMinGallons?.toString() ?: "5") }
     var companions by remember { mutableStateOf(existingPlant?.companionPlants ?: "") }
@@ -503,7 +503,7 @@ private fun AddCustomPlantSheet(
             )
             DropdownSelector(
                 label = "Category",
-                options = listOf("vegetable", "fruit", "herb", "berry", "legume", "grain"),
+                options = listOf("Vegetable", "Fruit", "Herb", "Berry", "Legume", "Grain"),
                 selected = category,
                 onSelect = { category = it },
                 accentColor = GardenGlow,
@@ -546,14 +546,14 @@ private fun AddCustomPlantSheet(
             }
             DropdownSelector(
                 label = "Sun Requirement",
-                options = listOf("full sun", "partial sun", "partial shade", "full shade"),
+                options = listOf("Full Sun", "Partial Sun", "Partial Shade", "Full Shade"),
                 selected = sun,
                 onSelect = { sun = it },
                 accentColor = GardenGlow,
             )
             DropdownSelector(
                 label = "Water Frequency",
-                options = listOf("low", "moderate", "high"),
+                options = listOf("Low", "Moderate", "High"),
                 selected = water,
                 onSelect = { water = it },
                 accentColor = GardenGlow,

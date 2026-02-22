@@ -246,7 +246,7 @@ private fun InspectionForm(
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var inspector by remember { mutableStateOf("") }
     var agency by remember { mutableStateOf("") }
-    var outcome by remember { mutableStateOf("pending") }
+    var outcome by remember { mutableStateOf("Pending") }
     var followUpItems by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
@@ -257,7 +257,7 @@ private fun InspectionForm(
                 date = it.date
                 inspector = it.inspector ?: ""
                 agency = it.agency ?: ""
-                outcome = it.outcome ?: "pending"
+                outcome = it.outcome ?: "Pending"
                 followUpItems = it.followUpItems ?: ""
                 notes = it.notes ?: ""
             }

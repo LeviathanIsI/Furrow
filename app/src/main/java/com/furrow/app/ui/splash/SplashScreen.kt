@@ -47,17 +47,18 @@ private data class SplashModule(
     val sweepStartMs: Int,
     val sweepDurationMs: Int,
     val startAngleDeg: Float,  // offset from top (0 = 12 o'clock)
+    val sweepDir: Float,       // 1f = clockwise, -1f = counter-clockwise
 )
 
 private val modules = listOf(
-    SplashModule("BEES",       Color(0xFFFFB300), 185f, 2.5f,    0,  700,   30f),  // amber — 1 o'clock
-    SplashModule("GARDEN",     Color(0xFF6ECF72), 163f, 2.5f,  850,  600,  170f),  // green — 7 o'clock
-    SplashModule("ANIMALS",    Color(0xFFCDA67A), 141f, 2.25f, 1550, 500,  290f),  // tan — 11 o'clock
-    SplashModule("ORCHARD",    Color(0xFFE87CB0), 119f, 2.15f, 2150, 425,   75f),  // rose pink — 3 o'clock
-    SplashModule("PRESERVE",   Color(0xFFDA9570),  97f, 2.0f,  2650, 375,  210f),  // terracotta — 8 o'clock
-    SplashModule("LAND",       Color(0xFF70C4D8),  75f, 1.9f,  3100, 325,  330f),  // sky blue — 12 o'clock
-    SplashModule("FINANCE",    Color(0xFFB89ADE),  53f, 1.8f,  3475, 275,  120f),  // lavender — 5 o'clock
-    SplashModule("COMPLIANCE", Color(0xFF92AAC0),  31f, 1.75f, 3800, 250,  245f),  // steel blue — 9 o'clock
+    SplashModule("BEES",       Color(0xFFFFB300), 185f, 2.5f,    0,  700,   30f,  1f),  // amber — CW
+    SplashModule("GARDEN",     Color(0xFF6ECF72), 163f, 2.5f,  850,  600,  170f, -1f),  // green — CCW
+    SplashModule("ANIMALS",    Color(0xFFCDA67A), 141f, 2.25f, 1600, 550,  290f,  1f),  // tan — CW
+    SplashModule("ORCHARD",    Color(0xFFE87CB0), 119f, 2.15f, 2300, 500,   75f, -1f),  // rose pink — CCW
+    SplashModule("PRESERVE",   Color(0xFFDA9570),  97f, 2.0f,  2950, 475,  210f,  1f),  // terracotta — CW
+    SplashModule("LAND",       Color(0xFF70C4D8),  75f, 1.9f,  3575, 450,  330f, -1f),  // sky blue — CCW
+    SplashModule("FINANCE",    Color(0xFFB89ADE),  53f, 1.8f,  4175, 425,  120f,  1f),  // lavender — CW
+    SplashModule("COMPLIANCE", Color(0xFF92AAC0),  31f, 1.75f, 4750, 400,  245f, -1f),  // steel blue — CCW
 )
 
 private const val MODULE_COUNT = 8
@@ -171,19 +172,18 @@ fun SplashScreen(onFinished: () -> Unit) {
                 val nextEnd = if (i < modules.size - 1) {
                     modules[i + 1].sweepStartMs + modules[i + 1].sweepDurationMs
                 } else {
-                    4300
+                    5400
                 }
                 val fadeDuration = (nextEnd - sweepEnd).coerceAtLeast(150)
                 labelAlphas[i].animateTo(0f, tween(fadeDuration, easing = EaseOutCubic))
             }
         }
 
-        // ── Phase 4: Logo reveal (4300–5400ms) ───────────────────────
+        // ── Phase 4: Logo reveal (5400–6500ms) ───────────────────────
         // Ring alignment — all completion dots rotate to top (12 o'clock)
         for (i in modules.indices) {
             launch {
-                delay(4300L + i * 30L)
-                // Shortest-path rotation to bring dot to top (undo startAngleDeg)
+                delay(5400L + i * 30L)
                 val target = -modules[i].startAngleDeg
                 val normalized = ((target % 360f) + 540f) % 360f - 180f
                 ringRotations[i].animateTo(normalized, tween(500, easing = EaseInOutCubic))
@@ -191,22 +191,22 @@ fun SplashScreen(onFinished: () -> Unit) {
         }
 
         // Web lines draw outward
-        launch { delay(4600); webLinesProgress.animateTo(1f, tween(400, easing = EaseOutCubic)) }
+        launch { delay(5700); webLinesProgress.animateTo(1f, tween(400, easing = EaseOutCubic)) }
 
         // Ring pulse
         launch {
-            delay(4600)
+            delay(5700)
             ringScale.animateTo(1.03f, tween(150, easing = EaseInOutCubic))
             ringScale.animateTo(1f, tween(150, easing = EaseInOutCubic))
         }
 
         // Grid out + rings dim
-        launch { delay(4600); gridAlpha.animateTo(0f, tween(400)) }
-        launch { delay(4600); ringsAlpha.animateTo(0.15f, tween(500, easing = EaseOutCubic)) }
+        launch { delay(5700); gridAlpha.animateTo(0f, tween(400)) }
+        launch { delay(5700); ringsAlpha.animateTo(0.15f, tween(500, easing = EaseOutCubic)) }
 
         // Logo reveal line (wipe → flash → fade)
         launch {
-            delay(4800)
+            delay(5900)
             logoLineAlpha.snapTo(0.5f)
             logoLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic))
             logoLineAlpha.snapTo(0.8f)
@@ -216,7 +216,7 @@ fun SplashScreen(onFinished: () -> Unit) {
 
         // Title
         launch {
-            delay(4900)
+            delay(6000)
             launch { titleAlpha.animateTo(1f, tween(500, easing = EaseOutCubic)) }
             launch { titleOffsetDp.animateTo(0f, tween(500, easing = EaseOutCubic)) }
             launch { titleLetterSpacing.animateTo(4f, tween(500, easing = EaseOutCubic)) }
@@ -224,14 +224,14 @@ fun SplashScreen(onFinished: () -> Unit) {
 
         // Bass-drop scale punch
         launch {
-            delay(5400)
+            delay(6500)
             canvasScale.animateTo(1.025f, tween(75, easing = EaseOutCubic))
             canvasScale.animateTo(1f, tween(75, easing = EaseInCubic))
         }
 
         // Tagline typewriter
         launch {
-            delay(5200)
+            delay(6300)
             val text = "grow smarter."
             for (i in 1..text.length) {
                 taglineCharCount.intValue = i
@@ -242,29 +242,29 @@ fun SplashScreen(onFinished: () -> Unit) {
             periodFlashAlpha.animateTo(0f, tween(100))
         }
 
-        // Module dots — 8 dots at 50ms intervals starting at 5600ms
+        // Module dots — 8 dots at 50ms intervals
         for (i in modules.indices) {
             launch {
-                delay(5600L + i * 50L)
+                delay(6700L + i * 50L)
                 dotAlphas[i].animateTo(1f, tween(200, easing = EaseOutCubic))
             }
         }
-        launch { delay(5600); connectLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic)) }
+        launch { delay(6700); connectLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic)) }
 
-        // ── Phase 5: Exit (6200–6700ms) ──────────────────────────────
+        // ── Phase 5: Exit (7300–7800ms) ──────────────────────────────
         launch {
-            delay(6200)
+            delay(7300)
             launch { ringScale.animateTo(0f, tween(250, easing = EaseInCubic)) }
             launch { webLinesProgress.animateTo(0f, tween(250, easing = EaseInCubic)) }
         }
-        launch { delay(6250); implosionFlashAlpha.snapTo(0.03f); delay(100); implosionFlashAlpha.snapTo(0f) }
+        launch { delay(7350); implosionFlashAlpha.snapTo(0.03f); delay(100); implosionFlashAlpha.snapTo(0f) }
         launch {
-            delay(6400)
+            delay(7500)
             launch { textExitAlpha.animateTo(0f, tween(300)) }
             launch { textExitScale.animateTo(1.1f, tween(300)) }
         }
 
-        delay(6700)
+        delay(7800)
         onFinished()
     }
 
@@ -353,17 +353,19 @@ fun SplashScreen(onFinished: () -> Unit) {
             flashAlpha: Float,
             strokeW: Float,
             burstProgress: Float,
+            dir: Float,
         ) {
             if (sweep <= 0f) return
             val topLeft = Offset(cx - radius, cy - radius)
             val arcSize = Size(radius * 2f, radius * 2f)
+            val dSweep = sweep * dir  // signed sweep angle
 
             // Tapered scanning trail (only while drawing)
             if (sweep < 360f) {
-                val primarySweep = 20f.coerceAtMost(sweep)
+                val primarySweep = 20f.coerceAtMost(sweep) * dir
                 drawArc(
                     color = color,
-                    startAngle = -90f + sweep - primarySweep,
+                    startAngle = -90f + dSweep - primarySweep,
                     sweepAngle = primarySweep,
                     useCenter = false,
                     topLeft = topLeft,
@@ -371,10 +373,10 @@ fun SplashScreen(onFinished: () -> Unit) {
                     style = Stroke(8.dp.toPx(), cap = StrokeCap.Round),
                     alpha = 0.10f * ringAlpha,
                 )
-                val secondarySweep = 10f.coerceAtMost(sweep)
+                val secondarySweep = 10f.coerceAtMost(sweep) * dir
                 drawArc(
                     color = color,
-                    startAngle = -90f + sweep - secondarySweep,
+                    startAngle = -90f + dSweep - secondarySweep,
                     sweepAngle = secondarySweep,
                     useCenter = false,
                     topLeft = topLeft,
@@ -388,7 +390,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             drawArc(
                 color = color,
                 startAngle = -90f,
-                sweepAngle = sweep,
+                sweepAngle = dSweep,
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
@@ -400,7 +402,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             drawArc(
                 color = color,
                 startAngle = -90f,
-                sweepAngle = sweep,
+                sweepAngle = dSweep,
                 useCenter = false,
                 topLeft = topLeft,
                 size = arcSize,
@@ -409,10 +411,10 @@ fun SplashScreen(onFinished: () -> Unit) {
             )
 
             // Hot spot — 60° at 2x stroke
-            val hotSpotSweep = 60f.coerceAtMost(sweep)
+            val hotSpotSweep = 60f.coerceAtMost(sweep) * dir
             drawArc(
                 color = color,
-                startAngle = -90f + sweep - hotSpotSweep,
+                startAngle = -90f + dSweep - hotSpotSweep,
                 sweepAngle = hotSpotSweep,
                 useCenter = false,
                 topLeft = topLeft,
@@ -439,7 +441,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             for (t in 0 until 5) {
                 val offset = t + 1
                 if (sweep > offset) {
-                    val trailAngle = Math.toRadians(-90.0 + sweep - offset)
+                    val trailAngle = Math.toRadians(-90.0 + dSweep - offset * dir)
                     val trailCenter = Offset(
                         cx + radius * cos(trailAngle).toFloat(),
                         cy + radius * sin(trailAngle).toFloat(),
@@ -457,7 +459,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             }
 
             // Leading edge glow — concentric circles for point-light falloff
-            val leadAngle = Math.toRadians(-90.0 + sweep)
+            val leadAngle = Math.toRadians(-90.0 + dSweep)
             val leadCenter = Offset(
                 cx + radius * cos(leadAngle).toFloat(),
                 cy + radius * sin(leadAngle).toFloat(),
@@ -471,17 +473,37 @@ fun SplashScreen(onFinished: () -> Unit) {
                 )
             }
 
-            // Completion dot glow
+            // Completion dot glow — boosted to stand out
             if (sweep >= 360f) {
                 val completionCenter = Offset(cx, cy - radius)
-                for (g in glowRadii.indices) {
-                    drawCircle(
-                        color = color,
-                        radius = glowRadii[g].dp.toPx(),
-                        center = completionCenter,
-                        alpha = glowAlphas[g] * ringAlpha,
-                    )
-                }
+                // Outer halo
+                drawCircle(
+                    color = color,
+                    radius = 10.dp.toPx(),
+                    center = completionCenter,
+                    alpha = 0.12f * ringAlpha,
+                )
+                // Mid glow
+                drawCircle(
+                    color = color,
+                    radius = 5.dp.toPx(),
+                    center = completionCenter,
+                    alpha = 0.35f * ringAlpha,
+                )
+                // Bright core
+                drawCircle(
+                    color = color,
+                    radius = 2.5f.dp.toPx(),
+                    center = completionCenter,
+                    alpha = 0.85f * ringAlpha,
+                )
+                // Hot white center
+                drawCircle(
+                    color = Color.White,
+                    radius = 1.2f.dp.toPx(),
+                    center = completionCenter,
+                    alpha = 0.7f * ringAlpha,
+                )
             }
 
             // Burst particles — 8 radial dots from completion point
@@ -528,6 +550,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 flashAlpha = flashAlphas[i].value,
                 strokeW = mod.strokeDp.dp.toPx(),
                 burstProgress = burstProgs[i].value,
+                dir = mod.sweepDir,
             )
 
             // Shockwave (drawn in ring's rotated space)

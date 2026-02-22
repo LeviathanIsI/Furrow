@@ -685,7 +685,7 @@ private fun GrantForm(
     var program by remember { mutableStateOf("") }
     var agency by remember { mutableStateOf("") }
     var applicationDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    var status by remember { mutableStateOf("applied") }
+    var status by remember { mutableStateOf("Applied") }
     var awardAmount by remember { mutableStateOf("") }
     var costSharePct by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
@@ -746,7 +746,7 @@ private fun GrantForm(
 
         DropdownSelector(
             label = "Status",
-            options = listOf("applied", "awarded", "denied", "completed"),
+            options = listOf("Applied", "Awarded", "Denied", "Completed"),
             selected = status,
             onSelect = { status = it },
             accentColor = FinanceGlow,

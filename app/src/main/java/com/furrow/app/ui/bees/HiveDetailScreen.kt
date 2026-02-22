@@ -169,6 +169,8 @@ fun HiveDetailScreen(
                                     letterSpacing = 1.2.sp,
                                 ),
                                 color = if (selectedTab == index) TextPrimary else TextTertiary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                     )

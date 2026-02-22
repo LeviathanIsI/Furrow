@@ -27,7 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -171,11 +172,11 @@ fun AnimalDetailScreen(
             }
 
             // -- Tab Row --
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = Charcoal,
                 contentColor = TextPrimary,
-                modifier = Modifier.padding(horizontal = AppSpacing.md),
+                edgePadding = 16.dp,
                 divider = { HorizontalDivider(thickness = 1.dp, color = BorderSubtle) },
                 indicator = { tabPositions ->
                     if (selectedTab < tabPositions.size) {
@@ -195,8 +196,11 @@ fun AnimalDetailScreen(
                                 tab.label,
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     letterSpacing = 1.2.sp,
+                                    fontSize = 11.sp,
                                 ),
                                 color = if (selectedTab == index) TextPrimary else TextTertiary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         },
                     )

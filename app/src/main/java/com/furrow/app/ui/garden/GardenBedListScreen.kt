@@ -212,11 +212,11 @@ private fun AddBedSheet(
 ) {
     val isEditMode = existingBed != null
     var name by remember { mutableStateOf(existingBed?.name ?: "") }
-    var type by remember { mutableStateOf(existingBed?.type ?: "raised bed") }
+    var type by remember { mutableStateOf(existingBed?.type ?: "Raised Bed") }
     var sizeGallons by remember { mutableStateOf(existingBed?.sizeGallons?.toString() ?: "") }
     var lengthFt by remember { mutableStateOf(existingBed?.lengthFt?.toString() ?: "") }
     var widthFt by remember { mutableStateOf(existingBed?.widthFt?.toString() ?: "") }
-    var sunExposure by remember { mutableStateOf(existingBed?.sunExposure ?: "full sun") }
+    var sunExposure by remember { mutableStateOf(existingBed?.sunExposure ?: "Full Sun") }
     var soilType by remember { mutableStateOf(existingBed?.soilType ?: "") }
     var notes by remember { mutableStateOf(existingBed?.notes ?: "") }
 
@@ -255,12 +255,12 @@ private fun AddBedSheet(
             )
             DropdownSelector(
                 label = "Type",
-                options = listOf("raised bed", "grow bag", "in-ground", "container", "mixed"),
+                options = listOf("Raised Bed", "Grow Bag", "In-Ground", "Container", "Mixed"),
                 selected = type,
                 onSelect = { type = it },
                 accentColor = GardenGlow,
             )
-            if (type == "grow bag" || type == "container") {
+            if (type == "Grow Bag" || type == "Container") {
                 AppTextField(
                     value = sizeGallons,
                     onValueChange = { sizeGallons = it.filter { c -> c.isDigit() } },
@@ -291,7 +291,7 @@ private fun AddBedSheet(
             }
             DropdownSelector(
                 label = "Sun Exposure",
-                options = listOf("full sun", "partial sun", "partial shade", "full shade"),
+                options = listOf("Full Sun", "Partial Sun", "Partial Shade", "Full Shade"),
                 selected = sunExposure,
                 onSelect = { sunExposure = it },
                 accentColor = GardenGlow,

@@ -64,8 +64,8 @@ fun TreatmentFormScreen(
 ) {
     val isEditMode = editId > 0L
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    var type by remember { mutableStateOf("oxalic acid") }
-    var method by remember { mutableStateOf("dribble") }
+    var type by remember { mutableStateOf("Oxalic Acid") }
+    var method by remember { mutableStateOf("Dribble") }
     var dose by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
@@ -75,7 +75,7 @@ fun TreatmentFormScreen(
             existingTreatment?.let {
                 date = it.date
                 type = it.type
-                method = it.method ?: "dribble"
+                method = it.method ?: "Dribble"
                 dose = it.dose ?: ""
                 notes = it.notes ?: ""
             }
@@ -144,14 +144,14 @@ fun TreatmentFormScreen(
 
             DropdownSelector(
                 label = "Treatment Type",
-                options = listOf("oxalic acid", "apivar", "formic pro", "apiguard", "thymol", "other"),
+                options = listOf("Oxalic Acid", "Apivar", "Formic Pro", "Apiguard", "Thymol", "Other"),
                 selected = type,
                 onSelect = { type = it },
             )
 
             DropdownSelector(
                 label = "Method",
-                options = listOf("dribble", "vaporize", "strip", "pad", "other"),
+                options = listOf("Dribble", "Vaporize", "Strip", "Pad", "Other"),
                 selected = method,
                 onSelect = { method = it },
             )
