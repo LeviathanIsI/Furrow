@@ -39,6 +39,29 @@ import kotlin.math.sqrt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+private data class SplashModule(
+    val label: String,
+    val color: Color,
+    val radiusDp: Float,
+    val strokeDp: Float,
+    val sweepStartMs: Int,
+    val sweepDurationMs: Int,
+    val startAngleDeg: Float,  // offset from top (0 = 12 o'clock)
+)
+
+private val modules = listOf(
+    SplashModule("BEES",       Color(0xFFFFB300), 185f, 2.5f,    0,  700,   30f),  // amber — 1 o'clock
+    SplashModule("GARDEN",     Color(0xFF6ECF72), 163f, 2.5f,  850,  600,  170f),  // green — 7 o'clock
+    SplashModule("ANIMALS",    Color(0xFFCDA67A), 141f, 2.25f, 1550, 500,  290f),  // tan — 11 o'clock
+    SplashModule("ORCHARD",    Color(0xFFE87CB0), 119f, 2.15f, 2150, 425,   75f),  // rose pink — 3 o'clock
+    SplashModule("PRESERVE",   Color(0xFFDA9570),  97f, 2.0f,  2650, 375,  210f),  // terracotta — 8 o'clock
+    SplashModule("LAND",       Color(0xFF70C4D8),  75f, 1.9f,  3100, 325,  330f),  // sky blue — 12 o'clock
+    SplashModule("FINANCE",    Color(0xFFB89ADE),  53f, 1.8f,  3475, 275,  120f),  // lavender — 5 o'clock
+    SplashModule("COMPLIANCE", Color(0xFF92AAC0),  31f, 1.75f, 3800, 250,  245f),  // steel blue — 9 o'clock
+)
+
+private const val MODULE_COUNT = 8
+
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
 
@@ -57,33 +80,21 @@ fun SplashScreen(onFinished: () -> Unit) {
     // ── 2. Grid ──────────────────────────────────────────────────────────
     val gridAlpha = remember { Animatable(0f) }
 
-    // ── Ring sweeps ──────────────────────────────────────────────────────
-    val outerSweep = remember { Animatable(0f) }
-    val middleSweep = remember { Animatable(0f) }
-    val innerSweep = remember { Animatable(0f) }
+    // ── Ring animatables (array-based) ────────────────────────────────────
+    val sweeps       = remember { List(MODULE_COUNT) { Animatable(0f) } }
+    val leadAlphas   = remember { List(MODULE_COUNT) { Animatable(0.8f) } }
+    val flashAlphas  = remember { List(MODULE_COUNT) { Animatable(0f) } }
+    val shockProgs   = remember { List(MODULE_COUNT) { Animatable(0f) } }
+    val burstProgs   = remember { List(MODULE_COUNT) { Animatable(0f) } }
+    val labelAlphas  = remember { List(MODULE_COUNT) { Animatable(0f) } }
+    val dotAlphas    = remember { List(MODULE_COUNT) { Animatable(0f) } }
+
+    // ── Per-ring rotation (scattered → aligned) ───────────────────────────
+    val ringRotations = remember { List(MODULE_COUNT) { Animatable(0f) } }
+
+    // ── Shared animatables ────────────────────────────────────────────────
     val ringsAlpha = remember { Animatable(1f) }
-    val outerLeadAlpha = remember { Animatable(0.8f) }
-    val middleLeadAlpha = remember { Animatable(0.8f) }
-    val innerLeadAlpha = remember { Animatable(0.8f) }
     val ringScale = remember { Animatable(1f) }
-
-    // ── Ring flash + shockwave + burst ───────────────────────────────────
-    val outerFlashAlpha = remember { Animatable(0f) }
-    val middleFlashAlpha = remember { Animatable(0f) }
-    val innerFlashAlpha = remember { Animatable(0f) }
-    val outerShockProgress = remember { Animatable(0f) }
-    val middleShockProgress = remember { Animatable(0f) }
-    val innerShockProgress = remember { Animatable(0f) }
-    val outerBurstProgress = remember { Animatable(0f) }
-    val middleBurstProgress = remember { Animatable(0f) }
-    val innerBurstProgress = remember { Animatable(0f) }
-
-    // ── Data readout labels ──────────────────────────────────────────────
-    val outerLabelAlpha = remember { Animatable(0f) }
-    val middleLabelAlpha = remember { Animatable(0f) }
-    val innerLabelAlpha = remember { Animatable(0f) }
-
-    // ── Structural web lines ─────────────────────────────────────────────
     val webLinesProgress = remember { Animatable(0f) }
 
     // ── Logo reveal line ─────────────────────────────────────────────────
@@ -95,7 +106,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     val titleOffsetDp = remember { Animatable(20f) }
     val titleLetterSpacing = remember { Animatable(8f) }
 
-    // ── 6. Bass-drop canvas scale ────────────────────────────────────────
+    // ── Bass-drop canvas scale ────────────────────────────────────────────
     val canvasScale = remember { Animatable(1f) }
 
     // ── Tagline typewriter ───────────────────────────────────────────────
@@ -103,9 +114,6 @@ fun SplashScreen(onFinished: () -> Unit) {
     val periodFlashAlpha = remember { Animatable(0f) }
 
     // ── Module dots ──────────────────────────────────────────────────────
-    val dot1Alpha = remember { Animatable(0f) }
-    val dot2Alpha = remember { Animatable(0f) }
-    val dot3Alpha = remember { Animatable(0f) }
     val connectLineProgress = remember { Animatable(0f) }
 
     // ── Exit ─────────────────────────────────────────────────────────────
@@ -120,56 +128,85 @@ fun SplashScreen(onFinished: () -> Unit) {
         // Grid fade in
         launch { gridAlpha.animateTo(0.04f, tween(500)) }
 
-        // ── Phase 1: Garden ring (0–1500ms) ──────────────────────────
-        launch { outerSweep.animateTo(360f, tween(1000, easing = EaseInOutCubic)) }
-        launch { delay(1000); outerLeadAlpha.animateTo(0.3f, tween(200)) }
-        launch { delay(1000); outerFlashAlpha.snapTo(0.5f); outerFlashAlpha.animateTo(0f, tween(150)) }
-        launch { delay(1000); outerShockProgress.animateTo(1f, tween(200)) }
-        launch { delay(1000); outerBurstProgress.animateTo(1f, tween(300)) }
-        launch { delay(1000); outerLabelAlpha.animateTo(0.7f, tween(100)) }
+        // ── Ring sweep phases (data-driven loop) ──────────────────────
+        for (i in modules.indices) {
+            val mod = modules[i]
+            val sweepEnd = mod.sweepStartMs + mod.sweepDurationMs
 
-        // ── Phase 2: Apiary ring (1500–3000ms) ───────────────────────
-        launch { delay(1500); outerLabelAlpha.animateTo(0.35f, tween(200)) }
-        launch { delay(1500); middleSweep.animateTo(360f, tween(1000, easing = EaseInOutCubic)) }
-        launch { delay(2500); middleLeadAlpha.animateTo(0.3f, tween(200)) }
-        launch { delay(2500); middleFlashAlpha.snapTo(0.5f); middleFlashAlpha.animateTo(0f, tween(150)) }
-        launch { delay(2500); middleShockProgress.animateTo(1f, tween(200)) }
-        launch { delay(2500); middleBurstProgress.animateTo(1f, tween(300)) }
-        launch { delay(2500); middleLabelAlpha.animateTo(0.7f, tween(100)) }
+            // Sweep arc
+            launch {
+                delay(mod.sweepStartMs.toLong())
+                sweeps[i].animateTo(360f, tween(mod.sweepDurationMs, easing = EaseInOutCubic))
+            }
 
-        // ── Phase 3: Flock ring (3000–4500ms) ────────────────────────
-        launch { delay(3000); middleLabelAlpha.animateTo(0.35f, tween(200)) }
-        launch { delay(3000); outerLabelAlpha.animateTo(0.2f, tween(200)) }
-        launch { delay(3000); innerSweep.animateTo(360f, tween(900, easing = EaseInOutCubic)) }
-        launch { delay(3900); innerLeadAlpha.animateTo(0.3f, tween(200)) }
-        launch { delay(3900); innerFlashAlpha.snapTo(0.5f); innerFlashAlpha.animateTo(0f, tween(150)) }
-        launch { delay(3900); innerShockProgress.animateTo(1f, tween(200)) }
-        launch { delay(3900); innerBurstProgress.animateTo(1f, tween(300)) }
-        launch { delay(3900); innerLabelAlpha.animateTo(0.7f, tween(100)) }
+            // Lead glow dims after sweep completes
+            launch {
+                delay(sweepEnd.toLong())
+                leadAlphas[i].animateTo(0.3f, tween(200))
+            }
 
-        // "All systems go" — all labels flash bright then fade out
-        launch { delay(4300); outerLabelAlpha.animateTo(0.7f, tween(150)); outerLabelAlpha.animateTo(0f, tween(200)) }
-        launch { delay(4300); middleLabelAlpha.animateTo(0.7f, tween(150)); middleLabelAlpha.animateTo(0f, tween(200)) }
-        launch { delay(4300); innerLabelAlpha.animateTo(0.7f, tween(150)); innerLabelAlpha.animateTo(0f, tween(200)) }
+            // Flash on completion
+            launch {
+                delay(sweepEnd.toLong())
+                flashAlphas[i].snapTo(0.5f)
+                flashAlphas[i].animateTo(0f, tween(150))
+            }
 
-        // ── Phase 4: Logo reveal (4300–5500ms) ───────────────────────
+            // Shockwave
+            launch {
+                delay(sweepEnd.toLong())
+                shockProgs[i].animateTo(1f, tween(200))
+            }
+
+            // Burst particles
+            launch {
+                delay(sweepEnd.toLong())
+                burstProgs[i].animateTo(1f, tween(300))
+            }
+
+            // Label flashes in center on ring completion, fades before next
+            launch {
+                delay(sweepEnd.toLong())
+                labelAlphas[i].snapTo(1f)
+                val nextEnd = if (i < modules.size - 1) {
+                    modules[i + 1].sweepStartMs + modules[i + 1].sweepDurationMs
+                } else {
+                    4300
+                }
+                val fadeDuration = (nextEnd - sweepEnd).coerceAtLeast(150)
+                labelAlphas[i].animateTo(0f, tween(fadeDuration, easing = EaseOutCubic))
+            }
+        }
+
+        // ── Phase 4: Logo reveal (4300–5400ms) ───────────────────────
+        // Ring alignment — all completion dots rotate to top (12 o'clock)
+        for (i in modules.indices) {
+            launch {
+                delay(4300L + i * 30L)
+                // Shortest-path rotation to bring dot to top (undo startAngleDeg)
+                val target = -modules[i].startAngleDeg
+                val normalized = ((target % 360f) + 540f) % 360f - 180f
+                ringRotations[i].animateTo(normalized, tween(500, easing = EaseInOutCubic))
+            }
+        }
+
         // Web lines draw outward
-        launch { delay(4300); webLinesProgress.animateTo(1f, tween(400, easing = EaseOutCubic)) }
+        launch { delay(4600); webLinesProgress.animateTo(1f, tween(400, easing = EaseOutCubic)) }
 
         // Ring pulse
         launch {
-            delay(4500)
+            delay(4600)
             ringScale.animateTo(1.03f, tween(150, easing = EaseInOutCubic))
             ringScale.animateTo(1f, tween(150, easing = EaseInOutCubic))
         }
 
         // Grid out + rings dim
-        launch { delay(4500); gridAlpha.animateTo(0f, tween(400)) }
-        launch { delay(4500); ringsAlpha.animateTo(0.15f, tween(500, easing = EaseOutCubic)) }
+        launch { delay(4600); gridAlpha.animateTo(0f, tween(400)) }
+        launch { delay(4600); ringsAlpha.animateTo(0.15f, tween(500, easing = EaseOutCubic)) }
 
         // Logo reveal line (wipe → flash → fade)
         launch {
-            delay(4500)
+            delay(4800)
             logoLineAlpha.snapTo(0.5f)
             logoLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic))
             logoLineAlpha.snapTo(0.8f)
@@ -179,22 +216,22 @@ fun SplashScreen(onFinished: () -> Unit) {
 
         // Title
         launch {
-            delay(4600)
+            delay(4900)
             launch { titleAlpha.animateTo(1f, tween(500, easing = EaseOutCubic)) }
             launch { titleOffsetDp.animateTo(0f, tween(500, easing = EaseOutCubic)) }
             launch { titleLetterSpacing.animateTo(4f, tween(500, easing = EaseOutCubic)) }
         }
 
-        // Bass-drop scale punch when title reaches full opacity
+        // Bass-drop scale punch
         launch {
-            delay(5100)
+            delay(5400)
             canvasScale.animateTo(1.025f, tween(75, easing = EaseOutCubic))
             canvasScale.animateTo(1f, tween(75, easing = EaseInCubic))
         }
 
         // Tagline typewriter
         launch {
-            delay(4900)
+            delay(5200)
             val text = "grow smarter."
             for (i in 1..text.length) {
                 taglineCharCount.intValue = i
@@ -205,26 +242,29 @@ fun SplashScreen(onFinished: () -> Unit) {
             periodFlashAlpha.animateTo(0f, tween(100))
         }
 
-        // Module dots
-        launch { delay(5200); dot1Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
-        launch { delay(5300); dot2Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
-        launch { delay(5400); dot3Alpha.animateTo(1f, tween(200, easing = EaseOutCubic)) }
-        launch { delay(5400); connectLineProgress.animateTo(1f, tween(200, easing = EaseOutCubic)) }
+        // Module dots — 8 dots at 50ms intervals starting at 5600ms
+        for (i in modules.indices) {
+            launch {
+                delay(5600L + i * 50L)
+                dotAlphas[i].animateTo(1f, tween(200, easing = EaseOutCubic))
+            }
+        }
+        launch { delay(5600); connectLineProgress.animateTo(1f, tween(300, easing = EaseOutCubic)) }
 
-        // ── Phase 5: Exit (5900–6400ms) ──────────────────────────────
+        // ── Phase 5: Exit (6200–6700ms) ──────────────────────────────
         launch {
-            delay(5900)
+            delay(6200)
             launch { ringScale.animateTo(0f, tween(250, easing = EaseInCubic)) }
             launch { webLinesProgress.animateTo(0f, tween(250, easing = EaseInCubic)) }
         }
-        launch { delay(5950); implosionFlashAlpha.snapTo(0.03f); delay(100); implosionFlashAlpha.snapTo(0f) }
+        launch { delay(6250); implosionFlashAlpha.snapTo(0.03f); delay(100); implosionFlashAlpha.snapTo(0f) }
         launch {
-            delay(6100)
+            delay(6400)
             launch { textExitAlpha.animateTo(0f, tween(300)) }
             launch { textExitScale.animateTo(1.1f, tween(300)) }
         }
 
-        delay(6400)
+        delay(6700)
         onFinished()
     }
 
@@ -246,7 +286,6 @@ fun SplashScreen(onFinished: () -> Unit) {
         val bg = Color(0xFF050505)
         val gardenGlow = Color(0xFF6ECF72)
         val beeGlow = Color(0xFFFFB300)
-        val poultryGlow = Color(0xFFE8956E)
         val textPrimary = Color(0xFFEAEAEA)
         val textTertiary = Color(0xFF505050)
         val textMuted = Color(0xFF333333)
@@ -258,7 +297,7 @@ fun SplashScreen(onFinished: () -> Unit) {
         // ── Background ───────────────────────────────────────────────────
         drawRect(color = bg, size = size)
 
-        // 5. Enhanced breathing — primary gradient
+        // Breathing — primary gradient
         drawCircle(
             brush = Brush.radialGradient(
                 colors = listOf(gardenGlow.copy(alpha = 0.04f), Color.Transparent),
@@ -268,7 +307,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             radius = diagonal,
             center = Offset(cx, cy),
         )
-        // 5. Secondary gradient — offset amber glow
+        // Secondary gradient — offset amber glow
         drawCircle(
             brush = Brush.radialGradient(
                 colors = listOf(beeGlow.copy(alpha = 0.015f), Color.Transparent),
@@ -279,7 +318,7 @@ fun SplashScreen(onFinished: () -> Unit) {
             center = Offset(cx, cy),
         )
 
-        // 2. Grid
+        // Grid
         if (gridAlpha.value > 0f) {
             val spacing = 40.dp.toPx()
             val gridStroke = 0.5f.dp.toPx()
@@ -295,24 +334,16 @@ fun SplashScreen(onFinished: () -> Unit) {
             }
         }
 
-        // ── Ring constants ───────────────────────────────────────────────
-        val outerR = 120.dp.toPx()
-        val middleR = 80.dp.toPx()
-        val innerR = 40.dp.toPx()
-        val outerStroke = 3.dp.toPx()
-        val middleStroke = 2.5f.dp.toPx()
-        val innerStroke = 2.dp.toPx()
-        val glowStroke = 8.dp.toPx()
+        // ── Glow layer specs (scaled down ~60% for 16dp ring spacing) ──
+        val glowStroke = 5.dp.toPx()
         val ringAlpha = ringsAlpha.value
 
-        // Glow layer specs: 12 layers for smooth point-light falloff
-        val glowRadii = floatArrayOf(32f, 28f, 24f, 21f, 18f, 15f, 12f, 9f, 7f, 5f, 3f, 1.5f)
-        val glowAlphas = floatArrayOf(0.01f, 0.015f, 0.02f, 0.03f, 0.045f, 0.06f, 0.08f, 0.12f, 0.18f, 0.28f, 0.45f, 0.85f)
-        // Trail glow: 60% radii, 50% alphas
-        val trailGlowRadii = floatArrayOf(19.2f, 16.8f, 14.4f, 12.6f, 10.8f, 9f, 7.2f, 5.4f, 4.2f, 3f, 1.8f, 0.9f)
-        val trailGlowAlphas = floatArrayOf(0.005f, 0.0075f, 0.01f, 0.015f, 0.0225f, 0.03f, 0.04f, 0.06f, 0.09f, 0.14f, 0.225f, 0.425f)
-        val burstDotR = 1.5f.dp.toPx()
-        val burstDist = 30.dp.toPx()
+        val glowRadii = floatArrayOf(19f, 16.8f, 14.4f, 12.6f, 10.8f, 9f, 7.2f, 5.4f, 4.2f, 3f, 1.8f, 1f)
+        val glowAlphas = floatArrayOf(0.006f, 0.009f, 0.012f, 0.018f, 0.027f, 0.036f, 0.048f, 0.072f, 0.108f, 0.168f, 0.27f, 0.5f)
+        val trailGlowRadii = floatArrayOf(11f, 9.6f, 8.4f, 7.2f, 6f, 5.2f, 4.2f, 3.2f, 2.4f, 1.8f, 1.1f, 0.6f)
+        val trailGlowAlphas = floatArrayOf(0.003f, 0.0045f, 0.006f, 0.009f, 0.0135f, 0.018f, 0.024f, 0.036f, 0.054f, 0.084f, 0.135f, 0.25f)
+        val burstDotR = 1.2f.dp.toPx()
+        val burstDist = 15.dp.toPx()
 
         fun drawRing(
             radius: Float,
@@ -337,7 +368,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                     useCenter = false,
                     topLeft = topLeft,
                     size = arcSize,
-                    style = Stroke(12.dp.toPx(), cap = StrokeCap.Round),
+                    style = Stroke(8.dp.toPx(), cap = StrokeCap.Round),
                     alpha = 0.10f * ringAlpha,
                 )
                 val secondarySweep = 10f.coerceAtMost(sweep)
@@ -348,7 +379,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                     useCenter = false,
                     topLeft = topLeft,
                     size = arcSize,
-                    style = Stroke(18.dp.toPx(), cap = StrokeCap.Round),
+                    style = Stroke(12.dp.toPx(), cap = StrokeCap.Round),
                     alpha = 0.04f * ringAlpha,
                 )
             }
@@ -377,7 +408,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 alpha = ringAlpha,
             )
 
-            // 1. Hot spot — 60° at 2x stroke, 0.25f alpha
+            // Hot spot — 60° at 2x stroke
             val hotSpotSweep = 60f.coerceAtMost(sweep)
             drawArc(
                 color = color,
@@ -390,7 +421,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 alpha = 0.25f * ringAlpha,
             )
 
-            // 4. Flash overlay — 3x stroke, fading over 150ms
+            // Flash overlay
             if (flashAlpha > 0f) {
                 drawArc(
                     color = color,
@@ -404,7 +435,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 )
             }
 
-            // Comet trail — 5 trailing glow dots (50% scale of main glow)
+            // Comet trail — 5 trailing glow dots
             for (t in 0 until 5) {
                 val offset = t + 1
                 if (sweep > offset) {
@@ -425,7 +456,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 }
             }
 
-            // Leading edge glow — 7 concentric circles for point-light falloff
+            // Leading edge glow — concentric circles for point-light falloff
             val leadAngle = Math.toRadians(-90.0 + sweep)
             val leadCenter = Offset(
                 cx + radius * cos(leadAngle).toFloat(),
@@ -453,13 +484,13 @@ fun SplashScreen(onFinished: () -> Unit) {
                 }
             }
 
-            // 4. Burst particles — 8 radial dots from completion point
+            // Burst particles — 8 radial dots from completion point
             if (burstProgress > 0f && burstProgress < 1f) {
                 val dist = burstDist * burstProgress
                 val bAlpha = 0.6f * (1f - burstProgress) * ringAlpha
                 val origin = Offset(cx, cy - radius)
-                for (i in 0 until 8) {
-                    val angle = Math.toRadians(i * 45.0)
+                for (j in 0 until 8) {
+                    val angle = Math.toRadians(j * 45.0)
                     drawCircle(
                         color = color,
                         radius = burstDotR,
@@ -479,65 +510,85 @@ fun SplashScreen(onFinished: () -> Unit) {
         drawContext.canvas.scale(ringScale.value, ringScale.value)
         drawContext.canvas.translate(-cx, -cy)
 
-        drawRing(outerR, outerSweep.value, gardenGlow, outerLeadAlpha.value, outerFlashAlpha.value, outerStroke, outerBurstProgress.value)
-        drawRing(middleR, middleSweep.value, beeGlow, middleLeadAlpha.value, middleFlashAlpha.value, middleStroke, middleBurstProgress.value)
-        drawRing(innerR, innerSweep.value, poultryGlow, innerLeadAlpha.value, innerFlashAlpha.value, innerStroke, innerBurstProgress.value)
+        // Draw all 8 rings — each rotated by its own scattered angle
+        for (i in modules.indices) {
+            val mod = modules[i]
+            val rotation = mod.startAngleDeg + ringRotations[i].value
 
-        // Shockwaves
-        fun drawShockwave(radius: Float, color: Color, progress: Float) {
-            if (progress <= 0f || progress >= 1f) return
-            drawCircle(
-                color = color,
-                radius = 20.dp.toPx() * progress,
-                center = Offset(cx, cy - radius),
-                style = Stroke(1.dp.toPx()),
-                alpha = 0.2f * (1f - progress),
+            drawContext.canvas.save()
+            drawContext.canvas.translate(cx, cy)
+            drawContext.canvas.rotate(rotation)
+            drawContext.canvas.translate(-cx, -cy)
+
+            drawRing(
+                radius = mod.radiusDp.dp.toPx(),
+                sweep = sweeps[i].value,
+                color = mod.color,
+                leadAlpha = leadAlphas[i].value,
+                flashAlpha = flashAlphas[i].value,
+                strokeW = mod.strokeDp.dp.toPx(),
+                burstProgress = burstProgs[i].value,
             )
+
+            // Shockwave (drawn in ring's rotated space)
+            val progress = shockProgs[i].value
+            if (progress > 0f && progress < 1f) {
+                drawCircle(
+                    color = mod.color,
+                    radius = 12.dp.toPx() * progress,
+                    center = Offset(cx, cy - mod.radiusDp.dp.toPx()),
+                    style = Stroke(1.dp.toPx()),
+                    alpha = 0.2f * (1f - progress),
+                )
+            }
+
+            drawContext.canvas.restore()
         }
 
-        drawShockwave(outerR, gardenGlow, outerShockProgress.value)
-        drawShockwave(middleR, beeGlow, middleShockProgress.value)
-        drawShockwave(innerR, poultryGlow, innerShockProgress.value)
-
-        // Data readout labels
+        // Center-flash labels — glowing white text in the middle of the rings
         val labelStyle = TextStyle(
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            fontFamily = dmSansMedium,
-            letterSpacing = 3.sp,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = dmSansBold,
+            letterSpacing = 4.sp,
         )
 
-        fun drawLabel(text: String, color: Color, radius: Float, alpha: Float) {
-            if (alpha <= 0f) return
-            val layout = textMeasurer.measure(text, labelStyle)
-            drawText(
-                textLayoutResult = layout,
-                color = color,
-                alpha = alpha,
-                topLeft = Offset(
-                    cx - layout.size.width / 2f,
-                    cy - radius - 12.dp.toPx() - layout.size.height,
-                ),
-            )
-        }
+        for (i in modules.indices) {
+            val alpha = labelAlphas[i].value
+            if (alpha > 0f) {
+                val mod = modules[i]
+                val layout = textMeasurer.measure(mod.label, labelStyle)
+                val labelX = cx - layout.size.width / 2f
+                val labelY = cy - layout.size.height / 2f
 
-        drawLabel("GARDEN", gardenGlow, outerR, outerLabelAlpha.value)
-        drawLabel("APIARY", beeGlow, middleR, middleLabelAlpha.value)
-        drawLabel("FLOCK", poultryGlow, innerR, innerLabelAlpha.value)
+                // Outer glow halo
+                drawText(
+                    textLayoutResult = layout,
+                    color = Color.White,
+                    alpha = alpha * 0.15f,
+                    topLeft = Offset(labelX, labelY),
+                )
+                // Main white text
+                drawText(
+                    textLayoutResult = layout,
+                    color = Color.White,
+                    alpha = alpha * 0.9f,
+                    topLeft = Offset(labelX, labelY),
+                )
+            }
+        }
 
         drawContext.canvas.restore()
 
-        // ── Structural web lines ─────────────────────────────────────────
+        // ── Structural web lines (8 at 45° intervals) ─────────────────────
         if (webLinesProgress.value > 0f) {
             val webLen = diagonal * webLinesProgress.value
             val webStroke = 0.5f.dp.toPx()
-            val webAngles = doubleArrayOf(0.0, 120.0, 240.0)
-            val webColors = arrayOf(gardenGlow, beeGlow, poultryGlow)
 
-            for (i in webAngles.indices) {
-                val rad = Math.toRadians(webAngles[i])
+            for (i in modules.indices) {
+                val rad = Math.toRadians(i * 45.0)
                 drawLine(
-                    color = webColors[i],
+                    color = modules[i].color,
                     start = Offset(cx, cy),
                     end = Offset(
                         cx + webLen * cos(rad).toFloat(),
@@ -569,7 +620,7 @@ fun SplashScreen(onFinished: () -> Unit) {
         val taglineFinalY = titleFinalY + titleLayout.size.height + 8.dp.toPx()
         val dotsY = taglineFinalY + fullTaglineLayout.size.height + 16.dp.toPx()
 
-        // ── 7. Enhanced logo reveal line + glow ──────────────────────────
+        // ── Logo reveal line + glow ──────────────────────────────────────
         if (logoLineAlpha.value > 0f) {
             val lineLeft = cx - titleLayout.size.width / 2f
             val lineRight = lineLeft + titleLayout.size.width * logoLineProgress.value
@@ -628,7 +679,7 @@ fun SplashScreen(onFinished: () -> Unit) {
                 topLeft = Offset(taglineStartX, taglineFinalY),
             )
 
-            // 8. Period flash — full GardenGlow for 200ms, settle to TextTertiary
+            // Period flash
             if (charCount == taglineText.length && periodFlashAlpha.value > 0f) {
                 val withoutPeriod = textMeasurer.measure(taglineText.dropLast(1), taglineStyle)
                 val periodLayout = textMeasurer.measure(".", taglineStyle)
@@ -641,24 +692,21 @@ fun SplashScreen(onFinished: () -> Unit) {
             }
         }
 
-        // Module dots — layered glow
-        val dotSpacing = 20.dp.toPx()
-        val dotColors = arrayOf(gardenGlow, beeGlow, poultryGlow)
-        val dotAlphas = floatArrayOf(dot1Alpha.value, dot2Alpha.value, dot3Alpha.value)
-        val dotCenters = arrayOf(
-            Offset(cx - dotSpacing, dotsY),
-            Offset(cx, dotsY),
-            Offset(cx + dotSpacing, dotsY),
-        )
+        // Module dots — 8 dots at 14dp spacing, layered glow
+        val dotSpacing = 14.dp.toPx()
+        val totalDotsWidth = dotSpacing * (MODULE_COUNT - 1)
+        val dotsStartX = cx - totalDotsWidth / 2f
 
-        for (d in 0 until 3) {
-            if (dotAlphas[d] > 0f) {
+        for (d in modules.indices) {
+            val dAlpha = dotAlphas[d].value
+            if (dAlpha > 0f) {
+                val dotCenter = Offset(dotsStartX + d * dotSpacing, dotsY)
                 for (g in glowRadii.indices) {
                     drawCircle(
-                        color = dotColors[d],
+                        color = modules[d].color,
                         radius = glowRadii[g].dp.toPx(),
-                        center = dotCenters[d],
-                        alpha = glowAlphas[g] * dotAlphas[d] * exitAlpha,
+                        center = dotCenter,
+                        alpha = glowAlphas[g] * dAlpha * exitAlpha,
                     )
                 }
             }
@@ -666,8 +714,8 @@ fun SplashScreen(onFinished: () -> Unit) {
 
         // Connecting line between dots
         if (connectLineProgress.value > 0f) {
-            val lineStartX = cx - dotSpacing
-            val lineEndX = lineStartX + (dotSpacing * 2f) * connectLineProgress.value
+            val lineStartX = dotsStartX
+            val lineEndX = lineStartX + totalDotsWidth * connectLineProgress.value
             drawLine(
                 color = textMuted,
                 start = Offset(lineStartX, dotsY),
@@ -679,7 +727,7 @@ fun SplashScreen(onFinished: () -> Unit) {
 
         drawContext.canvas.restore()
 
-        // ── 9. Implosion screen flash ────────────────────────────────────
+        // ── Implosion screen flash ────────────────────────────────────────
         if (implosionFlashAlpha.value > 0f) {
             drawRect(Color.White, size = size, alpha = implosionFlashAlpha.value)
         }
