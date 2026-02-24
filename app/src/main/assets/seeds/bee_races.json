@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Italian",
+    "temperament": "Very gentle",
+    "honeyProduction": 5,
+    "miteResistance": 2,
+    "swarmingTendency": 2,
+    "overwinteringAbility": 3,
+    "climateSuitability": "Best for warm/hot zones (7-10). Good for all regions as first-year bees.",
+    "notes": "Prone to robbing. Low propolis. High heat tolerance. Most forgiving for beginners."
+  },
+  {
+    "name": "Carniolan",
+    "temperament": "Very gentle",
+    "honeyProduction": 5,
+    "miteResistance": 3,
+    "swarmingTendency": 5,
+    "overwinteringAbility": 5,
+    "climateSuitability": "Best for cold zones (3-7). Excellent in Northeast, Upper Midwest, Pacific Northwest.",
+    "notes": "Rapid spring buildup. Excellent cold hardiness. Poor heat tolerance. Low propolis."
+  },
+  {
+    "name": "Russian",
+    "temperament": "Moderate-Defensive",
+    "honeyProduction": 4,
+    "miteResistance": 5,
+    "swarmingTendency": 4,
+    "overwinteringAbility": 5,
+    "climateSuitability": "Best for extreme cold zones (3-5). Good for Mountain West and Great Plains.",
+    "notes": "VSH trait for mite resistance. Slow spring buildup. Need 80-100 lbs stores for winter."
+  },
+  {
+    "name": "Buckfast",
+    "temperament": "Gentle",
+    "honeyProduction": 5,
+    "miteResistance": 4,
+    "swarmingTendency": 2,
+    "overwinteringAbility": 4,
+    "climateSuitability": "Versatile across zones 4-9. Good for Northeast, Mountain West, Southeast.",
+    "notes": "Tracheal mite resistant. Moderate to fast spring buildup. Good cold and heat tolerance."
+  },
+  {
+    "name": "Saskatraz",
+    "temperament": "Moderate",
+    "honeyProduction": 5,
+    "miteResistance": 5,
+    "swarmingTendency": 3,
+    "overwinteringAbility": 4,
+    "climateSuitability": "Wide range zones 3-10. Best for Upper Midwest, Southeast, Southwest.",
+    "notes": "Excellent varroa and tracheal mite resistance. Very high propolis. Good all-climate bee."
+  },
+  {
+    "name": "Caucasian",
+    "temperament": "Gentle",
+    "honeyProduction": 3,
+    "miteResistance": 2,
+    "swarmingTendency": 2,
+    "overwinteringAbility": 4,
+    "climateSuitability": "Best for moderate zones (5-7) with lower mite pressure.",
+    "notes": "Very high propolis which can be challenging. Slow spring buildup. Fair heat tolerance."
+  },
+  {
+    "name": "German Dark",
+    "temperament": "Aggressive",
+    "honeyProduction": 3,
+    "miteResistance": 2,
+    "swarmingTendency": 3,
+    "overwinteringAbility": 5,
+    "climateSuitability": "Best for cold zones (3-5) where temperament is less concern.",
+    "notes": "Excellent cold hardiness. Poor heat tolerance. Not typically recommended due to aggression."
+  },
+  {
+    "name": "Africanized",
+    "temperament": "Very Aggressive",
+    "honeyProduction": 5,
+    "miteResistance": 4,
+    "swarmingTendency": 5,
+    "overwinteringAbility": 1,
+    "climateSuitability": "Only suitable for hot zones (9-11). NOT recommended for residential areas.",
+    "notes": "WARNING: Extremely defensive. Requires experienced beekeepers only. High honey production. Excellent disease resistance. Illegal in some jurisdictions."
+  },
+  {
+    "name": "VSH Italian",
+    "temperament": "Gentle",
+    "honeyProduction": 4,
+    "miteResistance": 5,
+    "swarmingTendency": 2,
+    "overwinteringAbility": 3,
+    "climateSuitability": "Wide range zones 4-10. Best for beekeepers dealing with varroa mites.",
+    "notes": "Varroa Sensitive Hygiene trait bred into Italian stock. Best of both worlds: gentle temperament with strong mite resistance. Slightly lower honey production than standard Italian."
+  }
+]

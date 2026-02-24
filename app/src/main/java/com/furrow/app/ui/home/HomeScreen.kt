@@ -88,7 +88,7 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(bottom = AppSpacing.md),
+            .padding(bottom = AppSpacing.bottomListPadding),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
     ) {
         AppTopBar(

@@ -186,7 +186,7 @@ fun LandListScreen(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
                     top = AppSpacing.md,
-                    bottom = AppSpacing.xl,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {

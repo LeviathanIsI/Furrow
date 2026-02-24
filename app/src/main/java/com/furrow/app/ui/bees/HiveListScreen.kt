@@ -1,6 +1,5 @@
 package com.furrow.app.ui.bees
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,19 +18,11 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.outlined.Assessment
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,72 +33,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.BeeRaceInfo
 import com.furrow.app.data.local.entity.Hive
+import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.FurrowBottomSheet
-import com.furrow.app.ui.components.GlowCard
 import com.furrow.app.ui.components.SearchableSelector
+import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BeeGlow
-import com.furrow.app.ui.theme.BorderSubtle
-import com.furrow.app.ui.theme.Charcoal
-import com.furrow.app.ui.theme.DmSans
-import com.furrow.app.ui.theme.StatusBad
-import com.furrow.app.ui.theme.StatusGood
-import com.furrow.app.ui.theme.StatusWarn
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
-import com.furrow.app.ui.theme.Void
+import com.furrow.app.util.DateUtil
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-
-// ── Climate badge logic (shared with HiveDetailScreen) ──
-
-internal enum class ClimateBadge(val label: String) {
-    GREAT("Great for your climate"),
-    MANAGEABLE("Manageable"),
-    NOT_IDEAL("Not ideal"),
-}
-
-internal fun climateBadgeColor(badge: ClimateBadge): Color = when (badge) {
-    ClimateBadge.GREAT -> StatusGood
-    ClimateBadge.MANAGEABLE -> StatusWarn
-    ClimateBadge.NOT_IDEAL -> StatusBad
-}
-
-internal fun climateBadgeFor(race: BeeRaceInfo, zoneGroup: String): ClimateBadge {
-    val heatFitness = when (race.name) {
-        "Italian" -> 5
-        "Saskatraz" -> 4
-        "Buckfast" -> 4
-        "Russian" -> 3
-        "Caucasian" -> 2
-        "Carniolan" -> 2
-        "German Dark" -> 1
-        else -> 3
-    }
-    val score = when (zoneGroup) {
-        "hot", "warm" -> heatFitness
-        "cold", "extreme_cold" -> race.overwinteringAbility
-        else -> minOf(heatFitness, race.overwinteringAbility)
-    }
-    return when {
-        score >= 4 -> ClimateBadge.GREAT
-        score == 3 -> ClimateBadge.MANAGEABLE
-        else -> ClimateBadge.NOT_IDEAL
-    }
-}
 
 // ── Main Screen ──
 
@@ -165,7 +111,7 @@ fun HiveListScreen(
                     start = 16.dp,
                     end = 16.dp,
                     top = 12.dp,
-                    bottom = 32.dp,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -186,6 +132,7 @@ fun HiveListScreen(
                                 lastInspectionDate = lastDates[hive.id],
                                 onClick = { onHiveClick(hive.id) },
                                 showDivider = index != hives.lastIndex,
+                                zone = viewModel.zone,
                             )
                         }
                     }
@@ -222,8 +169,8 @@ private fun HiveCard(
     lastInspectionDate: Long?,
     onClick: () -> Unit,
     showDivider: Boolean,
+    zone: ZoneId = ZoneId.systemDefault(),
 ) {
-    val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
     val daysAgo = lastInspectionDate?.let {
         ChronoUnit.DAYS.between(
@@ -240,7 +187,7 @@ private fun HiveCard(
 
     com.furrow.app.ui.components.ListRow(
         title = hive.name,
-        subtitle = "${hive.beeRace ?: "Unknown"} • Queen: $queenLabel • Installed ${formatDate(hive.installDate)}",
+        subtitle = "${hive.beeRace ?: "Unknown"} • Queen: $queenLabel • Installed ${DateUtil.formatDate(hive.installDate)}",
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.BugReport,
@@ -259,24 +206,6 @@ private fun HiveCard(
         onClick = onClick,
         showDivider = showDivider,
     )
-}
-
-// ── Helper Composables ──
-
-@Composable
-private fun ClimateBadgePill(badge: ClimateBadge) {
-    val color = climateBadgeColor(badge)
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = color.copy(alpha = 0.12f),
-    ) {
-        Text(
-            badge.label,
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
-    }
 }
 
 // ── Form Sheets ──
@@ -321,17 +250,7 @@ private fun AddHiveSheet(
         )
     }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedContainerColor = Charcoal,
-        focusedContainerColor = Charcoal,
-        unfocusedBorderColor = BorderSubtle,
-        focusedBorderColor = BeeGlow,
-        unfocusedLabelColor = TextTertiary,
-        focusedLabelColor = BeeGlow,
-        cursorColor = BeeGlow,
-        unfocusedTextColor = TextPrimary,
-        focusedTextColor = TextPrimary,
-    )
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = BeeGlow, bordered = true)
 
     FurrowBottomSheet(
         onDismiss = onDismiss,
@@ -485,17 +404,7 @@ private fun AddCustomRaceSheet(
     var climateSuitability by remember { mutableStateOf(existingRace?.climateSuitability ?: "Moderate") }
     var raceNotes by remember { mutableStateOf(existingRace?.notes ?: "") }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        unfocusedContainerColor = Charcoal,
-        focusedContainerColor = Charcoal,
-        unfocusedBorderColor = BorderSubtle,
-        focusedBorderColor = BeeGlow,
-        unfocusedLabelColor = TextTertiary,
-        focusedLabelColor = BeeGlow,
-        cursorColor = BeeGlow,
-        unfocusedTextColor = TextPrimary,
-        focusedTextColor = TextPrimary,
-    )
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = BeeGlow, bordered = true)
 
     FurrowBottomSheet(
         onDismiss = onDismiss,
@@ -597,50 +506,6 @@ private fun AddCustomRaceSheet(
             )
         },
     )
-}
-
-// ── Shared Utilities ──
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun DropdownSelector(label: String, options: List<String>, selected: String, onSelect: (String) -> Unit, accentColor: Color = BeeGlow) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-        OutlinedTextField(
-            value = selected.replaceFirstChar { it.uppercase() },
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Charcoal,
-                focusedContainerColor = Charcoal,
-                unfocusedBorderColor = BorderSubtle,
-                focusedBorderColor = accentColor,
-                unfocusedLabelColor = TextTertiary,
-                focusedLabelColor = accentColor,
-                cursorColor = accentColor,
-                unfocusedTextColor = TextPrimary,
-                focusedTextColor = TextPrimary,
-            ),
-            shape = RoundedCornerShape(8.dp),
-        )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option.replaceFirstChar { it.uppercase() }) },
-                    onClick = { onSelect(option); expanded = false },
-                )
-            }
-        }
-    }
-}
-
-private val hiveDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate().format(hiveDateFormatter)
 }
 
 

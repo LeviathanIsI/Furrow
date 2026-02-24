@@ -27,12 +27,12 @@ interface PantryItemDao {
     @Query("SELECT * FROM pantry_items WHERE id = :id")
     fun getById(id: Long): Flow<PantryItem?>
 
-    @Query("SELECT * FROM pantry_items WHERE status = 'in_stock' ORDER BY expiration_date ASC")
+    @Query("SELECT * FROM pantry_items WHERE LOWER(status) = 'in_stock' ORDER BY expiration_date ASC")
     fun getInStock(): Flow<List<PantryItem>>
 
     @Query("SELECT * FROM pantry_items WHERE category = :category ORDER BY expiration_date ASC")
     fun getByCategory(category: String): Flow<List<PantryItem>>
 
-    @Query("SELECT * FROM pantry_items WHERE status = 'in_stock' AND expiration_date < :beforeDate ORDER BY expiration_date ASC")
+    @Query("SELECT * FROM pantry_items WHERE LOWER(status) = 'in_stock' AND expiration_date < :beforeDate ORDER BY expiration_date ASC")
     fun getExpiringSoon(beforeDate: Long): Flow<List<PantryItem>>
 }

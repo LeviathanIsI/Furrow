@@ -34,7 +34,7 @@ import com.furrow.app.data.local.entity.LabelTemplate
 import com.furrow.app.data.local.entity.LicensePermit
 import com.furrow.app.data.local.entity.SalesTracker
 import com.furrow.app.data.ModuleCatalogData
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle

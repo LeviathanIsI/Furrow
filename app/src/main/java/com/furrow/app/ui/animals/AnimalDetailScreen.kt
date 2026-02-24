@@ -1,8 +1,8 @@
 package com.furrow.app.ui.animals
 
 import android.view.HapticFeedbackConstants
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,18 +66,9 @@ import com.furrow.app.ui.theme.StatusBad
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
-import java.time.Instant
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val animalDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(animalDateFormatter)
-}
 
 private enum class AnimalTab(val label: String, val type: String) {
     HEALTH("Health", "health"),
@@ -86,7 +77,6 @@ private enum class AnimalTab(val label: String, val type: String) {
     FEED("Feed", "feed"),
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnimalDetailScreen(
     onBack: () -> Unit,
@@ -94,6 +84,7 @@ fun AnimalDetailScreen(
     onEditLog: (Long, String, Long) -> Unit,
     viewModel: AnimalViewModel = hiltViewModel(),
 ) {
+    val zone = viewModel.zone
     val animal by viewModel.selectedAnimal.collectAsState()
     val healthRecords by viewModel.healthRecords.collectAsState()
     val breedingRecords by viewModel.breedingRecords.collectAsState()
@@ -120,7 +111,7 @@ fun AnimalDetailScreen(
         topBar = {
             AppTopBar(
                 title = animal?.name ?: animal?.tagId ?: "Animal",
-                subtitle = animal?.let { "${it.species.replaceFirstChar { c -> c.uppercase() }} - ${it.breed}" },
+                subtitle = animal?.let { "${it.species.displayFormat()} - ${it.breed}" },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -159,13 +150,13 @@ fun AnimalDetailScreen(
                         .fillMaxWidth()
                         .padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
                 ) {
-                    InlineStat(label = "Species", value = a.species.replaceFirstChar { it.uppercase() })
+                    InlineStat(label = "Species", value = a.species.displayFormat())
                     InlineStat(label = "Breed", value = a.breed)
-                    InlineStat(label = "Sex", value = a.sex.replaceFirstChar { it.uppercase() })
+                    InlineStat(label = "Sex", value = a.sex.displayFormat())
                     a.tagId?.let { InlineStat(label = "Tag ID", value = it) }
-                    InlineStat(label = "Status", value = a.status.replaceFirstChar { it.uppercase() })
-                    a.dob?.let { InlineStat(label = "Date of Birth", value = formatDate(it)) }
-                    InlineStat(label = "Acquired", value = formatDate(a.acquisitionDate))
+                    InlineStat(label = "Status", value = a.status.displayFormat())
+                    a.dob?.let { InlineStat(label = "Date of Birth", value = DateUtil.formatDate(it, zone)) }
+                    InlineStat(label = "Acquired", value = DateUtil.formatDate(a.acquisitionDate, zone))
                     a.source?.let { InlineStat(label = "Source", value = it) }
                     a.notes?.takeIf { it.isNotBlank() }?.let { InlineStat(label = "Notes", value = it) }
                 }
@@ -214,6 +205,7 @@ fun AnimalDetailScreen(
                 AnimalTab.HEALTH -> HealthTab(
                     records = healthRecords,
                     now = now,
+                    zone = zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { record ->
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -222,6 +214,7 @@ fun AnimalDetailScreen(
                 )
                 AnimalTab.BREEDING -> BreedingTab(
                     records = breedingRecords,
+                    zone = zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { record ->
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -230,6 +223,7 @@ fun AnimalDetailScreen(
                 )
                 AnimalTab.WEIGHT -> WeightTab(
                     logs = weightLogs,
+                    zone = zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { log ->
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -238,6 +232,7 @@ fun AnimalDetailScreen(
                 )
                 AnimalTab.FEED -> FeedTab(
                     logs = feedLogs,
+                    zone = zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { log ->
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -339,11 +334,11 @@ fun AnimalDetailScreen(
 
 // -- Health Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HealthTab(
     records: List<HealthRecord>,
     now: Long,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (HealthRecord) -> Unit,
 ) {
@@ -369,7 +364,7 @@ private fun HealthTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -387,13 +382,12 @@ private fun HealthTab(
                         val isWithdrawal = record.withdrawalEndDate != null && record.withdrawalEndDate > now
 
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = { onLongPress(record) },
-                            ),
-                            title = record.type.replaceFirstChar { it.uppercase() },
+                            modifier = Modifier.pointerInput(record) {
+                                detectTapGestures(onLongPress = { onLongPress(record) })
+                            },
+                            title = record.type.displayFormat(),
                             subtitle = subtitle,
-                            metadata = formatDate(record.date),
+                            metadata = DateUtil.formatDate(record.date, zone),
                             trailing = if (isWithdrawal) {
                                 {
                                     StatusPill(
@@ -415,10 +409,10 @@ private fun HealthTab(
 
 // -- Breeding Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BreedingTab(
     records: List<BreedingRecord>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (BreedingRecord) -> Unit,
 ) {
@@ -444,7 +438,7 @@ private fun BreedingTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -452,7 +446,7 @@ private fun BreedingTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     records.forEachIndexed { index, record ->
                         val subtitle = buildString {
-                            record.method?.let { append(it.replaceFirstChar { c -> c.uppercase() }) }
+                            record.method?.let { append(it.displayFormat()) }
                             if (record.offspringCount != null && record.birthDate != null) {
                                 if (isNotEmpty()) append(" - ")
                                 append("${record.offspringCount} born")
@@ -460,13 +454,12 @@ private fun BreedingTab(
                         }.ifEmpty { null }
 
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = { onLongPress(record) },
-                            ),
-                            title = "Breeding ${formatDate(record.breedingDate)}",
+                            modifier = Modifier.pointerInput(record) {
+                                detectTapGestures(onLongPress = { onLongPress(record) })
+                            },
+                            title = "Breeding ${DateUtil.formatDate(record.breedingDate, zone)}",
                             subtitle = subtitle,
-                            metadata = record.dueDate?.let { "Due ${formatDate(it)}" },
+                            metadata = record.dueDate?.let { "Due ${DateUtil.formatDate(it, zone)}" },
                             showDivider = index != records.lastIndex,
                         )
                     }
@@ -478,10 +471,10 @@ private fun BreedingTab(
 
 // -- Weight Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun WeightTab(
     logs: List<WeightLog>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (WeightLog) -> Unit,
 ) {
@@ -507,7 +500,7 @@ private fun WeightTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -519,13 +512,12 @@ private fun WeightTab(
                         }
 
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = { onLongPress(log) },
-                            ),
+                            modifier = Modifier.pointerInput(log) {
+                                detectTapGestures(onLongPress = { onLongPress(log) })
+                            },
                             title = "${"%.1f".format(log.weight)} lbs",
                             subtitle = subtitle,
-                            metadata = formatDate(log.date),
+                            metadata = DateUtil.formatDate(log.date, zone),
                             showDivider = index != logs.lastIndex,
                         )
                     }
@@ -537,10 +529,10 @@ private fun WeightTab(
 
 // -- Feed Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FeedTab(
     logs: List<FeedLog>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (FeedLog) -> Unit,
 ) {
@@ -566,7 +558,7 @@ private fun FeedTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -582,13 +574,12 @@ private fun FeedTab(
                         }.ifEmpty { null }
 
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = { onLongPress(log) },
-                            ),
-                            title = log.feedType.replaceFirstChar { it.uppercase() },
+                            modifier = Modifier.pointerInput(log) {
+                                detectTapGestures(onLongPress = { onLongPress(log) })
+                            },
+                            title = log.feedType.displayFormat(),
                             subtitle = subtitle,
-                            metadata = formatDate(log.date),
+                            metadata = DateUtil.formatDate(log.date, zone),
                             showDivider = index != logs.lastIndex,
                         )
                     }

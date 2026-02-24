@@ -27,12 +27,12 @@ interface AnimalDao {
     @Query("SELECT * FROM animals WHERE id = :id")
     fun getById(id: Long): Flow<Animal?>
 
-    @Query("SELECT * FROM animals WHERE status = 'active' ORDER BY name")
+    @Query("SELECT * FROM animals WHERE LOWER(status) = 'active' ORDER BY name")
     fun getActiveAnimals(): Flow<List<Animal>>
 
     @Query("SELECT * FROM animals WHERE species = :species ORDER BY name")
     fun getBySpecies(species: String): Flow<List<Animal>>
 
-    @Query("SELECT * FROM animals WHERE species = :species AND status = 'active' ORDER BY name")
+    @Query("SELECT * FROM animals WHERE species = :species AND LOWER(status) = 'active' ORDER BY name")
     fun getActiveBySpecies(species: String): Flow<List<Animal>>
 }

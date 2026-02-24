@@ -49,12 +49,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.FertilizerLog
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.HarvestLog
 import com.furrow.app.data.local.entity.PestDiseaseLog
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.WateringLog
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppChip
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.AppScaffold
@@ -80,6 +81,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
+import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,6 +91,7 @@ fun BedDetailScreen(
     onAddHarvest: (Long) -> Unit,
     onEditPlanting: (Long, Long) -> Unit,
     onEditHarvest: (Long, Long) -> Unit,
+    onViewPlanting: (Long, Long) -> Unit,
     viewModel: BedDetailViewModel = hiltViewModel(),
 ) {
     val bed by viewModel.selectedBed.collectAsState()
@@ -105,7 +108,6 @@ fun BedDetailScreen(
 
     var plantingToDelete by remember { mutableStateOf<Planting?>(null) }
     var harvestToDelete by remember { mutableStateOf<HarvestLog?>(null) }
-    var selectedPlantDetail by remember { mutableStateOf<PlantInfo?>(null) }
     var plantingForAction by remember { mutableStateOf<Planting?>(null) }
     var harvestForAction by remember { mutableStateOf<HarvestLog?>(null) }
     var wateringToDelete by remember { mutableStateOf<WateringLog?>(null) }
@@ -166,9 +168,9 @@ fun BedDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(AppSpacing.xxs))
                     Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
-                        InfoPill(b.type.replaceFirstChar { it.uppercase() })
+                        InfoPill(b.type.displayFormat())
                         b.sunExposure?.let {
-                            InfoPill(it.replaceFirstChar { c -> c.uppercase() })
+                            InfoPill(it.displayFormat())
                         }
                     }
                 }
@@ -236,16 +238,22 @@ fun BedDetailScreen(
             }
 
             // ── Tab Content ──
+            val bedZone = viewModel.zone
+
             when (selectedTab) {
                 0 -> PlantingsTab(
-                    plantings, plantInfoMap, zoneWindows, harvestPredictions,
+                    plantings, zoneWindows, harvestPredictions,
                     onLongPress = { plantingForAction = it },
-                    onPlantInfoClick = { selectedPlantDetail = it },
+                    onPlantingClick = { bed?.let { b -> onViewPlanting(b.id, it.id) } },
                     onMarkSprouted = { plantingToMarkSprouted = it },
+                    zone = bedZone,
+                    modifier = Modifier.weight(1f),
                 )
                 1 -> HarvestsTab(
                     harvests, plantingNames, harvestTotals,
                     onLongPress = { harvestForAction = it },
+                    zone = bedZone,
+                    modifier = Modifier.weight(1f),
                 )
                 2 -> CareLogTab(
                     wateringLogs = wateringLogs,
@@ -254,6 +262,8 @@ fun BedDetailScreen(
                     plantInfoMap = plantInfoMap,
                     onWateringLongPress = { wateringToDelete = it },
                     onFertilizerLongPress = { fertilizerToDelete = it },
+                    zone = bedZone,
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -275,20 +285,6 @@ fun BedDetailScreen(
             itemName = "$name harvest",
             onConfirm = { viewModel.deleteHarvest(harvest); harvestToDelete = null },
             onDismiss = { harvestToDelete = null },
-        )
-    }
-
-    val allVarieties by viewModel.allVarieties.collectAsState()
-    val varietiesByPlantId by viewModel.varietiesByPlantId.collectAsState()
-    selectedPlantDetail?.let { plant ->
-        val activeWindows by viewModel.activeWindows.collectAsState()
-        val plantWindows = activeWindows.filter { it.plantName == plant.name }
-        val plantVarieties = varietiesByPlantId[plant.id] ?: emptyList()
-        PlantDetailSheet(
-            plant = plant,
-            varieties = plantVarieties,
-            plantingWindows = plantWindows,
-            onDismiss = { selectedPlantDetail = null },
         )
     }
 
@@ -388,11 +384,12 @@ fun BedDetailScreen(
     plantingToMarkSprouted?.let { planting ->
         SproutedFormSheet(
             planting = planting,
+            zone = viewModel.zone,
             onDismiss = { plantingToMarkSprouted = null },
-            onSave = { seedsSprouted ->
+            onSave = { date, seedsSprouted ->
                 viewModel.updatePlanting(
                     planting.copy(
-                        germinationDate = System.currentTimeMillis(),
+                        germinationDate = date,
                         seedsSprouted = seedsSprouted,
                     )
                 )
@@ -569,25 +566,40 @@ private fun WateringFormSheet(
 @Composable
 private fun SproutedFormSheet(
     planting: Planting,
+    zone: ZoneId = ZoneId.systemDefault(),
     onDismiss: () -> Unit,
-    onSave: (seedsSprouted: Int?) -> Unit,
+    onSave: (date: Long, seedsSprouted: Int?) -> Unit,
 ) {
-    var seedsSprouted by remember { mutableStateOf(planting.seedsPlanted?.toString() ?: "") }
+    var sproutDate by remember {
+        mutableStateOf(planting.germinationDate ?: System.currentTimeMillis())
+    }
+    var seedsSprouted by remember {
+        mutableStateOf(planting.seedsSprouted?.toString() ?: planting.seedsPlanted?.toString() ?: "")
+    }
 
+    val isEditing = planting.germinationDate != null
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
     FurrowBottomSheet(
         onDismiss = onDismiss,
-        title = "Mark as Sprouted",
+        title = if (isEditing) "Edit Sprout Date" else "Mark as Sprouted",
         confirmText = "Save",
         glowColor = GardenGlow,
-        onConfirm = { onSave(seedsSprouted.toIntOrNull()) },
+        onConfirm = { onSave(sproutDate, seedsSprouted.toIntOrNull()) },
         content = {
             Text(
                 "${planting.plantName}${planting.variety?.let { " \u2014 $it" } ?: ""}",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = GardenGlow,
+            )
+            DateFieldWithToggle(
+                label = "Date Sprouted",
+                dateMillis = sproutDate,
+                onDateChange = { sproutDate = it },
+                useTodayDefault = !isEditing,
+                accentColor = GardenGlow,
+                zone = zone,
             )
             if (planting.seedsPlanted != null) {
                 AppTextField(

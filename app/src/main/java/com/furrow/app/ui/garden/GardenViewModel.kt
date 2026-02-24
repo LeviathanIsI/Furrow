@@ -17,18 +17,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.furrow.app.util.DateUtil
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Locale
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 data class PlantingSummary(
@@ -97,7 +98,10 @@ class GardenViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
 ) : ViewModel() {
 
-    private val zone = ZoneId.systemDefault()
+    internal val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
     private val today = LocalDate.now(zone)
     private val thirtyDaysAgo = today.minusDays(29)
     private val rangeStartMillis = thirtyDaysAgo.atStartOfDay(zone).toInstant().toEpochMilli()
@@ -188,7 +192,7 @@ class GardenViewModel @Inject constructor(
         ) { plantings, predictions, beds ->
             val bedMap = beds.associateBy { it.id }
             plantings.filter { planting ->
-                planting.status in listOf("growing", "producing") &&
+                planting.status.lowercase() in listOf("growing", "producing") &&
                     predictions[planting.id]?.isReady == true
             }.map { planting ->
                 val pred = predictions[planting.id]!!
@@ -230,7 +234,7 @@ class GardenViewModel @Inject constructor(
             val frostDateStr = profile?.firstFrostDate
             val frostDate = frostDateStr?.let { parseFrostDate(it, today.year) }
             plantings.filter { planting ->
-                planting.status in listOf("harvested", "producing", "finished") &&
+                planting.status.lowercase() in listOf("harvested", "producing", "finished") &&
                     infoMap[planting.plantName]?.canSuccessionPlant == true
             }.map { planting ->
                 val plantInfo = infoMap[planting.plantName]!!
@@ -260,7 +264,7 @@ class GardenViewModel @Inject constructor(
             activeBeds,
         ) { plantings, infoMap, beds ->
             val bedMap = beds.associateBy { it.id }
-            plantings.filter { it.source == "seed" && it.germinationDate == null && it.status == "growing" }
+            plantings.filter { it.source.equals("seed", ignoreCase = true) && it.germinationDate == null && it.status.equals("growing", ignoreCase = true) }
                 .mapNotNull { planting ->
                     val plantInfo = infoMap[planting.plantName] ?: return@mapNotNull null
                     val germMax = plantInfo.germinationDaysMax ?: return@mapNotNull null
@@ -354,15 +358,6 @@ class GardenViewModel @Inject constructor(
         viewModelScope.launch { repository.deleteBed(bed) }
     }
 
-    private fun parseFrostDate(dateStr: String, year: Int): LocalDate? {
-        return try {
-            val formatter = DateTimeFormatter.ofPattern("MMM d", Locale.US)
-            val parsed = formatter.parse(dateStr)
-            val month = parsed.get(java.time.temporal.ChronoField.MONTH_OF_YEAR)
-            val day = parsed.get(java.time.temporal.ChronoField.DAY_OF_MONTH)
-            LocalDate.of(year, month, day)
-        } catch (_: Exception) {
-            null
-        }
-    }
+    private fun parseFrostDate(dateStr: String, year: Int): LocalDate? =
+        DateUtil.parseFrostDate(dateStr, year)
 }

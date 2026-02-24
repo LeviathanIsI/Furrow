@@ -19,7 +19,22 @@ object ZoneLookup {
             climateCategory = climate,
             lastFrostDate = lastFrost,
             firstFrostDate = firstFrost,
+            timezone = timezoneForState(info.state),
         )
+    }
+
+    fun timezoneForState(state: String): String = when (state) {
+        "HI" -> "Pacific/Honolulu"
+        "AK" -> "America/Anchorage"
+        "WA", "OR", "CA", "NV" -> "America/Los_Angeles"
+        "MT", "ID", "WY", "UT", "CO", "AZ", "NM" -> "America/Denver"
+        "ND", "SD", "NE", "KS", "MN", "IA", "MO", "WI", "IL",
+        "OK", "TX", "AR", "LA", "MS", "AL" -> "America/Chicago"
+        "MI", "IN", "OH", "KY", "TN", "GA", "FL", "SC", "NC",
+        "VA", "WV", "PA", "NY", "NJ", "CT", "RI", "MA", "NH",
+        "VT", "ME", "DE", "MD", "DC" -> "America/New_York"
+        "PR" -> "America/Puerto_Rico"
+        else -> "America/New_York"
     }
 
     fun isValidZip(zip: String): Boolean {

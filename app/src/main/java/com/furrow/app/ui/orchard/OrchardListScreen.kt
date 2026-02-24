@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.OrchardPlant
+import com.furrow.app.util.displayFormat
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
@@ -106,7 +107,7 @@ fun OrchardListScreen(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
                     top = AppSpacing.md,
-                    bottom = AppSpacing.xl,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {
@@ -125,7 +126,7 @@ fun OrchardListScreen(
                         }
                         items(categories, key = { it }) { category ->
                             Tag(
-                                text = category.replaceFirstChar { it.uppercase() }.replace('_', ' '),
+                                text = category.displayFormat(),
                                 selected = selectedCategory == category,
                                 onClick = { viewModel.setCategoryFilter(category) },
                                 accentColor = OrchardGlow,
@@ -157,7 +158,7 @@ fun OrchardListScreen(
                                 plant.variety?.let { append(" - $it") }
                             }
                             val subtitle = buildString {
-                                append(plant.category.replaceFirstChar { it.uppercase() }.replace('_', ' '))
+                                append(plant.category.displayFormat())
                                 plant.rootstock?.let { append(" | $it") }
                             }
                             ListRow(
@@ -170,7 +171,7 @@ fun OrchardListScreen(
                                 ),
                                 title = title,
                                 subtitle = subtitle,
-                                metadata = plant.status.replaceFirstChar { it.uppercase() },
+                                metadata = plant.status.displayFormat(),
                                 showDivider = index != plants.lastIndex,
                             )
                         }

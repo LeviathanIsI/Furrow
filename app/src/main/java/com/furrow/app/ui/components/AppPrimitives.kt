@@ -2,6 +2,7 @@ package com.furrow.app.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -201,11 +202,11 @@ fun Panel(
     contentPadding: PaddingValues = PaddingValues(AppSpacing.md),
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = Charcoal,
-        shape = RoundedCornerShape(AppRadius.card),
-        border = BorderStroke(1.dp, BorderVisible),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Charcoal, RoundedCornerShape(AppRadius.card))
+            .border(1.dp, BorderVisible, RoundedCornerShape(AppRadius.card)),
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
@@ -259,8 +260,6 @@ fun ListRow(
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -289,11 +288,11 @@ fun ListRow(
 
 object AppTextFieldDefaults {
     @Composable
-    fun colors(accentColor: Color = GardenGlow): TextFieldColors = OutlinedTextFieldDefaults.colors(
+    fun colors(accentColor: Color = GardenGlow, bordered: Boolean = false): TextFieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = Charcoal,
         unfocusedContainerColor = Charcoal,
-        focusedBorderColor = Color.Transparent,
-        unfocusedBorderColor = Color.Transparent,
+        focusedBorderColor = if (bordered) accentColor else Color.Transparent,
+        unfocusedBorderColor = if (bordered) BorderSubtle else Color.Transparent,
         focusedLabelColor = accentColor,
         unfocusedLabelColor = TextTertiary,
         focusedTextColor = TextPrimary,
@@ -470,13 +469,13 @@ fun Tag(
             content = content,
         )
     } else {
-        Surface(
-            modifier = modifier,
-            shape = RoundedCornerShape(AppRadius.chip),
-            color = containerColor,
-            border = BorderStroke(1.dp, borderColor),
-            content = content,
-        )
+        Box(
+            modifier = modifier
+                .background(containerColor, RoundedCornerShape(AppRadius.chip))
+                .border(1.dp, borderColor, RoundedCornerShape(AppRadius.chip)),
+        ) {
+            content()
+        }
     }
 }
 
@@ -732,11 +731,13 @@ fun StatusPill(
         active -> GardenGlow
         else -> TextSecondary
     }
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(AppRadius.chip),
-        color = if (active) color.copy(alpha = 0.16f) else Graphite,
-        border = BorderStroke(1.dp, if (active || error) color else BorderSubtle),
+    Box(
+        modifier = modifier
+            .background(
+                if (active) color.copy(alpha = 0.16f) else Graphite,
+                RoundedCornerShape(AppRadius.chip),
+            )
+            .border(1.dp, if (active || error) color else BorderSubtle, RoundedCornerShape(AppRadius.chip)),
     ) {
         Text(
             text = text,

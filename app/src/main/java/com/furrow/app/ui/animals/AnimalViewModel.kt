@@ -14,16 +14,20 @@ import com.furrow.app.data.local.entity.MilkLog
 import com.furrow.app.data.local.entity.ProcessingRecord
 import com.furrow.app.data.local.entity.WeightLog
 import com.furrow.app.data.repository.AnimalRepository
+import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -41,12 +45,16 @@ data class DailyEggCount(
 @HiltViewModel
 class AnimalViewModel @Inject constructor(
     private val repository: AnimalRepository,
+    private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val animalId: Long? = savedStateHandle.get<Long>("animalId")
 
-    private val zone = ZoneId.systemDefault()
+    internal val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
     private val today = LocalDate.now(zone)
     private val weekStart = today.minusDays(6)
 

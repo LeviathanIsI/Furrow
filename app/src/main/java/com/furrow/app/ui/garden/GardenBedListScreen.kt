@@ -30,7 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.GardenBed
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.util.displayFormat
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
@@ -103,7 +104,7 @@ fun GardenBedListScreen(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
                     top = AppSpacing.md,
-                    bottom = AppSpacing.xl,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {
@@ -125,10 +126,10 @@ fun GardenBedListScreen(
                             ListRow(
                                 title = bed.name,
                                 subtitle = buildString {
-                                    append(bed.type.replaceFirstChar { it.uppercase() })
+                                    append(bed.type.displayFormat())
                                     bed.sunExposure?.let {
                                         append(" • ")
-                                        append(it.replaceFirstChar { c -> c.uppercase() })
+                                        append(it.displayFormat())
                                     }
                                 },
                                 leadingIcon = {

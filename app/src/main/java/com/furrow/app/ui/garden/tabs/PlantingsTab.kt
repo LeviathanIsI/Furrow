@@ -2,6 +2,7 @@ package com.furrow.app.ui.garden.tabs
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Spa
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import com.furrow.app.data.local.entity.PlantInfo
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.PlantingWindow
 import com.furrow.app.ui.components.ListRow
@@ -41,24 +44,23 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-private val zone: ZoneId = ZoneId.systemDefault()
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun PlantingsTab(
     plantings: List<Planting>,
-    plantInfoMap: Map<String, PlantInfo>,
     zoneWindows: List<PlantingWindow>,
     harvestPredictions: Map<Long, HarvestPrediction>,
     onLongPress: (Planting) -> Unit,
-    onPlantInfoClick: (PlantInfo) -> Unit,
+    onPlantingClick: (Planting) -> Unit,
     onMarkSprouted: (Planting) -> Unit = {},
+    zone: ZoneId = ZoneId.systemDefault(),
+    modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
 
     if (plantings.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -77,13 +79,15 @@ internal fun PlantingsTab(
     }
 
     val today = LocalDate.now(zone)
+    fun formatShort(date: LocalDate): String = DateUtil.formatShortDate(date, today)
 
     LazyColumn(
+        modifier = modifier,
         contentPadding = PaddingValues(
             start = AppSpacing.md,
             end = AppSpacing.md,
             top = AppSpacing.md,
-            bottom = AppSpacing.xl,
+            bottom = AppSpacing.bottomListPadding,
         ),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
@@ -91,16 +95,7 @@ internal fun PlantingsTab(
             Panel(contentPadding = PaddingValues(0.dp)) {
                 plantings.forEachIndexed { index, planting ->
                     val plantedDate = Instant.ofEpochMilli(planting.datePlanted).atZone(zone).toLocalDate()
-                    val daysSincePlanting = ChronoUnit.DAYS.between(plantedDate, today)
                     val prediction = harvestPredictions[planting.id]
-                    val statusText = prediction?.let {
-                        when {
-                            it.isOverdue -> "Overdue"
-                            it.isReady -> "Ready"
-                            else -> "${it.daysUntilEarliest}d"
-                        }
-                    } ?: ""
-                    val plantInfo = plantInfoMap[planting.plantName]
                     val displayName = if (planting.variety != null) {
                         "${planting.plantName} • ${planting.variety}"
                     } else {
@@ -109,7 +104,7 @@ internal fun PlantingsTab(
 
                     ListRow(
                         modifier = Modifier.combinedClickable(
-                            onClick = { plantInfo?.let { onPlantInfoClick(it) } },
+                            onClick = { onPlantingClick(planting) },
                             onLongClick = {
                                 view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                 onLongPress(planting)
@@ -117,8 +112,22 @@ internal fun PlantingsTab(
                         ),
                         title = displayName,
                         subtitle = buildString {
-                            append("${planting.status.replaceFirstChar { it.uppercase() }} • $daysSincePlanting days")
-                            if (statusText.isNotBlank()) append(" • $statusText")
+                            append("Planted ${formatShort(plantedDate)}")
+                            planting.germinationDate?.let { millis ->
+                                val sproutDate = Instant.ofEpochMilli(millis).atZone(zone).toLocalDate()
+                                append(" · Sprouted ${formatShort(sproutDate)}")
+                            }
+                            prediction?.let {
+                                append("\n")
+                                when {
+                                    it.isOverdue -> {
+                                        val daysPast = ChronoUnit.DAYS.between(it.latestHarvest, today)
+                                        append("$daysPast days past expected harvest")
+                                    }
+                                    it.isReady -> append("Ready to harvest")
+                                    else -> append("~${it.daysUntilEarliest} days to harvest")
+                                }
+                            }
                         },
                         leadingIcon = {
                             Icon(
@@ -134,17 +143,27 @@ internal fun PlantingsTab(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
                             ) {
-                                if (planting.source == "seed" && planting.germinationDate == null) {
+                                if (planting.source.equals("seed", ignoreCase = true) && planting.germinationDate == null) {
                                     SecondaryButton(
                                         text = "Sprouted",
                                         onClick = { onMarkSprouted(planting) },
                                     )
                                 } else {
                                     Tag(
-                                        text = planting.status.replaceFirstChar { it.uppercase() },
-                                        selected = planting.status == "producing",
+                                        text = planting.status.displayFormat(),
+                                        selected = planting.status.equals("producing", ignoreCase = true),
                                         accentColor = GardenGlow,
                                     )
+                                    if (planting.source.equals("seed", ignoreCase = true) && planting.germinationDate != null) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Edit,
+                                            contentDescription = "Edit sprout date",
+                                            modifier = Modifier
+                                                .size(18.dp)
+                                                .clickable { onMarkSprouted(planting) },
+                                            tint = GardenGlow,
+                                        )
+                                    }
                                 }
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

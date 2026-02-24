@@ -13,4 +13,5 @@ data class UserProfile(
     val climateCategory: String,
     val lastFrostDate: String,
     val firstFrostDate: String,
+    val timezone: String = "",
 )

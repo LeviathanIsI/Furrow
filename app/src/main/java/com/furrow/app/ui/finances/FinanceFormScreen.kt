@@ -34,7 +34,7 @@ import com.furrow.app.data.local.entity.MileageLog
 import com.furrow.app.data.local.entity.Revenue
 import com.furrow.app.data.FinanceCategoryData
 import com.furrow.app.data.ModuleCatalogData
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppSectionHeader
 import com.furrow.app.ui.components.AppTextFieldDefaults

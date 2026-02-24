@@ -15,7 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import com.furrow.app.ui.components.AppTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Animal
 import com.furrow.app.data.local.entity.AnimalBreedInfo
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.BreedingRecord
 import com.furrow.app.data.local.entity.FeedLog
 import com.furrow.app.data.local.entity.HealthRecord
@@ -44,10 +45,7 @@ import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.theme.AnimalsGlow
 import com.furrow.app.ui.theme.AppSpacing
-import com.furrow.app.ui.theme.BorderSubtle
-import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.TextPrimary
-import com.furrow.app.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,17 +67,7 @@ fun AnimalFormScreen(
         else -> "Form"
     }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = Charcoal,
-        unfocusedContainerColor = Charcoal,
-        focusedBorderColor = AnimalsGlow,
-        unfocusedBorderColor = BorderSubtle,
-        focusedLabelColor = AnimalsGlow,
-        unfocusedLabelColor = TextTertiary,
-        cursorColor = AnimalsGlow,
-        unfocusedTextColor = TextPrimary,
-        focusedTextColor = TextPrimary,
-    )
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = AnimalsGlow, bordered = true)
 
     AppScaffold(
         topBar = {
@@ -175,14 +163,14 @@ private fun AnimalForm(
             existing?.let {
                 name = it.name ?: ""
                 species = it.species
-                speciesQuery = it.species.replaceFirstChar { c -> c.uppercase() }
+                speciesQuery = it.species.displayFormat()
                 breed = it.breed
                 breedQuery = it.breed
-                sex = it.sex.replaceFirstChar { c -> c.uppercase() }
-                sexQuery = it.sex.replaceFirstChar { c -> c.uppercase() }
+                sex = it.sex.displayFormat()
+                sexQuery = it.sex.displayFormat()
                 tagId = it.tagId ?: ""
-                status = it.status.replaceFirstChar { c -> c.uppercase() }
-                statusQuery = it.status.replaceFirstChar { c -> c.uppercase() }
+                status = it.status.displayFormat()
+                statusQuery = it.status.displayFormat()
                 if (it.dob != null) {
                     dob = it.dob
                     useDob = true
@@ -230,7 +218,7 @@ private fun AnimalForm(
             accentColor = AnimalsGlow,
             onAddCustom = {
                 species = it.trim().lowercase()
-                speciesQuery = it.replaceFirstChar { c -> c.uppercase() }
+                speciesQuery = it.displayFormat()
                 breedQuery = ""
                 breed = ""
             },

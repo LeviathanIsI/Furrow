@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.Planting
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppButtonPrimary
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppSectionHeader
@@ -63,6 +63,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
+import com.furrow.app.util.DateUtil
 import java.time.Instant
 import java.time.ZoneId
 
@@ -81,6 +82,7 @@ fun PlantingFormScreen(
     viewModel: BedDetailViewModel = hiltViewModel(),
 ) {
     val isEditMode = editId > 0L
+    val zone = viewModel.zone
     var plantName by remember { mutableStateOf("") }
     var plantQuery by remember { mutableStateOf("") }
     var variety by remember { mutableStateOf("") }
@@ -92,6 +94,8 @@ fun PlantingFormScreen(
     var status by remember { mutableStateOf("Growing") }
     var notes by remember { mutableStateOf("") }
     var seedsPlanted by remember { mutableStateOf("") }
+    var germinationDate by remember { mutableLongStateOf(0L) }
+    var seedsSprouted by remember { mutableStateOf("") }
     var showAddCustomPlant by remember { mutableStateOf(false) }
     var customPlantInitialName by remember { mutableStateOf("") }
     var plantToEdit by remember { mutableStateOf<PlantInfo?>(null) }
@@ -111,6 +115,8 @@ fun PlantingFormScreen(
                 status = it.status
                 notes = it.notes ?: ""
                 seedsPlanted = it.seedsPlanted?.toString() ?: ""
+                germinationDate = it.germinationDate ?: 0L
+                seedsSprouted = it.seedsSprouted?.toString() ?: ""
             }
         }
     }
@@ -324,7 +330,28 @@ fun PlantingFormScreen(
                 onDateChange = { datePlanted = it },
                 useTodayDefault = !isEditMode,
                 accentColor = GardenGlow,
+                zone = zone,
             )
+
+            if (source == "Seed" && germinationDate > 0L) {
+                DateFieldWithToggle(
+                    label = "Date Sprouted",
+                    dateMillis = germinationDate,
+                    onDateChange = { germinationDate = it },
+                    useTodayDefault = false,
+                    accentColor = GardenGlow,
+                    zone = zone,
+                )
+
+                AppTextField(
+                    value = seedsSprouted,
+                    onValueChange = { seedsSprouted = it.filter { c -> c.isDigit() } },
+                    label = { Text("Seeds Sprouted (optional)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = fieldColors,
+                )
+            }
 
             DropdownSelector(
                 label = "Status",
@@ -352,9 +379,9 @@ fun PlantingFormScreen(
                     val matchedPlant = allPlants.firstOrNull { it.name == plantName.trim() }
                     val expectedGermDate = if (source == "Seed" && matchedPlant?.germinationDaysMin != null) {
                         val plantedInstant = Instant.ofEpochMilli(datePlanted)
-                            .atZone(ZoneId.systemDefault()).toLocalDate()
+                            .atZone(zone).toLocalDate()
                         val expectedDate = plantedInstant.plusDays(matchedPlant.germinationDaysMin.toLong())
-                        expectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        expectedDate.atStartOfDay(zone).toInstant().toEpochMilli()
                     } else null
 
                     val planting = Planting(
@@ -368,6 +395,8 @@ fun PlantingFormScreen(
                         status = status,
                         notes = notes.ifBlank { null },
                         seedsPlanted = if (source == "Seed") seedsPlanted.toIntOrNull() else null,
+                        germinationDate = germinationDate.takeIf { it > 0L },
+                        seedsSprouted = if (source == "Seed") seedsSprouted.toIntOrNull() else null,
                         expectedGerminationDate = expectedGermDate,
                     )
                     if (isEditMode) viewModel.updatePlanting(planting) else viewModel.addPlanting(planting)

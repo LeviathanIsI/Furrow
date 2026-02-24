@@ -1,8 +1,8 @@
 package com.furrow.app.ui.garden.tabs
 
 import android.view.HapticFeedbackConstants
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +24,11 @@ import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.TextSecondary
-import java.time.Instant
+import com.furrow.app.util.DateUtil
+
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val zone: ZoneId = ZoneId.systemDefault()
-private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
 
 internal data class HarvestTotal(
     val totalOz: Double,
@@ -38,18 +36,20 @@ internal data class HarvestTotal(
     val entryCount: Int,
 )
 
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 internal fun HarvestsTab(
     harvests: List<HarvestLog>,
     plantingNames: Map<Long, String>,
     harvestTotals: Map<Long, HarvestTotal>,
     onLongPress: (HarvestLog) -> Unit,
+    zone: ZoneId = ZoneId.systemDefault(),
+    modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
 
     if (harvests.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("No harvest logs yet", style = MaterialTheme.typography.titleMedium)
                 Text("Use Add to log harvested yield", color = TextSecondary)
@@ -61,11 +61,12 @@ internal fun HarvestsTab(
     val grouped = harvests.groupBy { it.plantingId }
 
     LazyColumn(
+        modifier = modifier,
         contentPadding = PaddingValues(
             start = AppSpacing.md,
             end = AppSpacing.md,
             top = AppSpacing.md,
-            bottom = AppSpacing.xl,
+            bottom = AppSpacing.bottomListPadding,
         ),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
@@ -93,16 +94,15 @@ internal fun HarvestsTab(
             item(key = "panel_$plantingId") {
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     logs.forEachIndexed { index, harvest ->
-                        val harvestDate = Instant.ofEpochMilli(harvest.date).atZone(zone).toLocalDate()
+                        val harvestDateStr = DateUtil.formatDate(harvest.date, zone)
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(harvest) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(harvest)
-                                },
-                            ),
-                            title = harvestDate.format(dateFormatter),
+                                })
+                            },
+                            title = harvestDateStr,
                             subtitle = harvest.notes,
                             leadingIcon = {
                                 Icon(

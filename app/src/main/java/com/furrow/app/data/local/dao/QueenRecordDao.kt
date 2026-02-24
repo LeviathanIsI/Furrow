@@ -27,6 +27,6 @@ interface QueenRecordDao {
     @Query("SELECT * FROM queen_records WHERE id = :id")
     fun getById(id: Long): Flow<QueenRecord?>
 
-    @Query("SELECT * FROM queen_records WHERE hive_id = :hiveId AND status = 'laying' LIMIT 1")
+    @Query("SELECT * FROM queen_records WHERE hive_id = :hiveId AND LOWER(status) = 'laying' LIMIT 1")
     fun getCurrentQueen(hiveId: Long): Flow<QueenRecord?>
 }

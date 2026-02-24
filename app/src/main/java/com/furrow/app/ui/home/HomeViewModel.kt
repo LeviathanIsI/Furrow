@@ -18,13 +18,16 @@ import com.furrow.app.data.repository.PreservationRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -46,7 +49,10 @@ class HomeViewModel @Inject constructor(
     complianceRepository: ComplianceRepository,
 ) : ViewModel() {
 
-    private val zone = ZoneId.systemDefault()
+    internal val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
     private val today = LocalDate.now(zone)
     private val currentMonth = today.monthValue
     private val todayStartMillis = today.atStartOfDay(zone).toInstant().toEpochMilli()
@@ -148,11 +154,11 @@ class HomeViewModel @Inject constructor(
         plantRepository.getAllPlants(),
         plantRepository.getAllVarieties(),
     ) { plantings, beds, plants, varieties ->
-        val producing = plantings.count { it.status == "producing" }
-        val growing = plantings.count { it.status == "growing" }
+        val producing = plantings.count { it.status.equals("producing", ignoreCase = true) }
+        val growing = plantings.count { it.status.equals("growing", ignoreCase = true) }
 
         val oldestGrowing = plantings
-            .filter { it.status == "growing" }
+            .filter { it.status.equals("growing", ignoreCase = true) }
             .minByOrNull { it.datePlanted }
 
         val oldestDays = oldestGrowing?.let {
@@ -166,7 +172,7 @@ class HomeViewModel @Inject constructor(
         val plantMap = plants.associateBy { it.name }
         val varietyMap = varieties.associateBy { it.id }
         val readyCount = plantings.count { planting ->
-            if (planting.status !in listOf("growing", "producing")) return@count false
+            if (planting.status.lowercase() !in listOf("growing", "producing")) return@count false
             val info = plantMap[planting.plantName] ?: return@count false
             val variety = planting.varietyId?.let { varietyMap[it] }
             val daysMin = variety?.daysToHarvestMin ?: info.daysToHarvestMin

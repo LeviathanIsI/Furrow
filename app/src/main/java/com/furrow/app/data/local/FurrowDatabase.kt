@@ -232,7 +232,7 @@ import com.furrow.app.data.local.entity.WeightLog
         ComplianceDocument::class,
         UserModulePreference::class,
     ],
-    version = 16,
+    version = 17,
     exportSchema = false,
 )
 abstract class FurrowDatabase : RoomDatabase() {

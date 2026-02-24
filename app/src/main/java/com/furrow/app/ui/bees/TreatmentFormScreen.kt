@@ -23,7 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import com.furrow.app.ui.components.AppTextFieldDefaults
+import com.furrow.app.ui.components.DropdownSelector
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -47,11 +48,8 @@ import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.theme.BeeGlow
-import com.furrow.app.ui.theme.BorderSubtle
-import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
-import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,17 +80,7 @@ fun TreatmentFormScreen(
         }
     }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = Charcoal,
-        unfocusedContainerColor = Charcoal,
-        focusedBorderColor = BeeGlow,
-        unfocusedBorderColor = BorderSubtle,
-        focusedLabelColor = BeeGlow,
-        unfocusedLabelColor = TextTertiary,
-        focusedTextColor = TextPrimary,
-        unfocusedTextColor = TextPrimary,
-        cursorColor = BeeGlow,
-    )
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = BeeGlow, bordered = true)
 
     com.furrow.app.ui.components.AppScaffold(
         topBar = {

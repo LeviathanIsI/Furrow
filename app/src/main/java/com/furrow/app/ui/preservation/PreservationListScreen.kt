@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,18 +60,8 @@ import com.furrow.app.ui.theme.PreservationGlow
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.Void
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val preservationDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(preservationDateFormatter)
-}
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 
 private enum class PreservationTab(val label: String, val type: String) {
     CANNING("Canning", "canning"),
@@ -187,25 +178,27 @@ fun PreservationListScreen(
             when (tabs[selectedTab]) {
                 PreservationTab.CANNING -> {
                     if (canningBatches.isEmpty()) {
-                        EmptyState(
-                            title = "No canning batches",
-                            subtitle = "Add your first canning batch to start tracking.",
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Kitchen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp),
-                                    tint = PreservationGlow,
-                                )
-                            },
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            EmptyState(
+                                title = "No canning batches",
+                                subtitle = "Add your first canning batch to start tracking.",
+                                icon = {
+                                    Icon(
+                                        Icons.Outlined.Kitchen,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = PreservationGlow,
+                                    )
+                                },
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(
                                 start = AppSpacing.md,
                                 end = AppSpacing.md,
-                                bottom = 80.dp,
+                                bottom = AppSpacing.bottomListPadding,
                             ),
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                         ) {
@@ -213,14 +206,14 @@ fun PreservationListScreen(
                                 Panel(contentPadding = PaddingValues(0.dp)) {
                                     canningBatches.forEachIndexed { index, batch ->
                                         val subtitle = listOfNotNull(
-                                            batch.method?.replaceFirstChar { it.uppercase() },
+                                            batch.method?.displayFormat(),
                                             batch.jarSize,
                                             batch.jarCount?.let { "${it} jars" },
                                         ).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.recipeName,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = formatDate(batch.dateProcessed),
+                                            metadata = DateUtil.formatDate(batch.dateProcessed),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("canning", batch.id) },
                                                 onLongClick = { canningForAction = batch },
@@ -236,25 +229,27 @@ fun PreservationListScreen(
 
                 PreservationTab.DEHYDRATING -> {
                     if (dehydratingBatches.isEmpty()) {
-                        EmptyState(
-                            title = "No dehydrating batches",
-                            subtitle = "Add your first dehydrating batch to start tracking.",
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Kitchen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp),
-                                    tint = PreservationGlow,
-                                )
-                            },
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            EmptyState(
+                                title = "No dehydrating batches",
+                                subtitle = "Add your first dehydrating batch to start tracking.",
+                                icon = {
+                                    Icon(
+                                        Icons.Outlined.Kitchen,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = PreservationGlow,
+                                    )
+                                },
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(
                                 start = AppSpacing.md,
                                 end = AppSpacing.md,
-                                bottom = 80.dp,
+                                bottom = AppSpacing.bottomListPadding,
                             ),
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                         ) {
@@ -267,7 +262,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle,
-                                            metadata = formatDate(batch.date),
+                                            metadata = DateUtil.formatDate(batch.date),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("dehydrating", batch.id) },
                                                 onLongClick = { dehydratingForAction = batch },
@@ -283,25 +278,27 @@ fun PreservationListScreen(
 
                 PreservationTab.FERMENTING -> {
                     if (fermentingBatches.isEmpty()) {
-                        EmptyState(
-                            title = "No fermenting batches",
-                            subtitle = "Add your first fermenting batch to start tracking.",
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Kitchen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp),
-                                    tint = PreservationGlow,
-                                )
-                            },
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            EmptyState(
+                                title = "No fermenting batches",
+                                subtitle = "Add your first fermenting batch to start tracking.",
+                                icon = {
+                                    Icon(
+                                        Icons.Outlined.Kitchen,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = PreservationGlow,
+                                    )
+                                },
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(
                                 start = AppSpacing.md,
                                 end = AppSpacing.md,
-                                bottom = 80.dp,
+                                bottom = AppSpacing.bottomListPadding,
                             ),
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                         ) {
@@ -309,13 +306,13 @@ fun PreservationListScreen(
                                 Panel(contentPadding = PaddingValues(0.dp)) {
                                     fermentingBatches.forEachIndexed { index, batch ->
                                         val subtitle = listOfNotNull(
-                                            batch.method?.replaceFirstChar { it.uppercase() },
-                                            batch.vesselType?.replaceFirstChar { it.uppercase() },
+                                            batch.method?.displayFormat(),
+                                            batch.vesselType?.displayFormat(),
                                         ).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = formatDate(batch.startDate),
+                                            metadata = DateUtil.formatDate(batch.startDate),
                                             trailing = if (batch.endDate == null) {
                                                 {
                                                     StatusPill(text = "Active", active = true)
@@ -338,25 +335,27 @@ fun PreservationListScreen(
 
                 PreservationTab.FREEZING -> {
                     if (freezingBatches.isEmpty()) {
-                        EmptyState(
-                            title = "No freezing batches",
-                            subtitle = "Add your first freezing batch to start tracking.",
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Kitchen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp),
-                                    tint = PreservationGlow,
-                                )
-                            },
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            EmptyState(
+                                title = "No freezing batches",
+                                subtitle = "Add your first freezing batch to start tracking.",
+                                icon = {
+                                    Icon(
+                                        Icons.Outlined.Kitchen,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = PreservationGlow,
+                                    )
+                                },
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(
                                 start = AppSpacing.md,
                                 end = AppSpacing.md,
-                                bottom = 80.dp,
+                                bottom = AppSpacing.bottomListPadding,
                             ),
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                         ) {
@@ -366,12 +365,12 @@ fun PreservationListScreen(
                                         val qtyStr = batch.quantityLbs?.let { "%.1f lbs".format(it) }
                                         val subtitle = listOfNotNull(
                                             qtyStr,
-                                            batch.packagingMethod?.replaceFirstChar { it.uppercase() },
+                                            batch.packagingMethod?.displayFormat(),
                                         ).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.item,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = formatDate(batch.dateFrozen),
+                                            metadata = DateUtil.formatDate(batch.dateFrozen),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("freezing", batch.id) },
                                                 onLongClick = { freezingForAction = batch },
@@ -387,25 +386,27 @@ fun PreservationListScreen(
 
                 PreservationTab.SMOKING -> {
                     if (smokingBatches.isEmpty()) {
-                        EmptyState(
-                            title = "No smoking batches",
-                            subtitle = "Add your first smoking/curing batch to start tracking.",
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Kitchen,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp),
-                                    tint = PreservationGlow,
-                                )
-                            },
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            EmptyState(
+                                title = "No smoking batches",
+                                subtitle = "Add your first smoking/curing batch to start tracking.",
+                                icon = {
+                                    Icon(
+                                        Icons.Outlined.Kitchen,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = PreservationGlow,
+                                    )
+                                },
+                            )
+                        }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.weight(1f),
                             contentPadding = PaddingValues(
                                 start = AppSpacing.md,
                                 end = AppSpacing.md,
-                                bottom = 80.dp,
+                                bottom = AppSpacing.bottomListPadding,
                             ),
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
                         ) {
@@ -413,13 +414,13 @@ fun PreservationListScreen(
                                 Panel(contentPadding = PaddingValues(0.dp)) {
                                     smokingBatches.forEachIndexed { index, batch ->
                                         val subtitle = listOfNotNull(
-                                            batch.cut?.replaceFirstChar { it.uppercase() },
-                                            batch.cureType?.replaceFirstChar { it.uppercase() },
+                                            batch.cut?.displayFormat(),
+                                            batch.cureType?.displayFormat(),
                                         ).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.meatType,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = formatDate(batch.cureStart),
+                                            metadata = DateUtil.formatDate(batch.cureStart),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("smoking", batch.id) },
                                                 onLongClick = { smokingForAction = batch },

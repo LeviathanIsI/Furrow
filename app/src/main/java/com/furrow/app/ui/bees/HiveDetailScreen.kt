@@ -2,8 +2,8 @@ package com.furrow.app.ui.bees
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,11 +57,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Inspection
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.GlowCard
 import com.furrow.app.ui.components.ItemActionSheet
+import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BeeGlow
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
@@ -123,12 +126,12 @@ fun HiveDetailScreen(
                         .padding(horizontal = 16.dp),
                 ) {
                     Text(
-                        "Queen ${h.queenStatus.replaceFirstChar { it.uppercase() }} • Source ${h.source.replaceFirstChar { it.uppercase() }}",
+                        "Queen ${h.queenStatus.displayFormat()} \u2022 Source ${h.source.displayFormat()}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = TextSecondary,
                     )
                     Text(
-                        "Installed ${formatDate(h.installDate)}",
+                        "Installed ${DateUtil.formatDate(h.installDate)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextTertiary,
                     )
@@ -196,7 +199,7 @@ fun HiveDetailScreen(
 
     inspectionToDelete?.let { inspection ->
         DeleteConfirmationDialog(
-            itemName = "inspection from ${formatDate(inspection.date)}",
+            itemName = "inspection from ${DateUtil.formatDate(inspection.date)}",
             onConfirm = { viewModel.deleteInspection(inspection); inspectionToDelete = null },
             onDismiss = { inspectionToDelete = null },
         )
@@ -204,7 +207,7 @@ fun HiveDetailScreen(
 
     treatmentToDelete?.let { treatment ->
         DeleteConfirmationDialog(
-            itemName = treatment.type.replaceFirstChar { it.uppercase() },
+            itemName = treatment.type.displayFormat(),
             onConfirm = { viewModel.deleteTreatment(treatment); treatmentToDelete = null },
             onDismiss = { treatmentToDelete = null },
         )
@@ -229,7 +232,6 @@ fun HiveDetailScreen(
 
 // ── Inspection List ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InspectionList(
     inspections: List<Inspection>,
@@ -258,7 +260,7 @@ private fun InspectionList(
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = AppSpacing.bottomListPadding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
@@ -266,14 +268,13 @@ private fun InspectionList(
                     inspections.forEachIndexed { index, inspection ->
                         val findings = buildInspectionFindings(inspection)
                         com.furrow.app.ui.components.ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(inspection) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(inspection)
-                                },
-                            ),
-                            title = formatDate(inspection.date),
+                                })
+                            },
+                            title = DateUtil.formatDate(inspection.date),
                             subtitle = listOfNotNull(
                                 findings.joinToString(" • ").takeIf { it.isNotBlank() },
                                 inspection.notes,
@@ -292,7 +293,6 @@ private fun InspectionList(
 
 // ── Treatment List ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TreatmentList(
     treatments: List<Treatment>,
@@ -321,28 +321,27 @@ private fun TreatmentList(
     } else {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 32.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = AppSpacing.bottomListPadding),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
                 com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
                     treatments.forEachIndexed { index, treatment ->
                         val details = buildString {
-                            append(treatment.type.replaceFirstChar { it.uppercase() })
-                            treatment.method?.let { append(" • Method: $it") }
+                            append(treatment.type.displayFormat())
+                            treatment.method?.let { append(" \u2022 Method: ${it.displayFormat()}") }
                             treatment.dose?.let { append(" • Dose: $it") }
-                            treatment.endDate?.let { append(" • Until ${formatDate(it)}") }
+                            treatment.endDate?.let { append(" • Until ${DateUtil.formatDate(it)}") }
                             treatment.notes?.let { append(" • $it") }
                         }
                         com.furrow.app.ui.components.ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(treatment) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(treatment)
-                                },
-                            ),
-                            title = formatDate(treatment.date),
+                                })
+                            },
+                            title = DateUtil.formatDate(treatment.date),
                             subtitle = details,
                             leadingIcon = {
                                 Icon(Icons.Outlined.Vaccines, contentDescription = null, tint = TextSecondary)

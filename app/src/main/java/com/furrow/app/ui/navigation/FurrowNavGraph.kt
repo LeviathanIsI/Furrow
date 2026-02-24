@@ -54,6 +54,7 @@ import com.furrow.app.ui.garden.BedDetailScreen
 import com.furrow.app.ui.garden.GardenBedListScreen
 import com.furrow.app.ui.garden.GardenReportsScreen
 import com.furrow.app.ui.garden.HarvestLogScreen
+import com.furrow.app.ui.garden.PlantDetailScreen
 import com.furrow.app.ui.garden.PlantingFormScreen
 import com.furrow.app.ui.home.HomeScreen
 import com.furrow.app.ui.land.LandFormScreen
@@ -260,6 +261,7 @@ fun FurrowNavGraph(
                 onAddHarvest = { bedId -> navController.navigate("garden/$bedId/add-harvest") },
                 onEditPlanting = { bedId, editId -> navController.navigate("garden/$bedId/add-planting?editId=$editId") },
                 onEditHarvest = { bedId, editId -> navController.navigate("garden/$bedId/add-harvest?editId=$editId") },
+                onViewPlanting = { bedId, plantingId -> navController.navigate("garden/$bedId/planting/$plantingId") },
             )
         }
 
@@ -291,6 +293,18 @@ fun FurrowNavGraph(
             HarvestLogScreen(
                 bedId = bedId,
                 editId = editId,
+                onBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = "garden/{bedId}/planting/{plantingId}",
+            arguments = listOf(
+                navArgument("bedId") { type = NavType.LongType },
+                navArgument("plantingId") { type = NavType.LongType },
+            )
+        ) {
+            PlantDetailScreen(
                 onBack = { navController.popBackStack() },
             )
         }

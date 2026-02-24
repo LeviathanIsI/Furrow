@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,6 +48,8 @@ import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
+import com.furrow.app.ui.theme.TextTertiary
+import java.time.ZoneId
 
 @Composable
 fun SettingsScreen(
@@ -152,6 +155,13 @@ fun SettingsScreen(
                 )
             }
 
+            // ── Timezone ──
+
+            TimezonePanel(
+                currentTimezone = profile?.timezone ?: "",
+                onTimezoneChange = { viewModel.updateTimezone(it) },
+            )
+
             // ── Modules ──
 
             Panel {
@@ -227,4 +237,123 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+private val commonTimezones = listOf(
+    "America/New_York" to "Eastern (ET)",
+    "America/Chicago" to "Central (CT)",
+    "America/Denver" to "Mountain (MT)",
+    "America/Los_Angeles" to "Pacific (PT)",
+    "America/Anchorage" to "Alaska (AKT)",
+    "Pacific/Honolulu" to "Hawaii (HT)",
+    "America/Puerto_Rico" to "Atlantic (AT)",
+)
+
+private fun timezoneLabel(tzId: String): String {
+    return commonTimezones.firstOrNull { it.first == tzId }?.second
+        ?: tzId.ifBlank { "System default" }
+}
+
+@Composable
+private fun TimezonePanel(
+    currentTimezone: String,
+    onTimezoneChange: (String) -> Unit,
+) {
+    var showPicker by remember { mutableStateOf(false) }
+    var showAll by remember { mutableStateOf(false) }
+
+    Panel {
+        Text("Timezone", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = timezoneLabel(currentTimezone),
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextSecondary,
+        )
+        PrimaryButton(
+            text = "Change timezone",
+            onClick = { showPicker = true },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+
+    if (showPicker) {
+        TimezonePicker(
+            currentTimezone = currentTimezone,
+            showAll = showAll,
+            onShowAllToggle = { showAll = it },
+            onSelect = {
+                onTimezoneChange(it)
+                showPicker = false
+            },
+            onDismiss = { showPicker = false },
+        )
+    }
+}
+
+@Composable
+private fun TimezonePicker(
+    currentTimezone: String,
+    showAll: Boolean,
+    onShowAllToggle: (Boolean) -> Unit,
+    onSelect: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val allZones = remember {
+        ZoneId.getAvailableZoneIds().sorted()
+    }
+
+    var searchQuery by remember { mutableStateOf("") }
+
+    val displayedZones = if (showAll) {
+        if (searchQuery.isBlank()) allZones
+        else allZones.filter { it.contains(searchQuery, ignoreCase = true) }
+    } else {
+        commonTimezones.map { it.first }
+    }
+
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = com.furrow.app.ui.theme.Obsidian,
+        title = { Text("Select Timezone", color = TextPrimary) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
+                if (showAll) {
+                    InputField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        label = { Text("Search") },
+                        singleLine = true,
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .heightIn(max = 300.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    displayedZones.forEach { tzId ->
+                        val label = if (showAll) tzId else timezoneLabel(tzId)
+                        val isCurrent = tzId == currentTimezone
+                        ListRow(
+                            title = label,
+                            onClick = { onSelect(tzId) },
+                            trailingText = if (isCurrent) "Current" else null,
+                            showDivider = false,
+                        )
+                    }
+                }
+                ToggleRow(
+                    label = "Show all timezones",
+                    checked = showAll,
+                    accentColor = GardenGlow,
+                    onCheckedChange = { onShowAllToggle(it) },
+                )
+            }
+        },
+        confirmButton = {
+            androidx.compose.material3.TextButton(onClick = onDismiss) {
+                Text("Cancel", color = TextSecondary)
+            }
+        },
+    )
 }

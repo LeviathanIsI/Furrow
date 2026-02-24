@@ -62,18 +62,8 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val listDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(listDateFormatter)
-}
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 
 private enum class FinanceTab(val label: String, val type: String) {
     EXPENSES("Expenses", "expense"),
@@ -146,7 +136,7 @@ fun FinanceListScreen(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.md,
-                bottom = 88.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
         ) {
@@ -236,10 +226,10 @@ fun FinanceListScreen(
                             Panel(contentPadding = PaddingValues(0.dp)) {
                                 expenses.forEachIndexed { index, expense ->
                                     ListRow(
-                                        title = expense.category ?: "Expense",
+                                        title = expense.category?.displayFormat() ?: "Expense",
                                         subtitle = listOfNotNull(
                                             expense.vendor,
-                                            expense.paymentMethod,
+                                            expense.paymentMethod?.displayFormat(),
                                         ).joinToString(" \u2022 ").ifEmpty { null },
                                         trailing = {
                                             Column(
@@ -252,7 +242,7 @@ fun FinanceListScreen(
                                                     color = StatusBad,
                                                 )
                                                 Text(
-                                                    text = formatDate(expense.date),
+                                                    text = DateUtil.formatDate(expense.date),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -309,7 +299,7 @@ fun FinanceListScreen(
                                                     color = StatusGood,
                                                 )
                                                 Text(
-                                                    text = formatDate(revenue.date),
+                                                    text = DateUtil.formatDate(revenue.date),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -368,7 +358,7 @@ fun FinanceListScreen(
                                                     color = TextPrimary,
                                                 )
                                                 Text(
-                                                    text = formatDate(log.date),
+                                                    text = DateUtil.formatDate(log.date),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -414,7 +404,7 @@ fun FinanceListScreen(
                                             append("Gave: ${trade.givenItems ?: "?"}")
                                             append(" \u2192 Got: ${trade.receivedItems ?: "?"}")
                                         },
-                                        metadata = formatDate(trade.date),
+                                        metadata = DateUtil.formatDate(trade.date),
                                         modifier = Modifier.combinedClickable(
                                             onClick = { onEditItem("barter", trade.id) },
                                             onLongClick = { barterForAction = trade },
@@ -453,7 +443,7 @@ fun FinanceListScreen(
                                         title = grant.program ?: "Grant",
                                         subtitle = listOfNotNull(
                                             grant.agency,
-                                            grant.status?.replaceFirstChar { it.uppercase() },
+                                            grant.status?.displayFormat(),
                                         ).joinToString(" \u2022 ").ifEmpty { null },
                                         trailing = {
                                             Column(
@@ -469,7 +459,7 @@ fun FinanceListScreen(
                                                 }
                                                 grant.applicationDate?.let { date ->
                                                     Text(
-                                                        text = formatDate(date),
+                                                        text = DateUtil.formatDate(date),
                                                         style = MaterialTheme.typography.labelSmall,
                                                         color = TextTertiary,
                                                     )

@@ -35,7 +35,7 @@ import com.furrow.app.data.local.entity.Structure
 import com.furrow.app.data.local.entity.WaterSource
 import com.furrow.app.data.local.entity.WeatherLog
 import com.furrow.app.data.ModuleCatalogData
-import com.furrow.app.ui.bees.DropdownSelector
+import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle

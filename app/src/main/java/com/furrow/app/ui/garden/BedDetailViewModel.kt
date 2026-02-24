@@ -20,12 +20,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -43,7 +46,10 @@ class BedDetailViewModel @Inject constructor(
 
     private val bedId: Long = checkNotNull(savedStateHandle.get<Long>("bedId"))
 
-    private val zone = ZoneId.systemDefault()
+    internal val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
     private val today = LocalDate.now(zone)
 
     // -- Bed data --

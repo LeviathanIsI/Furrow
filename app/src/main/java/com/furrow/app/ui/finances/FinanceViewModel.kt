@@ -8,13 +8,17 @@ import com.furrow.app.data.local.entity.GrantRecord
 import com.furrow.app.data.local.entity.MileageLog
 import com.furrow.app.data.local.entity.Revenue
 import com.furrow.app.data.repository.FinanceRepository
+import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
@@ -22,9 +26,13 @@ import javax.inject.Inject
 @HiltViewModel
 class FinanceViewModel @Inject constructor(
     private val repository: FinanceRepository,
+    userProfileRepository: UserProfileRepository,
 ) : ViewModel() {
 
-    private val zone = ZoneId.systemDefault()
+    private val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
     private val today = LocalDate.now(zone)
     private val monthStart = today.withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli()
     private val monthEnd = today.plusMonths(1).withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1

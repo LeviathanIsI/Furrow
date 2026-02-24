@@ -12,12 +12,15 @@ import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.BeeRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -31,6 +34,11 @@ class BeeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val hiveId: Long? = savedStateHandle.get<Long>("hiveId")
+
+    internal val zone: ZoneId = runBlocking {
+        userProfileRepository.getProfile().firstOrNull()
+            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    }
 
     // -- Bee race reference data --
 
@@ -46,7 +54,7 @@ class BeeViewModel @Inject constructor(
 
     // -- Bee Calendar (current month × zone group) --
 
-    private val currentMonth = LocalDate.now(ZoneId.systemDefault()).monthValue
+    private val currentMonth = LocalDate.now(zone).monthValue
 
     val currentMonthCalendar: StateFlow<BeeCalendar.MonthlyInfo?> = userProfile.map { profile ->
         profile?.let { BeeCalendar.getMonthlyInfo(currentMonth, it.zoneGroup) }

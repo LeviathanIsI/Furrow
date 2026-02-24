@@ -14,9 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
@@ -287,13 +286,17 @@ fun FurrowBottomSheet(
                 color = TextPrimary,
                 modifier = Modifier.padding(bottom = AppSpacing.md),
             )
-            Column(
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .verticalScroll(rememberScrollState()),
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
-                content = content,
-            )
+            ) {
+                item {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
+                        content = content,
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(AppSpacing.md))
             HorizontalDivider(color = BorderSubtle)
             Row(
@@ -430,11 +433,10 @@ fun DateFieldWithToggle(
     onDateChange: (Long) -> Unit,
     useTodayDefault: Boolean = true,
     accentColor: Color = GardenGlow,
+    zone: ZoneId = ZoneId.systemDefault(),
 ) {
     var useToday by remember { mutableStateOf(useTodayDefault) }
     var showDatePicker by remember { mutableStateOf(false) }
-
-    val zone = ZoneId.systemDefault()
 
     LaunchedEffect(useToday) {
         if (useToday) {
@@ -501,7 +503,14 @@ fun DateFieldWithToggle(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    datePickerState.selectedDateMillis?.let { onDateChange(it) }
+                    datePickerState.selectedDateMillis?.let { utcMillis ->
+                        // DatePicker returns UTC midnight — convert to same date at midnight in user's zone
+                        val localDate = Instant.ofEpochMilli(utcMillis)
+                            .atZone(ZoneId.of("UTC"))
+                            .toLocalDate()
+                        val corrected = localDate.atStartOfDay(zone).toInstant().toEpochMilli()
+                        onDateChange(corrected)
+                    }
                     showDatePicker = false
                 }) {
                     Text("OK", color = accentColor)

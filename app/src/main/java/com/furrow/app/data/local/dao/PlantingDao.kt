@@ -30,7 +30,7 @@ interface PlantingDao {
     @Query("SELECT * FROM plantings WHERE id = :id")
     fun getPlantingById(id: Long): Flow<Planting?>
 
-    @Query("SELECT COUNT(*) FROM plantings WHERE bedId = :bedId AND status IN ('growing', 'producing')")
+    @Query("SELECT COUNT(*) FROM plantings WHERE bedId = :bedId AND LOWER(status) IN ('growing', 'producing')")
     fun getActivePlantingCount(bedId: Long): Flow<Int>
 
     // --- Harvests ---
@@ -56,10 +56,10 @@ interface PlantingDao {
     @Query("SELECT * FROM harvest_logs WHERE plantingId IN (SELECT id FROM plantings WHERE bedId = :bedId) ORDER BY date DESC")
     fun getHarvestsForBed(bedId: Long): Flow<List<HarvestLog>>
 
-    @Query("SELECT bedId, COUNT(*) as count FROM plantings WHERE status IN ('growing', 'producing') GROUP BY bedId")
+    @Query("SELECT bedId, COUNT(*) as count FROM plantings WHERE LOWER(status) IN ('growing', 'producing') GROUP BY bedId")
     fun getActivePlantingCountPerBed(): Flow<List<BedPlantingCount>>
 
-    @Query("SELECT * FROM plantings WHERE status IN ('growing', 'producing') ORDER BY datePlanted ASC")
+    @Query("SELECT * FROM plantings WHERE LOWER(status) IN ('growing', 'producing') ORDER BY datePlanted ASC")
     fun getActivePlantings(): Flow<List<Planting>>
 
     @Query("SELECT * FROM harvest_logs WHERE date >= :startMillis AND date <= :endMillis ORDER BY date DESC")

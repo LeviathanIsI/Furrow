@@ -1,0 +1,2102 @@
+[
+  {
+    "plantName": "Radicchio",
+    "name": "Chioggia",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 65,
+    "description": "Classic round head, red and white variegation"
+  },
+  {
+    "plantName": "Radicchio",
+    "name": "Treviso",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 80,
+    "description": "Elongated head, milder than Chioggia"
+  },
+  {
+    "plantName": "Radicchio",
+    "name": "Castelfranco",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Loose head, cream with red speckles, mild"
+  },
+  {
+    "plantName": "Endive",
+    "name": "Frisée",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Finely cut curly leaves, classic French"
+  },
+  {
+    "plantName": "Endive",
+    "name": "Très Fine Maraîchère",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 65,
+    "description": "Very finely cut, tender heart"
+  },
+  {
+    "plantName": "Endive",
+    "name": "Rhodos",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 55,
+    "description": "Dark green, heat tolerant"
+  },
+  {
+    "plantName": "Escarole",
+    "name": "Batavian Full Heart",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 100,
+    "description": "Broad thick leaves, blanched heart"
+  },
+  {
+    "plantName": "Escarole",
+    "name": "Natacha",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 55,
+    "description": "Compact head, bolt resistant"
+  },
+  {
+    "plantName": "Escarole",
+    "name": "Eros",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Dark green, cold tolerant"
+  },
+  {
+    "plantName": "Mache",
+    "name": "Vit",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 50,
+    "description": "Fast growing, small round leaves"
+  },
+  {
+    "plantName": "Mache",
+    "name": "D'Etampes",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 55,
+    "description": "Large leaves, vigorous"
+  },
+  {
+    "plantName": "Mache",
+    "name": "Jade",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Dark green, cold hardy"
+  },
+  {
+    "plantName": "Cress",
+    "name": "Wrinkled Crinkled Crumpled",
+    "daysToHarvestMin": 15,
+    "daysToHarvestMax": 20,
+    "description": "Curly leaves, peppery"
+  },
+  {
+    "plantName": "Cress",
+    "name": "Persian",
+    "daysToHarvestMin": 15,
+    "daysToHarvestMax": 20,
+    "description": "Broad leaf, mild flavor"
+  },
+  {
+    "plantName": "Cress",
+    "name": "Upland",
+    "daysToHarvestMin": 18,
+    "daysToHarvestMax": 20,
+    "description": "Perennial type, watercress flavor on dry land"
+  },
+  {
+    "plantName": "Purslane",
+    "name": "Golden",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 40,
+    "description": "Yellow-green leaves, upright habit"
+  },
+  {
+    "plantName": "Purslane",
+    "name": "Gruner Red",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 45,
+    "description": "Red stems, green leaves"
+  },
+  {
+    "plantName": "Purslane",
+    "name": "Goldberg",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 40,
+    "description": "Large golden leaves, vigorous"
+  },
+  {
+    "plantName": "Sorrel",
+    "name": "Large Leaf French",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Classic large-leaf culinary variety"
+  },
+  {
+    "plantName": "Sorrel",
+    "name": "Red Veined",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Red-veined leaves, milder lemony flavor"
+  },
+  {
+    "plantName": "Sorrel",
+    "name": "Profusion",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Slow to bolt, very productive"
+  },
+  {
+    "plantName": "Lamb's Quarters",
+    "name": "Magentaspreen",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 50,
+    "description": "Magenta-tipped young leaves, ornamental"
+  },
+  {
+    "plantName": "Lamb's Quarters",
+    "name": "Common Wild",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Classic foraging type, very nutritious"
+  },
+  {
+    "plantName": "Watercress",
+    "name": "Aqua",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Standard watercress, peppery"
+  },
+  {
+    "plantName": "Watercress",
+    "name": "Large Leaf",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 65,
+    "description": "Bigger leaves, milder flavor"
+  },
+  {
+    "plantName": "Malabar Spinach",
+    "name": "Red Stem",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 70,
+    "description": "Red-purple stems, ornamental and edible"
+  },
+  {
+    "plantName": "Malabar Spinach",
+    "name": "Green Stem",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 65,
+    "description": "All green, slightly milder"
+  },
+  {
+    "plantName": "New Zealand Spinach",
+    "name": "Tetragonia",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 70,
+    "description": "Only cultivated variety, heat tolerant spinach substitute"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "name": "Red Leaf",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 40,
+    "description": "Red-purple foliage, tender young leaves"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "name": "Callaloo",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Caribbean variety, mild flavor"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "name": "White Leaf",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 45,
+    "description": "Light green, very tender"
+  },
+  {
+    "plantName": "Moringa",
+    "name": "PKM-1",
+    "daysToHarvestMin": 180,
+    "daysToHarvestMax": 240,
+    "description": "High-yielding, early fruiting"
+  },
+  {
+    "plantName": "Moringa",
+    "name": "PKM-2",
+    "daysToHarvestMin": 180,
+    "daysToHarvestMax": 240,
+    "description": "Longer pods than PKM-1, commercial variety"
+  },
+  {
+    "plantName": "Fennel",
+    "name": "Orion",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 85,
+    "description": "Large bulb, bolt resistant, hybrid vigor"
+  },
+  {
+    "plantName": "Fennel",
+    "name": "Perfection",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 90,
+    "description": "Thick rounded bulb, slow to bolt"
+  },
+  {
+    "plantName": "Fennel",
+    "name": "Zefa Fino",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 80,
+    "description": "Swiss variety, fast maturing, sweet"
+  },
+  {
+    "plantName": "Celeriac",
+    "name": "Brilliant",
+    "daysToHarvestMin": 110,
+    "daysToHarvestMax": 120,
+    "description": "Smooth skin, white flesh, vigorous"
+  },
+  {
+    "plantName": "Celeriac",
+    "name": "Mars",
+    "daysToHarvestMin": 110,
+    "daysToHarvestMax": 120,
+    "description": "Large round root, good storage"
+  },
+  {
+    "plantName": "Celeriac",
+    "name": "Diamant",
+    "daysToHarvestMin": 110,
+    "daysToHarvestMax": 120,
+    "description": "Dutch variety, very smooth skin"
+  },
+  {
+    "plantName": "Rutabaga",
+    "name": "American Purple Top",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 95,
+    "description": "Classic variety, purple top, yellow flesh"
+  },
+  {
+    "plantName": "Rutabaga",
+    "name": "Laurentian",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 100,
+    "description": "Canadian heirloom, sweet after frost"
+  },
+  {
+    "plantName": "Rutabaga",
+    "name": "Gilfeather",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 95,
+    "description": "Vermont heirloom, white flesh, sweet"
+  },
+  {
+    "plantName": "Parsnip",
+    "name": "Hollow Crown",
+    "daysToHarvestMin": 100,
+    "daysToHarvestMax": 120,
+    "description": "Classic heirloom, long tapered root"
+  },
+  {
+    "plantName": "Parsnip",
+    "name": "Harris Model",
+    "daysToHarvestMin": 100,
+    "daysToHarvestMax": 115,
+    "description": "Smooth white skin, fine grained"
+  },
+  {
+    "plantName": "Parsnip",
+    "name": "Gladiator",
+    "daysToHarvestMin": 100,
+    "daysToHarvestMax": 110,
+    "description": "Hybrid vigor, uniform roots, canker resistant"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "name": "Miyashige",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "White, 16-18 inches, mild"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "name": "Watermelon",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 65,
+    "description": "Green outside, pink inside, mild and sweet"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "name": "KN-Bravo",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Purple skin and flesh, striking color"
+  },
+  {
+    "plantName": "Horseradish",
+    "name": "Big Top Western",
+    "daysToHarvestMin": 140,
+    "daysToHarvestMax": 160,
+    "description": "Standard commercial variety, vigorous"
+  },
+  {
+    "plantName": "Horseradish",
+    "name": "Maliner Kren",
+    "daysToHarvestMin": 140,
+    "daysToHarvestMax": 160,
+    "description": "Czech heirloom, very pungent"
+  },
+  {
+    "plantName": "Jicama",
+    "name": "Agua",
+    "daysToHarvestMin": 150,
+    "daysToHarvestMax": 180,
+    "description": "Juicy flesh, mild sweet flavor, most common type"
+  },
+  {
+    "plantName": "Taro",
+    "name": "Dasheen",
+    "daysToHarvestMin": 200,
+    "daysToHarvestMax": 365,
+    "description": "Large central corm, starchy, staple food"
+  },
+  {
+    "plantName": "Taro",
+    "name": "Eddoe",
+    "daysToHarvestMin": 200,
+    "daysToHarvestMax": 300,
+    "description": "Smaller corms, cold tolerant for taro"
+  },
+  {
+    "plantName": "Ginger",
+    "name": "Common Culinary",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 300,
+    "description": "Standard culinary ginger, pungent"
+  },
+  {
+    "plantName": "Ginger",
+    "name": "Baby Ginger",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 150,
+    "description": "Harvested young, pink tips, tender"
+  },
+  {
+    "plantName": "Turmeric",
+    "name": "Alleppey",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 300,
+    "description": "High curcumin content, deep orange"
+  },
+  {
+    "plantName": "Turmeric",
+    "name": "Madras",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 300,
+    "description": "Lighter color, standard culinary variety"
+  },
+  {
+    "plantName": "Rhubarb",
+    "name": "Victoria",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Classic green and red, reliable, from seed"
+  },
+  {
+    "plantName": "Rhubarb",
+    "name": "Crimson Red",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Deep red stalks, sweet flavor"
+  },
+  {
+    "plantName": "Rhubarb",
+    "name": "Canada Red",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Very cold hardy, tender red stalks"
+  },
+  {
+    "plantName": "Cassava",
+    "name": "Sweet",
+    "daysToHarvestMin": 240,
+    "daysToHarvestMax": 365,
+    "description": "Low cyanide, table eating variety"
+  },
+  {
+    "plantName": "Cassava",
+    "name": "Bitter",
+    "daysToHarvestMin": 300,
+    "daysToHarvestMax": 365,
+    "description": "High starch, requires thorough processing"
+  },
+  {
+    "plantName": "Edamame",
+    "name": "Midori Giant",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 100,
+    "description": "Large beans, sweet flavor, early maturing"
+  },
+  {
+    "plantName": "Edamame",
+    "name": "Sayamusume",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 95,
+    "description": "Japanese variety, compact plants, very sweet"
+  },
+  {
+    "plantName": "Edamame",
+    "name": "Chiba Green",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 100,
+    "description": "Reliable production, buttery flavor"
+  },
+  {
+    "plantName": "Peanut",
+    "name": "Virginia",
+    "daysToHarvestMin": 130,
+    "daysToHarvestMax": 150,
+    "description": "Large kernels, roasting type"
+  },
+  {
+    "plantName": "Peanut",
+    "name": "Valencia",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 140,
+    "description": "3-4 seeds per pod, sweet, boiling type"
+  },
+  {
+    "plantName": "Peanut",
+    "name": "Spanish",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 130,
+    "description": "Small kernels, high oil, early"
+  },
+  {
+    "plantName": "Fava Bean",
+    "name": "Broad Windsor",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 100,
+    "description": "Classic large-seeded English type"
+  },
+  {
+    "plantName": "Fava Bean",
+    "name": "Aguadulce",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 90,
+    "description": "Very long pods, cold hardy, early"
+  },
+  {
+    "plantName": "Fava Bean",
+    "name": "Crimson Flowered",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 100,
+    "description": "Red flowers, ornamental and edible"
+  },
+  {
+    "plantName": "Chickpea",
+    "name": "Desi",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 110,
+    "description": "Small dark seeds, nutty flavor, most common worldwide"
+  },
+  {
+    "plantName": "Chickpea",
+    "name": "Kabuli",
+    "daysToHarvestMin": 95,
+    "daysToHarvestMax": 110,
+    "description": "Large cream seeds, mild, used in hummus"
+  },
+  {
+    "plantName": "Lentil",
+    "name": "Crimson Red",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 100,
+    "description": "Quick cooking, splits easily, mild flavor"
+  },
+  {
+    "plantName": "Lentil",
+    "name": "French Green (Puy)",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 110,
+    "description": "Holds shape when cooked, peppery flavor"
+  },
+  {
+    "plantName": "Lentil",
+    "name": "Black Beluga",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 105,
+    "description": "Small, shiny, holds shape, earthy flavor"
+  },
+  {
+    "plantName": "Winged Bean",
+    "name": "Day Neutral",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 100,
+    "description": "Flowers in long days unlike most types"
+  },
+  {
+    "plantName": "Winged Bean",
+    "name": "Chimbu",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 110,
+    "description": "Papua New Guinea origin, vigorous"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "name": "Mosaic",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 80,
+    "description": "Purple and green bicolor pods"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "name": "Red Noodle",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 85,
+    "description": "Deep red pods, turn green when cooked"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "name": "Stickless Wonder",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 80,
+    "description": "Bush type, no trellis needed"
+  },
+  {
+    "plantName": "Bok Choy",
+    "name": "Shanghai Green",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 45,
+    "description": "Small, green stems, compact, versatile"
+  },
+  {
+    "plantName": "Bok Choy",
+    "name": "Joi Choi",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 55,
+    "description": "Large white stems, heat tolerant hybrid"
+  },
+  {
+    "plantName": "Bok Choy",
+    "name": "Mei Qing Choi",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 45,
+    "description": "Baby type, light green, tender"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "name": "Blues",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Large barrel head, disease resistant hybrid"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "name": "Minuet",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 75,
+    "description": "Mini heads, perfect for small gardens"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "name": "Rubicon",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Tall cylindrical head, crisp and sweet"
+  },
+  {
+    "plantName": "Mizuna",
+    "name": "Early",
+    "daysToHarvestMin": 20,
+    "daysToHarvestMax": 30,
+    "description": "Fast growing, finely serrated leaves"
+  },
+  {
+    "plantName": "Mizuna",
+    "name": "Red Streaked",
+    "daysToHarvestMin": 25,
+    "daysToHarvestMax": 35,
+    "description": "Purple-red veins, attractive in salads"
+  },
+  {
+    "plantName": "Tatsoi",
+    "name": "Yukina Savoy",
+    "daysToHarvestMin": 25,
+    "daysToHarvestMax": 45,
+    "description": "Thick crinkled leaves, cold hardy"
+  },
+  {
+    "plantName": "Tatsoi",
+    "name": "Rosette",
+    "daysToHarvestMin": 21,
+    "daysToHarvestMax": 35,
+    "description": "Flat rosette shape, tender mild flavor"
+  },
+  {
+    "plantName": "Komatsuna",
+    "name": "Summerfest",
+    "daysToHarvestMin": 25,
+    "daysToHarvestMax": 40,
+    "description": "Heat tolerant, slow bolting"
+  },
+  {
+    "plantName": "Komatsuna",
+    "name": "Red Komatsuna",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 50,
+    "description": "Purple-red leaves, mild mustard flavor"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "name": "Kailaan",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Standard variety, thick stems, blue-green"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "name": "Green Lance",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Hybrid, uniform, tender stems"
+  },
+  {
+    "plantName": "Broccoli Rabe",
+    "name": "Sessantina Grossa",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Italian heirloom, large leaves, mild"
+  },
+  {
+    "plantName": "Broccoli Rabe",
+    "name": "Quarantina",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 45,
+    "description": "Very early, small florets, sharp flavor"
+  },
+  {
+    "plantName": "Romanesco",
+    "name": "Veronica",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 85,
+    "description": "Uniform fractal heads, bright chartreuse"
+  },
+  {
+    "plantName": "Romanesco",
+    "name": "Gitano",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 100,
+    "description": "Large heads, good wrapper leaves"
+  },
+  {
+    "plantName": "Bitter Melon",
+    "name": "Indian Long",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Dark green, very bumpy, strong bitterness"
+  },
+  {
+    "plantName": "Bitter Melon",
+    "name": "Chinese Large",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 80,
+    "description": "Pale green, smoother, milder flavor"
+  },
+  {
+    "plantName": "Bitter Melon",
+    "name": "Japanese White",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 75,
+    "description": "White skin, mild, tender"
+  },
+  {
+    "plantName": "Luffa",
+    "name": "Smooth (Angled)",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 150,
+    "description": "Ridged skin, eat young or use as sponge"
+  },
+  {
+    "plantName": "Luffa",
+    "name": "Common (Smooth)",
+    "daysToHarvestMin": 150,
+    "daysToHarvestMax": 200,
+    "description": "Round cross-section, best sponge variety"
+  },
+  {
+    "plantName": "Chayote",
+    "name": "Green Smooth",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 140,
+    "description": "Standard variety, light green, mild"
+  },
+  {
+    "plantName": "Chayote",
+    "name": "White",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 150,
+    "description": "Pale cream, slightly sweeter"
+  },
+  {
+    "plantName": "Calabash",
+    "name": "Long Handle Dipper",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 100,
+    "description": "Long neck, traditional dipper shape"
+  },
+  {
+    "plantName": "Calabash",
+    "name": "Bushel Basket",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 120,
+    "description": "Large round, used as container"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "name": "Red Kuri",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 100,
+    "description": "Red-orange, teardrop shape, chestnut flavor"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "name": "Sweet Mama",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 100,
+    "description": "Grey-green, very sweet dense flesh"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "name": "Sunshine",
+    "daysToHarvestMin": 95,
+    "daysToHarvestMax": 110,
+    "description": "Bright orange, compact vine, sweet"
+  },
+  {
+    "plantName": "Delicata Squash",
+    "name": "Honey Boat",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 100,
+    "description": "Extra sweet, dark green stripes"
+  },
+  {
+    "plantName": "Delicata Squash",
+    "name": "Sugar Loaf",
+    "daysToHarvestMin": 85,
+    "daysToHarvestMax": 100,
+    "description": "Larger fruit, tan with green stripes"
+  },
+  {
+    "plantName": "Hubbard Squash",
+    "name": "Blue Hubbard",
+    "daysToHarvestMin": 100,
+    "daysToHarvestMax": 120,
+    "description": "Blue-grey, very large, excellent keeper"
+  },
+  {
+    "plantName": "Hubbard Squash",
+    "name": "Golden Hubbard",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 110,
+    "description": "Orange-red, sweet, slightly smaller"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "name": "Sunburst",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 55,
+    "description": "Bright yellow, scalloped edges"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "name": "Benning's Green Tint",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 55,
+    "description": "Pale green, heirloom, prolific"
+  },
+  {
+    "plantName": "Snake Gourd",
+    "name": "Extra Long",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 80,
+    "description": "3-5 feet long, eat young"
+  },
+  {
+    "plantName": "Snake Gourd",
+    "name": "Short",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 70,
+    "description": "12-18 inches, more compact, culinary type"
+  },
+  {
+    "plantName": "Tomatillo",
+    "name": "Grande Rio Verde",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 85,
+    "description": "Large green fruits, high yield"
+  },
+  {
+    "plantName": "Tomatillo",
+    "name": "Purple",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 100,
+    "description": "Purple skin, sweeter, good fresh"
+  },
+  {
+    "plantName": "Tomatillo",
+    "name": "Toma Verde",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 80,
+    "description": "Classic green, tangy, perfect for salsa verde"
+  },
+  {
+    "plantName": "Ground Cherry",
+    "name": "Aunt Molly's",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 75,
+    "description": "Orange fruit, sweet, heirloom from Poland"
+  },
+  {
+    "plantName": "Ground Cherry",
+    "name": "Cossack Pineapple",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 75,
+    "description": "Pineapple flavor, golden yellow"
+  },
+  {
+    "plantName": "Ground Cherry",
+    "name": "Goldie",
+    "daysToHarvestMin": 65,
+    "daysToHarvestMax": 75,
+    "description": "Large fruit, very sweet, productive"
+  },
+  {
+    "plantName": "Gooseberry",
+    "name": "Invicta",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Green, mildew resistant, heavy cropping"
+  },
+  {
+    "plantName": "Gooseberry",
+    "name": "Hinnomaki Red",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Red-purple, sweet, disease resistant"
+  },
+  {
+    "plantName": "Gooseberry",
+    "name": "Pixwell",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Pink, nearly thornless, very hardy"
+  },
+  {
+    "plantName": "Currant",
+    "name": "Red Lake",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Red, vigorous, heavy yields, tart"
+  },
+  {
+    "plantName": "Currant",
+    "name": "Crandall",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Black currant, clove-scented flowers, sweet"
+  },
+  {
+    "plantName": "Currant",
+    "name": "White Imperial",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "White, sweet, translucent berries"
+  },
+  {
+    "plantName": "Elderberry",
+    "name": "Adams",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Large clusters, reliable, American type"
+  },
+  {
+    "plantName": "Elderberry",
+    "name": "York",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Largest berries, late season, needs pollinator"
+  },
+  {
+    "plantName": "Elderberry",
+    "name": "Nova",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Sweet flavor, mid-season, Canadian variety"
+  },
+  {
+    "plantName": "Mulberry",
+    "name": "Illinois Everbearing",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Long harvest season, sweet-tart, very hardy"
+  },
+  {
+    "plantName": "Mulberry",
+    "name": "Silk Hope",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Large sweet fruit, vigorous grower"
+  },
+  {
+    "plantName": "Mulberry",
+    "name": "Oscar",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Large black fruit, dwarf tree"
+  },
+  {
+    "plantName": "Pawpaw",
+    "name": "Sunflower",
+    "daysToHarvestMin": 1460,
+    "daysToHarvestMax": 2920,
+    "description": "Self-fertile, medium fruit, reliable"
+  },
+  {
+    "plantName": "Pawpaw",
+    "name": "Peterson's Shenandoah",
+    "daysToHarvestMin": 1460,
+    "daysToHarvestMax": 2920,
+    "description": "Large fruit, sweet custard flavor"
+  },
+  {
+    "plantName": "Pawpaw",
+    "name": "Mango",
+    "daysToHarvestMin": 1460,
+    "daysToHarvestMax": 2920,
+    "description": "Rich tropical flavor, medium size"
+  },
+  {
+    "plantName": "American Persimmon",
+    "name": "Meader",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 2190,
+    "description": "Self-fertile, early ripening, cold hardy"
+  },
+  {
+    "plantName": "American Persimmon",
+    "name": "Prok",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 2190,
+    "description": "Large fruit, excellent flavor, productive"
+  },
+  {
+    "plantName": "American Persimmon",
+    "name": "Yates",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 2190,
+    "description": "Small sweet fruit, very cold hardy"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "name": "Issai",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Self-fertile, small fruit, reliable"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "name": "Anna",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Female, large fruit, needs male pollinator"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "name": "Ken's Red",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Red-skinned fruit, ornamental, female"
+  },
+  {
+    "plantName": "Honeyberry",
+    "name": "Blue Velvet",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Sweet, mild flavor, good for fresh eating"
+  },
+  {
+    "plantName": "Honeyberry",
+    "name": "Tundra",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Large fruit, tangy-sweet, Canadian bred"
+  },
+  {
+    "plantName": "Honeyberry",
+    "name": "Berry Blue",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Sweet, oval fruit, vigorous"
+  },
+  {
+    "plantName": "Serviceberry",
+    "name": "Regent",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Compact shrub, sweet fruit, great for hedges"
+  },
+  {
+    "plantName": "Serviceberry",
+    "name": "Thiessen",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Large fruit, saskatoon type, sweet"
+  },
+  {
+    "plantName": "Serviceberry",
+    "name": "Martin",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Large berries, upright tree form"
+  },
+  {
+    "plantName": "Goji Berry",
+    "name": "Crimson Star",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Large sweet berries, heavy producer"
+  },
+  {
+    "plantName": "Goji Berry",
+    "name": "Phoenix Tears",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Sweet, tear-drop shape, early bearing"
+  },
+  {
+    "plantName": "Cranberry",
+    "name": "Stevens",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Large berries, high yield, commercial standard"
+  },
+  {
+    "plantName": "Cranberry",
+    "name": "Ben Lear",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Early ripening, large dark red fruit"
+  },
+  {
+    "plantName": "Lingonberry",
+    "name": "Koralle",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Heavy cropper, two harvests per year"
+  },
+  {
+    "plantName": "Lingonberry",
+    "name": "Red Pearl",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Large berries, compact plant, ornamental"
+  },
+  {
+    "plantName": "Boysenberry",
+    "name": "Thornless",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Thornless canes, large purple-black fruit"
+  },
+  {
+    "plantName": "Loganberry",
+    "name": "Thornless",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Thornless sport, dark red, tart-sweet"
+  },
+  {
+    "plantName": "Marionberry",
+    "name": "Marion",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Standard variety, complex blackberry flavor"
+  },
+  {
+    "plantName": "Tayberry",
+    "name": "Buckingham",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Thornless, large conical red-purple fruit"
+  },
+  {
+    "plantName": "Dewberry",
+    "name": "Austin",
+    "daysToHarvestMin": 1460,
+    "daysToHarvestMax": 1825,
+    "description": "Southern trailing blackberry, early, sweet"
+  },
+  {
+    "plantName": "Dewberry",
+    "name": "Lucretia",
+    "daysToHarvestMin": 1460,
+    "daysToHarvestMax": 1825,
+    "description": "Large berries, trailing habit, very hardy"
+  },
+  {
+    "plantName": "Huckleberry",
+    "name": "Black",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Wild type, intense sweet-tart, mountain habitat"
+  },
+  {
+    "plantName": "Huckleberry",
+    "name": "Red",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Tart, smaller fruit, shade tolerant"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "name": "Noble",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Self-fertile, black, wine and juice"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "name": "Carlos",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Self-fertile, bronze, sweet fresh eating"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "name": "Scuppernong",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Bronze, female, classic Southern variety"
+  },
+  {
+    "plantName": "Quince",
+    "name": "Orange",
+    "daysToHarvestMin": 1825,
+    "daysToHarvestMax": 2190,
+    "description": "Orange flesh, aromatic, good for preserves"
+  },
+  {
+    "plantName": "Quince",
+    "name": "Aromatnaya",
+    "daysToHarvestMin": 1825,
+    "daysToHarvestMax": 2190,
+    "description": "Russian variety, can eat fresh when ripe"
+  },
+  {
+    "plantName": "Quince",
+    "name": "Smyrna",
+    "daysToHarvestMin": 1825,
+    "daysToHarvestMax": 2190,
+    "description": "Large fruit, tender flesh, Turkish heirloom"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "name": "Aunt Molly's",
+    "daysToHarvestMin": 100,
+    "daysToHarvestMax": 120,
+    "description": "Orange fruit, sweet-tart, prolific"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "name": "Giant",
+    "daysToHarvestMin": 110,
+    "daysToHarvestMax": 140,
+    "description": "Large fruit, sweeter flavor"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "name": "Santa Rita",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1460,
+    "description": "Purple pads, red fruit, ornamental"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "name": "Burbank Spineless",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1460,
+    "description": "Nearly spineless, green fruit, easy harvest"
+  },
+  {
+    "plantName": "Che Fruit",
+    "name": "Norris",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Sweet red fruit, selected cultivar"
+  },
+  {
+    "plantName": "Pomegranate",
+    "name": "Wonderful",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Deep red, large, most popular commercial variety"
+  },
+  {
+    "plantName": "Pomegranate",
+    "name": "Eversweet",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Non-staining clear juice, very sweet"
+  },
+  {
+    "plantName": "Pomegranate",
+    "name": "Russian 26",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Cold hardy to zone 6, medium red fruit"
+  },
+  {
+    "plantName": "Jujube",
+    "name": "Li",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Large round fruit, sweet, early bearing"
+  },
+  {
+    "plantName": "Jujube",
+    "name": "Lang",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Pear-shaped, good for drying, productive"
+  },
+  {
+    "plantName": "Jujube",
+    "name": "Sugar Cane",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1460,
+    "description": "Very sweet, small round fruit, crisp"
+  },
+  {
+    "plantName": "Guava",
+    "name": "Ruby Supreme",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "Red flesh, sweet, cold hardy for guava"
+  },
+  {
+    "plantName": "Guava",
+    "name": "Tropical White",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1095,
+    "description": "White flesh, mild sweet, fragrant"
+  },
+  {
+    "plantName": "Loquat",
+    "name": "Champagne",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Yellow flesh, sweet-tart, vigorous tree"
+  },
+  {
+    "plantName": "Loquat",
+    "name": "Gold Nugget",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Large sweet fruit, orange flesh"
+  },
+  {
+    "plantName": "Loquat",
+    "name": "Tanaka",
+    "daysToHarvestMin": 730,
+    "daysToHarvestMax": 1825,
+    "description": "Japanese variety, large oval fruit, late"
+  },
+  {
+    "plantName": "Dragonfruit",
+    "name": "American Beauty",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Red skin, magenta flesh, self-fertile"
+  },
+  {
+    "plantName": "Dragonfruit",
+    "name": "Physical Graffiti",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Red skin, white flesh, sweet, hybrid vigor"
+  },
+  {
+    "plantName": "Dragonfruit",
+    "name": "Yellow Dragon",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Yellow skin, white flesh, sweetest variety"
+  },
+  {
+    "plantName": "Banana",
+    "name": "Dwarf Cavendish",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 545,
+    "description": "Standard dessert banana, compact plant, 6-8 ft"
+  },
+  {
+    "plantName": "Banana",
+    "name": "Ice Cream (Blue Java)",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 545,
+    "description": "Blue-silver peel, creamy vanilla flavor"
+  },
+  {
+    "plantName": "Banana",
+    "name": "Lady Finger",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 545,
+    "description": "Small sweet fruit, slender plant"
+  },
+  {
+    "plantName": "Lemon",
+    "name": "Eureka",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Standard supermarket lemon, everbearing"
+  },
+  {
+    "plantName": "Lemon",
+    "name": "Lisbon",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Very thorny, cold tolerant, juicy"
+  },
+  {
+    "plantName": "Lime",
+    "name": "Persian (Bearss)",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Seedless, large fruit, main commercial lime"
+  },
+  {
+    "plantName": "Lime",
+    "name": "Key Lime",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Small aromatic fruit, essential for Key lime pie"
+  },
+  {
+    "plantName": "Orange",
+    "name": "Washington Navel",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Seedless, easy peel, classic eating orange"
+  },
+  {
+    "plantName": "Orange",
+    "name": "Valencia",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Juice orange, late season, few seeds"
+  },
+  {
+    "plantName": "Orange",
+    "name": "Cara Cara",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Pink-red flesh navel, sweet, low acid"
+  },
+  {
+    "plantName": "Grapefruit",
+    "name": "Ruby Red",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "Red flesh, sweet-tart, Texas origin"
+  },
+  {
+    "plantName": "Grapefruit",
+    "name": "Marsh",
+    "daysToHarvestMin": 1095,
+    "daysToHarvestMax": 1825,
+    "description": "White flesh, seedless, classic flavor"
+  },
+  {
+    "plantName": "Kumquat",
+    "name": "Nagami",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Oval fruit, sweet rind, tart flesh"
+  },
+  {
+    "plantName": "Kumquat",
+    "name": "Meiwa",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Round fruit, sweeter overall, eat whole"
+  },
+  {
+    "plantName": "Meyer Lemon",
+    "name": "Improved Meyer",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Virus-free selection, sweet lemon-orange hybrid"
+  },
+  {
+    "plantName": "Satsuma",
+    "name": "Owari",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Seedless, easy peel, very cold hardy citrus"
+  },
+  {
+    "plantName": "Satsuma",
+    "name": "Brown Select",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 1095,
+    "description": "Early ripening, sweet, Louisiana selection"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "name": "Citronella",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Strong lemon scent, compact growth"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "name": "Aurea",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Golden-green variegated leaves, ornamental"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "name": "Compacta",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Dwarf form, dense habit, ideal containers"
+  },
+  {
+    "plantName": "Chamomile",
+    "name": "German (Matricaria)",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 65,
+    "description": "Annual, apple-scented, best for tea"
+  },
+  {
+    "plantName": "Chamomile",
+    "name": "Roman",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 65,
+    "description": "Perennial, creeping groundcover, bitter tea"
+  },
+  {
+    "plantName": "Stevia",
+    "name": "Sweetie",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "High rebaudioside A, very sweet leaves"
+  },
+  {
+    "plantName": "Stevia",
+    "name": "Sugar In The Raw",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Compact, heavy leaf producer"
+  },
+  {
+    "plantName": "Catnip",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 80,
+    "description": "Classic catnip, very attractive to cats"
+  },
+  {
+    "plantName": "Catnip",
+    "name": "Citriodora",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 80,
+    "description": "Lemon-scented, less attractive to cats"
+  },
+  {
+    "plantName": "Hyssop",
+    "name": "Official",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Blue flowers, classic medicinal herb"
+  },
+  {
+    "plantName": "Hyssop",
+    "name": "Anise Hyssop",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Licorice-mint flavor, pollinator magnet"
+  },
+  {
+    "plantName": "Borage",
+    "name": "Common Blue",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Blue star flowers, cucumber-flavored leaves"
+  },
+  {
+    "plantName": "Borage",
+    "name": "Alba",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "White flowers, same cucumber flavor"
+  },
+  {
+    "plantName": "Comfrey",
+    "name": "Bocking 14",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Sterile, non-invasive, best for mulch/compost"
+  },
+  {
+    "plantName": "Comfrey",
+    "name": "Common",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Self-seeding, spreads readily, medicinal"
+  },
+  {
+    "plantName": "Feverfew",
+    "name": "Single Flower",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 110,
+    "description": "Classic daisy-like flower, medicinal"
+  },
+  {
+    "plantName": "Feverfew",
+    "name": "Aureum",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 110,
+    "description": "Golden foliage, ornamental, same properties"
+  },
+  {
+    "plantName": "Valerian",
+    "name": "Common",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 180,
+    "description": "Pink-white flowers, used for sleep aid root"
+  },
+  {
+    "plantName": "Valerian",
+    "name": "Red",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 180,
+    "description": "Centranthus ruber, ornamental, not medicinal"
+  },
+  {
+    "plantName": "Echinacea",
+    "name": "Purple Coneflower",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 180,
+    "description": "Classic purple petals, immune support root"
+  },
+  {
+    "plantName": "Echinacea",
+    "name": "White Swan",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 180,
+    "description": "White petals, same medicinal properties"
+  },
+  {
+    "plantName": "Echinacea",
+    "name": "Magnus",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 180,
+    "description": "Large flat flowers, won Perennial of Year"
+  },
+  {
+    "plantName": "Bee Balm",
+    "name": "Jacob Cline",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Deep red flowers, mildew resistant"
+  },
+  {
+    "plantName": "Bee Balm",
+    "name": "Marshall's Delight",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Pink flowers, excellent mildew resistance"
+  },
+  {
+    "plantName": "Bee Balm",
+    "name": "Wild Bergamot",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Lavender, native species, drought tolerant"
+  },
+  {
+    "plantName": "Anise",
+    "name": "Common",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 130,
+    "description": "Standard culinary anise, licorice seed"
+  },
+  {
+    "plantName": "Caraway",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 75,
+    "description": "Biennial, rye bread spice, first-year roots edible"
+  },
+  {
+    "plantName": "Herb Fennel",
+    "name": "Bronze",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Copper-bronze foliage, ornamental, anise flavor"
+  },
+  {
+    "plantName": "Herb Fennel",
+    "name": "Sweet",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Finely cut green leaves, stronger flavor"
+  },
+  {
+    "plantName": "Epazote",
+    "name": "Common",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 55,
+    "description": "Traditional Mexican herb, bean seasoning"
+  },
+  {
+    "plantName": "Shiso",
+    "name": "Red (Aka)",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 70,
+    "description": "Purple-red leaves, used in umeboshi"
+  },
+  {
+    "plantName": "Shiso",
+    "name": "Green (Ao)",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 70,
+    "description": "Green leaves, milder, sashimi garnish"
+  },
+  {
+    "plantName": "Summer Savory",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 70,
+    "description": "Annual, peppery bean herb, delicate"
+  },
+  {
+    "plantName": "Winter Savory",
+    "name": "Common",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 90,
+    "description": "Perennial, stronger flavor, compact shrub"
+  },
+  {
+    "plantName": "French Tarragon",
+    "name": "French",
+    "daysToHarvestMin": 42,
+    "daysToHarvestMax": 60,
+    "description": "True tarragon, anise flavor, does not set seed"
+  },
+  {
+    "plantName": "Marjoram",
+    "name": "Sweet",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 80,
+    "description": "Classic sweet marjoram, knot-like flower buds"
+  },
+  {
+    "plantName": "Marjoram",
+    "name": "Italian",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 80,
+    "description": "Oregano-marjoram hybrid, robust flavor"
+  },
+  {
+    "plantName": "Lovage",
+    "name": "Common",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 90,
+    "description": "Celery-like flavor, tall perennial"
+  },
+  {
+    "plantName": "Angelica",
+    "name": "Garden",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Biennial, candied stems, licorice flavor"
+  },
+  {
+    "plantName": "Rue",
+    "name": "Common",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Blue-grey foliage, bitter, companion plant"
+  },
+  {
+    "plantName": "Rue",
+    "name": "Jackman's Blue",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Intense blue-grey foliage, compact"
+  },
+  {
+    "plantName": "Sweet Woodruff",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Groundcover, sweet hay scent, May wine herb"
+  },
+  {
+    "plantName": "Salad Burnet",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 75,
+    "description": "Cucumber-flavored leaves, rosette form"
+  },
+  {
+    "plantName": "Sweet Cicely",
+    "name": "Common",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Anise-flavored leaves, sweet seeds"
+  },
+  {
+    "plantName": "Chervil",
+    "name": "Brussels Winter",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 60,
+    "description": "Cold hardy, slow bolting, fine-cut leaves"
+  },
+  {
+    "plantName": "Chervil",
+    "name": "Vertissimo",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Dark green, slower to bolt, compact"
+  },
+  {
+    "plantName": "Curry Leaf",
+    "name": "Gamthi",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Dwarf, thick aromatic leaves, best for pots"
+  },
+  {
+    "plantName": "Curry Leaf",
+    "name": "Regular",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Standard tree form, fast growing"
+  },
+  {
+    "plantName": "Lemon Verbena",
+    "name": "Common",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Strongest lemon scent of any herb"
+  },
+  {
+    "plantName": "Pineapple Sage",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Red tubular flowers, pineapple-scented leaves"
+  },
+  {
+    "plantName": "Mexican Oregano",
+    "name": "Lippia graveolens",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Stronger than Mediterranean oregano, earthy"
+  },
+  {
+    "plantName": "Cuban Oregano",
+    "name": "Variegated",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "White-edged leaves, ornamental, succulent herb"
+  },
+  {
+    "plantName": "Vietnamese Coriander",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "V-shaped leaf markings, cilantro substitute"
+  },
+  {
+    "plantName": "Culantro",
+    "name": "Common",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Long serrated leaves, stronger than cilantro"
+  },
+  {
+    "plantName": "Thai Basil",
+    "name": "Siam Queen",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 60,
+    "description": "Purple stems, licorice-anise, AAS winner"
+  },
+  {
+    "plantName": "Thai Basil",
+    "name": "Sweet Thai",
+    "daysToHarvestMin": 50,
+    "daysToHarvestMax": 75,
+    "description": "Classic Thai cooking basil, compact"
+  },
+  {
+    "plantName": "Horehound",
+    "name": "Common White",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 90,
+    "description": "Woolly leaves, bitter, traditional cough drops"
+  },
+  {
+    "plantName": "Wormwood",
+    "name": "Common",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Silver-grey foliage, bitter, pest deterrent"
+  },
+  {
+    "plantName": "Wormwood",
+    "name": "Powis Castle",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Finely cut silver foliage, ornamental"
+  },
+  {
+    "plantName": "Tansy",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Yellow button flowers, insect repellent"
+  },
+  {
+    "plantName": "Tansy",
+    "name": "Fernleaf",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Finely cut foliage, less aggressive"
+  },
+  {
+    "plantName": "Pennyroyal",
+    "name": "European",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Creeping mint relative, strong menthol"
+  },
+  {
+    "plantName": "Betony",
+    "name": "Wood Betony",
+    "daysToHarvestMin": 75,
+    "daysToHarvestMax": 90,
+    "description": "Purple flower spikes, groundcover"
+  },
+  {
+    "plantName": "Meadowsweet",
+    "name": "Common",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Creamy flower plumes, aspirin-like compound"
+  },
+  {
+    "plantName": "Meadowsweet",
+    "name": "Aurea",
+    "daysToHarvestMin": 90,
+    "daysToHarvestMax": 120,
+    "description": "Golden foliage, same sweet flowers"
+  },
+  {
+    "plantName": "Costmary",
+    "name": "Common",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 90,
+    "description": "Bible leaf, minty-balsam, pressed in books"
+  },
+  {
+    "plantName": "Soapwort",
+    "name": "Common",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Pink flowers, lathers in water, gentle cleanser"
+  },
+  {
+    "plantName": "Elecampane",
+    "name": "Common",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Tall sunflower-like, medicinal root, camphor scent"
+  },
+  {
+    "plantName": "Nasturtium",
+    "name": "Jewel Mix",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Compact, mixed colors, peppery edible flowers"
+  },
+  {
+    "plantName": "Nasturtium",
+    "name": "Empress of India",
+    "daysToHarvestMin": 40,
+    "daysToHarvestMax": 55,
+    "description": "Dark foliage, scarlet flowers, compact"
+  },
+  {
+    "plantName": "Nasturtium",
+    "name": "Alaska",
+    "daysToHarvestMin": 35,
+    "daysToHarvestMax": 50,
+    "description": "Variegated leaves, mixed flower colors"
+  },
+  {
+    "plantName": "Calendula",
+    "name": "Pacific Beauty",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 60,
+    "description": "Mixed doubles, orange and yellow, large"
+  },
+  {
+    "plantName": "Calendula",
+    "name": "Resina",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 55,
+    "description": "High resin content, best medicinal variety"
+  },
+  {
+    "plantName": "Calendula",
+    "name": "Flashback",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 60,
+    "description": "Bicolor petals, unique pastel shades"
+  },
+  {
+    "plantName": "Viola",
+    "name": "Sorbet Mix",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 84,
+    "description": "Compact, winter hardy, huge color range"
+  },
+  {
+    "plantName": "Viola",
+    "name": "Johnny Jump Up",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 75,
+    "description": "Classic tricolor, self-sows freely"
+  },
+  {
+    "plantName": "Sunflower",
+    "name": "Mammoth Russian",
+    "daysToHarvestMin": 80,
+    "daysToHarvestMax": 120,
+    "description": "10-12 ft, huge heads, edible seeds"
+  },
+  {
+    "plantName": "Sunflower",
+    "name": "Teddy Bear",
+    "daysToHarvestMin": 55,
+    "daysToHarvestMax": 75,
+    "description": "Dwarf 2-3 ft, fluffy double flowers"
+  },
+  {
+    "plantName": "Sunflower",
+    "name": "Italian White",
+    "daysToHarvestMin": 60,
+    "daysToHarvestMax": 90,
+    "description": "Pale cream petals, dark center, branching"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "name": "Tangerine Gem",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 56,
+    "description": "Citrus-scented, orange, ferny foliage"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "name": "Lemon Gem",
+    "daysToHarvestMin": 45,
+    "daysToHarvestMax": 56,
+    "description": "Bright yellow, lemon flavor, compact"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "name": "Thai Red",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 150,
+    "description": "Deep red calyces, classic for hibiscus tea"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "name": "USVL White",
+    "daysToHarvestMin": 120,
+    "daysToHarvestMax": 150,
+    "description": "Green calyces, milder flavor, less tart"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "name": "Hansa",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Double mauve-pink, very fragrant, ultra cold hardy"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "name": "Blanc Double de Coubert",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Double white, intensely fragrant, disease-free"
+  },
+  {
+    "plantName": "Dianthus",
+    "name": "Cheddar Pink",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 120,
+    "description": "Compact, pink, clove-scented, heirloom"
+  },
+  {
+    "plantName": "Dianthus",
+    "name": "Firewitch",
+    "daysToHarvestMin": 70,
+    "daysToHarvestMax": 100,
+    "description": "Magenta, blue foliage, long bloom, Perennial of Year"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "name": "Shungiku",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 50,
+    "description": "Japanese greens type, mild nutty flavor"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "name": "Garland",
+    "daysToHarvestMin": 30,
+    "daysToHarvestMax": 60,
+    "description": "Large leaves, milder, popular in Korean cooking"
+  },
+  {
+    "plantName": "Daylily",
+    "name": "Stella de Oro",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Reblooming gold, most popular landscape daylily"
+  },
+  {
+    "plantName": "Daylily",
+    "name": "Happy Returns",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Reblooming lemon yellow, compact, fragrant"
+  },
+  {
+    "plantName": "Daylily",
+    "name": "Hyperion",
+    "daysToHarvestMin": 365,
+    "daysToHarvestMax": 730,
+    "description": "Tall lemon yellow, classic fragrant heirloom"
+  }
+]

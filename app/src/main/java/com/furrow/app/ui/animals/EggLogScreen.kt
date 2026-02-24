@@ -20,7 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import com.furrow.app.ui.components.AppTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +48,6 @@ import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.theme.AnimalsGlow
-import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
@@ -91,17 +90,7 @@ fun EggLogScreen(
         }
     }
 
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = Charcoal,
-        unfocusedContainerColor = Charcoal,
-        focusedBorderColor = AnimalsGlow,
-        unfocusedBorderColor = BorderSubtle,
-        focusedLabelColor = AnimalsGlow,
-        unfocusedLabelColor = TextTertiary,
-        focusedTextColor = TextPrimary,
-        unfocusedTextColor = TextPrimary,
-        cursorColor = AnimalsGlow,
-    )
+    val fieldColors = AppTextFieldDefaults.colors(accentColor = AnimalsGlow, bordered = true)
 
     AppScaffold(
         topBar = {

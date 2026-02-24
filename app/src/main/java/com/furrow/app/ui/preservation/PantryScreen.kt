@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.PantryItem
+import com.furrow.app.util.displayFormat
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
@@ -113,7 +114,7 @@ fun PantryScreen(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
                     top = AppSpacing.sm,
-                    bottom = 80.dp,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
             ) {
@@ -135,7 +136,7 @@ fun PantryScreen(
                         pantryItems.forEachIndexed { index, item ->
                             val isExpiring = expiringSoon.any { it.id == item.id }
                             val subtitle = listOfNotNull(
-                                item.category.replaceFirstChar { it.uppercase() },
+                                item.category.displayFormat(),
                                 item.quantity?.let { qty ->
                                     val qtyStr = if (qty == qty.toLong().toDouble()) {
                                         qty.toLong().toString()
@@ -145,8 +146,7 @@ fun PantryScreen(
                                     item.unit?.let { "$qtyStr $it" } ?: qtyStr
                                 },
                             ).joinToString(" \u2022 ")
-                            val statusText = item.status.replace("_", " ")
-                                .replaceFirstChar { it.uppercase() }
+                            val statusText = item.status.displayFormat()
                             ListRow(
                                 title = item.name,
                                 subtitle = subtitle.ifEmpty { null },

@@ -1,0 +1,3317 @@
+[
+  {
+    "plantName": "Tomato (determinate)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties recommended"
+  },
+  {
+    "plantName": "Tomato (determinate)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (determinate)",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (determinate)",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (determinate)",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (indeterminate)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties recommended"
+  },
+  {
+    "plantName": "Tomato (indeterminate)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (indeterminate)",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (indeterminate)",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Tomato (indeterminate)",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (sweet)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (sweet)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (sweet)",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (sweet)",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (sweet)",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (hot)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (hot)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (hot)",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (hot)",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pepper (hot)",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cucumber",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Cucumber",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Cucumber",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Cucumber",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Cucumber",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Zucchini",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Zucchini",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Zucchini",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Zucchini",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Zucchini",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Choose short-season varieties (85 days)"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Winter Squash",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "either",
+    "notes": "Fall planting — primary season in hot zones"
+  },
+  {
+    "plantName": "Pumpkin",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Choose 90-day varieties for short season"
+  },
+  {
+    "plantName": "Pumpkin",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pumpkin",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pumpkin",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pumpkin",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Watermelon",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties only"
+  },
+  {
+    "plantName": "Watermelon",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Watermelon",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Watermelon",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Watermelon",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Cantaloupe",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties only"
+  },
+  {
+    "plantName": "Cantaloupe",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cantaloupe",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Cantaloupe",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Cantaloupe",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Eggplant",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Difficult in extreme cold zones — use season extenders"
+  },
+  {
+    "plantName": "Eggplant",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Eggplant",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Eggplant",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Eggplant",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Okra",
+    "zoneGroup": "moderate",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Okra",
+    "zoneGroup": "warm",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Okra",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Thrives in summer heat when other crops struggle"
+  },
+  {
+    "plantName": "Sweet Potato",
+    "zoneGroup": "moderate",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Plant slips after soil is warm"
+  },
+  {
+    "plantName": "Sweet Potato",
+    "zoneGroup": "warm",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Sweet Potato",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Survives summer heat in hot zones"
+  },
+  {
+    "plantName": "Corn",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Choose 60-day varieties"
+  },
+  {
+    "plantName": "Corn",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Corn",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Corn",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Corn",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Bush Beans",
+    "zoneGroup": "hot",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Pole Beans",
+    "zoneGroup": "hot",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lima Beans",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Lima Beans",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Lima Beans",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lima Beans",
+    "zoneGroup": "hot",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Southern Peas",
+    "zoneGroup": "warm",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Southern Peas",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Thrives in summer heat"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (leaf)",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Lettuce (head)",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Spinach",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kale",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Swiss Chard",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Fall/winter — more heat-tolerant than other greens"
+  },
+  {
+    "plantName": "Collard Greens",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Collard Greens",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Collard Greens",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Collard Greens",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Collard Greens",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall/winter — thrives in mild winters"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Mustard Greens",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring only — start indoors 6 weeks before transplant"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring only — start indoors 6 weeks before transplant"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Fall planting — start indoors Jul-Aug"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Broccoli",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "transplant",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Challenging — needs consistent cool temps"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cauliflower",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "transplant",
+    "notes": "Fall/winter only"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cabbage",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "transplant",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Brussels Sprouts",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Challenging — may not mature before frost"
+  },
+  {
+    "plantName": "Brussels Sprouts",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Brussels Sprouts",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting for fall harvest"
+  },
+  {
+    "plantName": "Brussels Sprouts",
+    "zoneGroup": "moderate",
+    "startMonth": 7,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Start indoors for fall harvest"
+  },
+  {
+    "plantName": "Brussels Sprouts",
+    "zoneGroup": "warm",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "transplant",
+    "notes": "Fall planting for winter harvest"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Peas",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter — primary season in hot zones"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Radish",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Fall/winter — succession plant every 2 weeks"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Carrot",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Beet",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Turnip",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Onion",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Plant sets or transplants"
+  },
+  {
+    "plantName": "Onion",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Plant sets or transplants"
+  },
+  {
+    "plantName": "Onion",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Sets or transplants"
+  },
+  {
+    "plantName": "Onion",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either"
+  },
+  {
+    "plantName": "Onion",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 12,
+    "method": "either",
+    "notes": "Fall planting for spring harvest. Use short-day varieties"
+  },
+  {
+    "plantName": "Garlic",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall plant. Hardneck varieties best for cold zones"
+  },
+  {
+    "plantName": "Garlic",
+    "zoneGroup": "cold",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Fall plant. Hardneck varieties"
+  },
+  {
+    "plantName": "Garlic",
+    "zoneGroup": "moderate",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall plant"
+  },
+  {
+    "plantName": "Garlic",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall plant"
+  },
+  {
+    "plantName": "Garlic",
+    "zoneGroup": "hot",
+    "startMonth": 11,
+    "endMonth": 12,
+    "method": "direct_sow",
+    "notes": "Fall plant. Use softneck varieties for mild winters"
+  },
+  {
+    "plantName": "Potato",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant seed potatoes after last frost"
+  },
+  {
+    "plantName": "Potato",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Potato",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Potato",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Potato",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Plant early for spring harvest before heat"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Kohlrabi",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "either",
+    "notes": "Fall/winter only"
+  },
+  {
+    "plantName": "Basil",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Very frost-sensitive"
+  },
+  {
+    "plantName": "Basil",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Basil",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Basil",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Basil",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Cilantro",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter — bolts fast in heat"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Dill",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter — bolts in heat"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Slow to germinate — be patient"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Parsley",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "either",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Oregano",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+. Bring indoors in winter"
+  },
+  {
+    "plantName": "Oregano",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+"
+  },
+  {
+    "plantName": "Oregano",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Oregano",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Oregano",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "May go semi-dormant in extreme summer heat"
+  },
+  {
+    "plantName": "Thyme",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+. Mulch heavily in winter"
+  },
+  {
+    "plantName": "Thyme",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+"
+  },
+  {
+    "plantName": "Thyme",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Thyme",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Thyme",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Rosemary",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Perennial in zones 7+"
+  },
+  {
+    "plantName": "Rosemary",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Evergreen perennial in hot zones"
+  },
+  {
+    "plantName": "Sage",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+. Protect in extreme cold"
+  },
+  {
+    "plantName": "Sage",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+"
+  },
+  {
+    "plantName": "Sage",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Sage",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Sage",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Mint",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial. ALWAYS grow in containers — very invasive"
+  },
+  {
+    "plantName": "Mint",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Mint",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Mint",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Mint",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Chives",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Perennial. Very cold-hardy"
+  },
+  {
+    "plantName": "Chives",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Chives",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Chives",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Chives",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Fall through spring in hot zones"
+  },
+  {
+    "plantName": "Cherry Tomato",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties recommended"
+  },
+  {
+    "plantName": "Cherry Tomato",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cherry Tomato",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cherry Tomato",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cherry Tomato",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Roma Tomato",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Roma Tomato",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Roma Tomato",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Roma Tomato",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Roma Tomato",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Jalapeno",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Jalapeno",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Jalapeno",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Jalapeno",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Jalapeno",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Habanero",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Needs long warm season"
+  },
+  {
+    "plantName": "Habanero",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Habanero",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cayenne",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cayenne",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cayenne",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cayenne",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Cayenne",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Banana Pepper",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Banana Pepper",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Banana Pepper",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Banana Pepper",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Banana Pepper",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Pickling Cucumber",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pickling Cucumber",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Pickling Cucumber",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Pickling Cucumber",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Pickling Cucumber",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Yellow Squash",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Yellow Squash",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Yellow Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Yellow Squash",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Yellow Squash",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Butternut Squash",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Choose short-season varieties"
+  },
+  {
+    "plantName": "Butternut Squash",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Butternut Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Butternut Squash",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Butternut Squash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either"
+  },
+  {
+    "plantName": "Acorn Squash",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Acorn Squash",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Acorn Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Acorn Squash",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Acorn Squash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either"
+  },
+  {
+    "plantName": "Spaghetti Squash",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Spaghetti Squash",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Spaghetti Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Spaghetti Squash",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Spaghetti Squash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "either"
+  },
+  {
+    "plantName": "Honeydew",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Short-season varieties only"
+  },
+  {
+    "plantName": "Honeydew",
+    "zoneGroup": "cold",
+    "startMonth": 6,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Honeydew",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either"
+  },
+  {
+    "plantName": "Honeydew",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either"
+  },
+  {
+    "plantName": "Honeydew",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either"
+  },
+  {
+    "plantName": "Snap Peas",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snap Peas",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snap Peas",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snap Peas",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snap Peas",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Snow Peas",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snow Peas",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snow Peas",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snow Peas",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Snow Peas",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Romaine Lettuce",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "either",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Butter Lettuce",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "cold",
+    "startMonth": 8,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "moderate",
+    "startMonth": 9,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Arugula",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter — bolts fast in heat"
+  },
+  {
+    "plantName": "Green Onion",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Green Onion",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Green Onion",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Green Onion",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Green Onion",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Year-round in mild areas"
+  },
+  {
+    "plantName": "Shallot",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Shallot",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Shallot",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 4,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Shallot",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "direct_sow"
+  },
+  {
+    "plantName": "Shallot",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 12,
+    "method": "direct_sow",
+    "notes": "Fall planting for spring harvest"
+  },
+  {
+    "plantName": "Leek",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Leek",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Leek",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Leek",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Leek",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 12,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Celery",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors early"
+  },
+  {
+    "plantName": "Celery",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Celery",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Celery",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Celery",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "transplant",
+    "notes": "Fall/winter only"
+  },
+  {
+    "plantName": "Asparagus",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant crowns. 2-3 year wait before harvest"
+  },
+  {
+    "plantName": "Asparagus",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Asparagus",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Asparagus",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Artichoke",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Perennial in zones 7+"
+  },
+  {
+    "plantName": "Artichoke",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Perennial, produces year-round in mild climates"
+  },
+  {
+    "plantName": "Lemongrass",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Grow as annual in cooler areas"
+  },
+  {
+    "plantName": "Lemongrass",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Perennial in tropical zones"
+  },
+  {
+    "plantName": "Lavender",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Perennial in zones 5+, mulch heavily"
+  },
+  {
+    "plantName": "Lavender",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Lavender",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Lavender",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Strawberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring plant for next year harvest"
+  },
+  {
+    "plantName": "Strawberry",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Strawberry",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Strawberry",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Strawberry",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 12,
+    "method": "transplant",
+    "notes": "Fall planting for spring harvest"
+  },
+  {
+    "plantName": "Blueberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Need acidic soil, 2+ varieties for cross-pollination"
+  },
+  {
+    "plantName": "Blueberry",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Blueberry",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Blueberry",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Raspberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant dormant canes"
+  },
+  {
+    "plantName": "Raspberry",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Raspberry",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Raspberry",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Blackberry",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Blackberry",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Blackberry",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 2,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Fig",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Perennial, plant in spring"
+  },
+  {
+    "plantName": "Fig",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Evergreen in hot zones"
+  },
+  {
+    "plantName": "Grape",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant dormant vines"
+  },
+  {
+    "plantName": "Grape",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Grape",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Grape",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Grape",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 2,
+    "method": "transplant"
+  },
+  {
+    "plantName": "Passion Fruit",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Frost-free zones only"
+  },
+  {
+    "plantName": "Papaya",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Tropical, needs consistent warmth"
+  },
+  {
+    "plantName": "Mango",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Large tree, frost-free zones only"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Spring planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Fall planting"
+  },
+  {
+    "plantName": "Iceberg Lettuce",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Fall/winter primary season"
+  },
+  {
+    "plantName": "Yam",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Tropical, needs very long warm season"
+  }
+]

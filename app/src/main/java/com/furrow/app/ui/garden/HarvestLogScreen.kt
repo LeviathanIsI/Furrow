@@ -70,6 +70,7 @@ fun HarvestLogScreen(
     viewModel: BedDetailViewModel = hiltViewModel(),
 ) {
     val isEditMode = editId > 0L
+    val zone = viewModel.zone
     val plantings by viewModel.plantings.collectAsState()
     var selectedPlanting by remember { mutableStateOf<Planting?>(null) }
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -134,6 +135,7 @@ fun HarvestLogScreen(
                 onDateChange = { date = it },
                 useTodayDefault = !isEditMode,
                 accentColor = GardenGlow,
+                zone = zone,
             )
 
             // ── Section: Amount ──

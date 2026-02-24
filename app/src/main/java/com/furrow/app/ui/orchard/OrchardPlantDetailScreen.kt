@@ -1,9 +1,8 @@
 package com.furrow.app.ui.orchard
 
 import android.view.HapticFeedbackConstants
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,12 +42,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.BloomRecord
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.GraftingLog
 import com.furrow.app.data.local.entity.OrchardHarvest
 import com.furrow.app.data.local.entity.PruningLog
@@ -72,18 +73,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val orchardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(orchardDateFormatter)
-}
+import com.furrow.app.util.DateUtil
 
 private enum class DetailTab(val label: String) {
     HARVESTS("Harvests"),
@@ -101,7 +91,7 @@ private fun DetailTab.toLogType(): String = when (this) {
     DetailTab.GRAFTS -> "grafting"
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrchardPlantDetailScreen(
     onBack: () -> Unit,
@@ -187,13 +177,13 @@ fun OrchardPlantDetailScreen(
                     p.variety?.let { InlineStat(label = "Variety", value = it) }
                     InlineStat(
                         label = "Category",
-                        value = p.category.replaceFirstChar { it.uppercase() }.replace('_', ' '),
+                        value = p.category.displayFormat(),
                     )
                     p.rootstock?.let { InlineStat(label = "Rootstock", value = it) }
                     p.plantingYear?.let { InlineStat(label = "Planting Year", value = "$it") }
                     InlineStat(
                         label = "Status",
-                        value = p.status.replaceFirstChar { it.uppercase() },
+                        value = p.status.displayFormat(),
                     )
                     p.chillHoursRequired?.let {
                         InlineStat(label = "Chill Hours Required", value = "$it")
@@ -358,7 +348,6 @@ fun OrchardPlantDetailScreen(
 
 // ── Harvests Tab ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HarvestsTab(
     harvests: List<OrchardHarvest>,
@@ -387,7 +376,7 @@ private fun HarvestsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = AppSpacing.xl,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -395,16 +384,15 @@ private fun HarvestsTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     harvests.forEachIndexed { index, harvest ->
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(harvest) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(harvest)
-                                },
-                            ),
+                                })
+                            },
                             title = "${harvest.yieldLbs ?: 0.0} lbs",
                             subtitle = harvest.fruitQuality,
-                            metadata = formatDate(harvest.date),
+                            metadata = DateUtil.formatDate(harvest.date),
                             showDivider = index != harvests.lastIndex,
                         )
                     }
@@ -416,7 +404,6 @@ private fun HarvestsTab(
 
 // ── Pruning Tab ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PruningTab(
     logs: List<PruningLog>,
@@ -445,7 +432,7 @@ private fun PruningTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = AppSpacing.xl,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -453,16 +440,15 @@ private fun PruningTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     logs.forEachIndexed { index, log ->
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(log) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(log)
-                                },
-                            ),
-                            title = log.pruningType?.replaceFirstChar { it.uppercase() } ?: "Pruning",
-                            subtitle = log.method,
-                            metadata = formatDate(log.date),
+                                })
+                            },
+                            title = log.pruningType?.displayFormat() ?: "Pruning",
+                            subtitle = log.method?.displayFormat(),
+                            metadata = DateUtil.formatDate(log.date),
                             showDivider = index != logs.lastIndex,
                         )
                     }
@@ -474,7 +460,6 @@ private fun PruningTab(
 
 // ── Sprays Tab ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SpraysTab(
     logs: List<SprayLog>,
@@ -503,7 +488,7 @@ private fun SpraysTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = AppSpacing.xl,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -511,7 +496,7 @@ private fun SpraysTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     logs.forEachIndexed { index, log ->
                         val subtitle = buildString {
-                            log.timing?.let { append(it.replaceFirstChar { c -> c.uppercase() }) }
+                            log.timing?.let { append(it.displayFormat()) }
                             log.activeIngredient?.let {
                                 if (isNotEmpty()) append(" | ")
                                 append(it)
@@ -519,16 +504,15 @@ private fun SpraysTab(
                         }.ifBlank { null }
 
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(log) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(log)
-                                },
-                            ),
+                                })
+                            },
                             title = log.product ?: "Spray",
                             subtitle = subtitle,
-                            metadata = formatDate(log.date),
+                            metadata = DateUtil.formatDate(log.date),
                             trailing = if (log.organicApproved) {
                                 {
                                     Tag(
@@ -551,7 +535,6 @@ private fun SpraysTab(
 
 // ── Blooms Tab ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun BloomsTab(
     records: List<BloomRecord>,
@@ -580,7 +563,7 @@ private fun BloomsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = AppSpacing.xl,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -588,16 +571,15 @@ private fun BloomsTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     records.forEachIndexed { index, record ->
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(record) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(record)
-                                },
-                            ),
+                                })
+                            },
                             title = "Bloom ${record.year}",
                             subtitle = record.fruitSet,
-                            metadata = record.firstBloomDate?.let { formatDate(it) },
+                            metadata = record.firstBloomDate?.let { DateUtil.formatDate(it) },
                             showDivider = index != records.lastIndex,
                         )
                     }
@@ -609,7 +591,6 @@ private fun BloomsTab(
 
 // ── Grafts Tab ──
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GraftsTab(
     logs: List<GraftingLog>,
@@ -638,7 +619,7 @@ private fun GraftsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = AppSpacing.xl,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -649,17 +630,16 @@ private fun GraftsTab(
                             "successful" -> "Successful"
                             "failed" -> "Failed"
                             "pending" -> "Pending"
-                            else -> log.success?.replaceFirstChar { it.uppercase() }
+                            else -> log.success?.displayFormat()
                         }
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
+                            modifier = Modifier.pointerInput(log) {
+                                detectTapGestures(onLongPress = {
                                     view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                     onLongPress(log)
-                                },
-                            ),
-                            title = log.graftType?.replaceFirstChar { it.uppercase() } ?: "Graft",
+                                })
+                            },
+                            title = log.graftType?.displayFormat() ?: "Graft",
                             subtitle = log.scionSource,
                             metadata = successText,
                             showDivider = index != logs.lastIndex,

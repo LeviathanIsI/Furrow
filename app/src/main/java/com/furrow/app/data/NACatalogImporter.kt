@@ -1,5 +1,6 @@
 package com.furrow.app.data
 
+import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.json.JSONArray
 import org.json.JSONObject
@@ -19,8 +20,8 @@ data class CatalogImportStats(
 object NACatalogImporter {
     private val scientificRegex = Regex("""(?i)\bscientific:\s*([^|]+)""")
 
-    fun seed(db: SupportSQLiteDatabase): CatalogImportStats {
-        val root = JSONObject(NACatalogJson.RAW)
+    fun seed(context: Context, db: SupportSQLiteDatabase): CatalogImportStats {
+        val root = SeedLoader.loadJsonObject(context, "na_catalog.json")
         val stats = CatalogImportStats()
 
         importChickens(db, root.optJSONArray("chickens") ?: JSONArray(), stats.chickens)

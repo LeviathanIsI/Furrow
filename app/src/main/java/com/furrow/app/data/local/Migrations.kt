@@ -94,9 +94,15 @@ val MIGRATION_3_7 = object : Migration(3, 7) {
     }
 }
 
+val MIGRATION_16_17 = object : Migration(16, 17) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE user_profile ADD COLUMN timezone TEXT NOT NULL DEFAULT ''")
+    }
+}
+
 val MIGRATION_12_13 = object : Migration(12, 13) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        val stats = NACatalogImporter.seed(db)
+        val stats = NACatalogImporter.seed(PlantDatabaseSeeder.appContext, db)
         println(
             "NA catalog migration import: " +
                 "chickens inserted=${stats.chickens.inserted}, matched=${stats.chickens.matched}; " +

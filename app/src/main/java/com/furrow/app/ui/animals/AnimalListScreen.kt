@@ -2,8 +2,8 @@ package com.furrow.app.ui.animals
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Animal
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
@@ -63,7 +65,6 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnimalListScreen(
     onAnimalClick: (Long) -> Unit,
@@ -156,7 +157,7 @@ fun AnimalListScreen(
                     start = AppSpacing.md,
                     end = AppSpacing.md,
                     top = AppSpacing.md,
-                    bottom = AppSpacing.xl,
+                    bottom = AppSpacing.bottomListPadding,
                 ),
                 verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
             ) {
@@ -174,7 +175,7 @@ fun AnimalListScreen(
                         }
                         items(speciesList, key = { it }) { species ->
                             Tag(
-                                text = species.replaceFirstChar { it.uppercase() },
+                                text = species.displayFormat(),
                                 selected = selectedSpecies == species,
                                 onClick = { viewModel.setSpeciesFilter(species) },
                                 accentColor = AnimalsGlow,
@@ -249,14 +250,13 @@ fun AnimalListScreen(
                             Panel(contentPadding = PaddingValues(0.dp)) {
                                 eggLogs.take(10).forEachIndexed { index, entry ->
                                     ListRow(
-                                        modifier = Modifier.combinedClickable(
-                                            onClick = {},
-                                            onLongClick = {
+                                        modifier = Modifier.pointerInput(entry) {
+                                            detectTapGestures(onLongPress = {
                                                 view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                                                 eggLogForAction = entry
-                                            },
-                                        ),
-                                        title = formatDate(entry.date),
+                                            })
+                                        },
+                                        title = DateUtil.formatDate(entry.date),
                                         subtitle = entry.notes,
                                         trailingText = "${entry.count} eggs",
                                         showDivider = index != (eggLogs.take(10).lastIndex),
@@ -269,26 +269,29 @@ fun AnimalListScreen(
 
                 if (animals.isNotEmpty()) {
                     item(key = "animals_panel") {
+                        val view = LocalView.current
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             animals.forEachIndexed { index, animal ->
                                 val displayName = animal.name
-                                    ?: "Unnamed ${animal.species.replaceFirstChar { it.uppercase() }}"
+                                    ?: "Unnamed ${animal.species.displayFormat()}"
                                 val subtitle = buildString {
                                     append(animal.breed)
                                     append(" \u2022 ")
-                                    append(animal.sex.replaceFirstChar { it.uppercase() })
+                                    append(animal.sex.displayFormat())
                                 }
 
                                 ListRow(
                                     title = displayName,
                                     subtitle = subtitle,
-                                    metadata = animal.status.replaceFirstChar { it.uppercase() },
+                                    metadata = animal.status.displayFormat(),
                                     onClick = { onAnimalClick(animal.id) },
                                     showDivider = index != animals.lastIndex,
-                                    modifier = Modifier.combinedClickable(
-                                        onClick = { onAnimalClick(animal.id) },
-                                        onLongClick = { selectedAnimal = animal },
-                                    ),
+                                    modifier = Modifier.pointerInput(animal) {
+                                        detectTapGestures(onLongPress = {
+                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                            selectedAnimal = animal
+                                        })
+                                    },
                                 )
                             }
                         }
@@ -326,7 +329,7 @@ fun AnimalListScreen(
 
     animalToDelete?.let { animal ->
         DeleteConfirmationDialog(
-            itemName = animal.name ?: "Unnamed ${animal.species.replaceFirstChar { it.uppercase() }}",
+            itemName = animal.name ?: "Unnamed ${animal.species.displayFormat()}",
             onConfirm = {
                 viewModel.deleteAnimal(animal)
                 animalToDelete = null
@@ -345,7 +348,7 @@ fun AnimalListScreen(
 
     eggLogToDelete?.let { eggLog ->
         DeleteConfirmationDialog(
-            itemName = "egg log from ${formatDate(eggLog.date)}",
+            itemName = "egg log from ${DateUtil.formatDate(eggLog.date)}",
             onConfirm = {
                 viewModel.deleteEggLog(eggLog)
                 eggLogToDelete = null
@@ -421,4 +424,3 @@ private fun WeeklyEggChart(
     }
 }
 
-// formatDate is provided by AnimalDetailScreen.kt (internal)

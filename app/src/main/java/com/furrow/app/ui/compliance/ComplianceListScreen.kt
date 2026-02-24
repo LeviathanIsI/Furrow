@@ -1,8 +1,8 @@
 package com.furrow.app.ui.compliance
 
 import android.view.HapticFeedbackConstants
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +48,7 @@ import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.InlineStat
+import java.time.Instant
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
@@ -60,24 +61,15 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
-import java.time.Instant
+import com.furrow.app.util.DateUtil
+import com.furrow.app.util.displayFormat
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
-private val complianceDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
-
-internal fun formatDate(millis: Long): String {
-    return Instant.ofEpochMilli(millis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(complianceDateFormatter)
-}
 
 private val tabLabels = listOf("PERMITS", "INSPECTIONS", "SALES", "LABELS", "DOCUMENTS")
 
 private val tabTypes = listOf("permit", "inspection", "sale", "label", "document")
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComplianceListScreen(
     onAddItem: (String) -> Unit,
@@ -326,7 +318,6 @@ fun ComplianceListScreen(
 
 // -- Permits Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PermitsTab(
     permits: List<LicensePermit>,
@@ -357,7 +348,7 @@ private fun PermitsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -366,13 +357,12 @@ private fun PermitsTab(
                     permits.forEachIndexed { index, permit ->
                         val isExpiring = expiringSoonIds.contains(permit.id)
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(permit)
+                            modifier = Modifier.pointerInput(permit) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(permit)
+                                    })
                                 },
-                            ),
                             title = permit.type,
                             subtitle = buildString {
                                 permit.authority?.let { append(it) }
@@ -381,7 +371,7 @@ private fun PermitsTab(
                                     append("# $it")
                                 }
                             }.ifBlank { null },
-                            metadata = permit.expiration?.let { formatDate(it) },
+                            metadata = permit.expiration?.let { DateUtil.formatDate(it) },
                             trailing = if (isExpiring) {
                                 {
                                     Icon(
@@ -403,7 +393,6 @@ private fun PermitsTab(
 
 // -- Inspections Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InspectionsTab(
     inspections: List<ComplianceInspection>,
@@ -433,7 +422,7 @@ private fun InspectionsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -441,22 +430,21 @@ private fun InspectionsTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     inspections.forEachIndexed { index, inspection ->
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(inspection)
+                            modifier = Modifier.pointerInput(inspection) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(inspection)
+                                    })
                                 },
-                            ),
                             title = inspection.agency ?: "Inspection",
                             subtitle = buildString {
                                 inspection.inspector?.let { append(it) }
                                 inspection.outcome?.let {
                                     if (isNotEmpty()) append(" - ")
-                                    append(it.replaceFirstChar { c -> c.uppercase() })
+                                    append(it.displayFormat())
                                 }
                             }.ifBlank { null },
-                            metadata = formatDate(inspection.date),
+                            metadata = DateUtil.formatDate(inspection.date),
                             showDivider = index != inspections.lastIndex,
                         )
                     }
@@ -468,7 +456,6 @@ private fun InspectionsTab(
 
 // -- Sales Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SalesTab(
     sales: List<SalesTracker>,
@@ -498,7 +485,7 @@ private fun SalesTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -506,13 +493,12 @@ private fun SalesTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     sales.forEachIndexed { index, sale ->
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(sale)
+                            modifier = Modifier.pointerInput(sale) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(sale)
+                                    })
                                 },
-                            ),
                             title = sale.productType,
                             subtitle = "Year: ${sale.year}",
                             trailingText = "$${String.format("%.2f", sale.runningTotal)}",
@@ -528,7 +514,6 @@ private fun SalesTab(
 
 // -- Labels Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LabelsTab(
     labels: List<LabelTemplate>,
@@ -558,7 +543,7 @@ private fun LabelsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -570,13 +555,12 @@ private fun LabelsTab(
                             ?.filter { it.isNotBlank() }
                             ?.size ?: 0
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(label)
+                            modifier = Modifier.pointerInput(label) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(label)
+                                    })
                                 },
-                            ),
                             title = label.productName,
                             subtitle = label.disclaimer?.take(50),
                             metadata = "$fieldCount required fields",
@@ -591,7 +575,6 @@ private fun LabelsTab(
 
 // -- Documents Tab --
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DocumentsTab(
     documents: List<ComplianceDocument>,
@@ -623,7 +606,7 @@ private fun DocumentsTab(
                 start = AppSpacing.md,
                 end = AppSpacing.md,
                 top = AppSpacing.sm,
-                bottom = 80.dp,
+                bottom = AppSpacing.bottomListPadding,
             ),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
         ) {
@@ -634,16 +617,15 @@ private fun DocumentsTab(
                             it in now..ninetyDaysFromNow
                         } ?: false
                         ListRow(
-                            modifier = Modifier.combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(document)
+                            modifier = Modifier.pointerInput(document) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(document)
+                                    })
                                 },
-                            ),
                             title = document.name,
                             subtitle = document.type,
-                            metadata = document.issueDate?.let { formatDate(it) },
+                            metadata = document.issueDate?.let { DateUtil.formatDate(it) },
                             trailing = if (isApproaching) {
                                 {
                                     Icon(

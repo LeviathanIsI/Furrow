@@ -1,0 +1,3458 @@
+[
+  {
+    "plantName": "Radicchio",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Start indoors early, transplant after frost"
+  },
+  {
+    "plantName": "Radicchio",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring or late summer sowing for fall harvest"
+  },
+  {
+    "plantName": "Radicchio",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop, heads form in cool weather"
+  },
+  {
+    "plantName": "Radicchio",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Winter crop only, bolts in heat"
+  },
+  {
+    "plantName": "Endive",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after last frost"
+  },
+  {
+    "plantName": "Endive",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Direct sow spring or fall"
+  },
+  {
+    "plantName": "Endive",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall sowing preferred, mild winters"
+  },
+  {
+    "plantName": "Endive",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Cool season crop, winter only"
+  },
+  {
+    "plantName": "Escarole",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Transplant after frost, harvest before heat"
+  },
+  {
+    "plantName": "Escarole",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring or late summer sowing"
+  },
+  {
+    "plantName": "Escarole",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Best as fall/winter crop"
+  },
+  {
+    "plantName": "Escarole",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Winter planting, bolts in warm weather"
+  },
+  {
+    "plantName": "Mache",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Short season, cold tolerant, sow as early as possible"
+  },
+  {
+    "plantName": "Mache",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring or late fall sow"
+  },
+  {
+    "plantName": "Mache",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/early spring, self-sows in fall"
+  },
+  {
+    "plantName": "Mache",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall through winter crop"
+  },
+  {
+    "plantName": "Cress",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Very fast, sow after last frost"
+  },
+  {
+    "plantName": "Cress",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Cool season, multiple successions"
+  },
+  {
+    "plantName": "Cress",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or fall, bolts in heat"
+  },
+  {
+    "plantName": "Cress",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Winter crop in mild climates"
+  },
+  {
+    "plantName": "Purslane",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Sow after soil warms, heat lover"
+  },
+  {
+    "plantName": "Purslane",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Purslane",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Long season, thrives in heat"
+  },
+  {
+    "plantName": "Purslane",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Nearly year-round in hot zones"
+  },
+  {
+    "plantName": "Sorrel",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Perennial, plant once, harvest years"
+  },
+  {
+    "plantName": "Sorrel",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Early spring sowing, cold tolerant"
+  },
+  {
+    "plantName": "Sorrel",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Very early spring"
+  },
+  {
+    "plantName": "Sorrel",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter planting, perennial"
+  },
+  {
+    "plantName": "Lamb's Quarters",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Self-sows readily, volunteer weed-crop"
+  },
+  {
+    "plantName": "Lamb's Quarters",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Spring through summer, very easy"
+  },
+  {
+    "plantName": "Lamb's Quarters",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Long season, harvest young leaves"
+  },
+  {
+    "plantName": "Watercress",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Needs constant moisture, stream edges"
+  },
+  {
+    "plantName": "Watercress",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Spring through fall in boggy conditions"
+  },
+  {
+    "plantName": "Watercress",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Fall through spring, goes dormant in heat"
+  },
+  {
+    "plantName": "Watercress",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Winter crop, needs shade and water"
+  },
+  {
+    "plantName": "Malabar Spinach",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Needs warm soil, start indoors"
+  },
+  {
+    "plantName": "Malabar Spinach",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 8,
+    "method": "either",
+    "notes": "Long warm season, trellis needed"
+  },
+  {
+    "plantName": "Malabar Spinach",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Thrives in heat and humidity"
+  },
+  {
+    "plantName": "New Zealand Spinach",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, heat tolerant spinach sub"
+  },
+  {
+    "plantName": "New Zealand Spinach",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through summer, self-sows"
+  },
+  {
+    "plantName": "New Zealand Spinach",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Long season, spreads as groundcover"
+  },
+  {
+    "plantName": "New Zealand Spinach",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Nearly year-round, true heat lover"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After last frost, needs warm soil"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Long warm season"
+  },
+  {
+    "plantName": "Amaranth Greens",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Nearly year-round"
+  },
+  {
+    "plantName": "Moringa",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Transplant after all frost danger past"
+  },
+  {
+    "plantName": "Moringa",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "either",
+    "notes": "Thrives in extreme heat, fast growing tree"
+  },
+  {
+    "plantName": "Fennel",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Fennel",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring or late summer for fall bulbs"
+  },
+  {
+    "plantName": "Fennel",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall sowing for winter harvest"
+  },
+  {
+    "plantName": "Fennel",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Winter crop, bolts in heat"
+  },
+  {
+    "plantName": "Celeriac",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors 10 weeks early, long season"
+  },
+  {
+    "plantName": "Celeriac",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Start indoors very early, needs long cool season"
+  },
+  {
+    "plantName": "Celeriac",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Start indoors winter, transplant spring"
+  },
+  {
+    "plantName": "Rutabaga",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring sow for fall harvest"
+  },
+  {
+    "plantName": "Rutabaga",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Late spring or midsummer for fall"
+  },
+  {
+    "plantName": "Rutabaga",
+    "zoneGroup": "moderate",
+    "startMonth": 7,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Midsummer sow for fall harvest, sweetens after frost"
+  },
+  {
+    "plantName": "Rutabaga",
+    "zoneGroup": "warm",
+    "startMonth": 8,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Late summer/fall, grows through winter"
+  },
+  {
+    "plantName": "Parsnip",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Sow as early as possible, very slow to germinate"
+  },
+  {
+    "plantName": "Parsnip",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring sow, harvest after frost for sweetness"
+  },
+  {
+    "plantName": "Parsnip",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, leave in ground until fall"
+  },
+  {
+    "plantName": "Parsnip",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall sow for winter harvest"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring sow, bolt resistant varieties only"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or late summer for fall harvest"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "zoneGroup": "moderate",
+    "startMonth": 8,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Late summer sowing, prefers fall harvest"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop, cool weather needed"
+  },
+  {
+    "plantName": "Daikon Radish",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 12,
+    "method": "direct_sow",
+    "notes": "Winter only, fast growing"
+  },
+  {
+    "plantName": "Horseradish",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant root cuttings in early spring"
+  },
+  {
+    "plantName": "Horseradish",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, perennial, harvest fall/winter"
+  },
+  {
+    "plantName": "Horseradish",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/early spring root cuttings"
+  },
+  {
+    "plantName": "Jicama",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Start indoors, needs 9+ month season"
+  },
+  {
+    "plantName": "Jicama",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Direct sow in warm soil, long season needed"
+  },
+  {
+    "plantName": "Taro",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant corms after soil warms, needs moisture"
+  },
+  {
+    "plantName": "Taro",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant corms, needs 7-12 months frost-free"
+  },
+  {
+    "plantName": "Ginger",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant rhizomes in spring, harvest late fall"
+  },
+  {
+    "plantName": "Ginger",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant rhizomes, needs 8-10 months warm"
+  },
+  {
+    "plantName": "Turmeric",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant rhizomes after last frost"
+  },
+  {
+    "plantName": "Turmeric",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant rhizomes, needs 8-10 months"
+  },
+  {
+    "plantName": "Rhubarb",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant crowns in early spring, perennial"
+  },
+  {
+    "plantName": "Rhubarb",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant crowns early spring, needs winter chill"
+  },
+  {
+    "plantName": "Rhubarb",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Late winter planting, needs cold dormancy"
+  },
+  {
+    "plantName": "Cassava",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant stem cuttings, needs 8-12 months frost-free"
+  },
+  {
+    "plantName": "Cassava",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant cuttings after last frost, long season"
+  },
+  {
+    "plantName": "Edamame",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Short season varieties only, after last frost"
+  },
+  {
+    "plantName": "Edamame",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After last frost, needs warm soil"
+  },
+  {
+    "plantName": "Edamame",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring/summer, 60°F+ soil"
+  },
+  {
+    "plantName": "Edamame",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Long window, successive plantings"
+  },
+  {
+    "plantName": "Peanut",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Short season varieties, plastic mulch helps"
+  },
+  {
+    "plantName": "Peanut",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, needs 120+ frost-free days"
+  },
+  {
+    "plantName": "Peanut",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Long warm season ideal"
+  },
+  {
+    "plantName": "Peanut",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Very long season, thrives in heat"
+  },
+  {
+    "plantName": "Fava Bean",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring sow, prefers cool weather"
+  },
+  {
+    "plantName": "Fava Bean",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, tolerates light frost"
+  },
+  {
+    "plantName": "Fava Bean",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/early spring, or fall sow"
+  },
+  {
+    "plantName": "Fava Bean",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop, doesn't like heat"
+  },
+  {
+    "plantName": "Fava Bean",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Cool season only, winter planting"
+  },
+  {
+    "plantName": "Chickpea",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, desi types more hardy"
+  },
+  {
+    "plantName": "Chickpea",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring sowing, needs dry harvest period"
+  },
+  {
+    "plantName": "Chickpea",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Early spring, harvest before summer heat"
+  },
+  {
+    "plantName": "Lentil",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, cool season crop"
+  },
+  {
+    "plantName": "Lentil",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/spring, tolerates light frost"
+  },
+  {
+    "plantName": "Lentil",
+    "zoneGroup": "warm",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop"
+  },
+  {
+    "plantName": "Lentil",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 1,
+    "method": "direct_sow",
+    "notes": "Cool season only"
+  },
+  {
+    "plantName": "Winged Bean",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, needs long warm season"
+  },
+  {
+    "plantName": "Winged Bean",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Tropical, all parts edible"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After last frost, needs trellis and heat"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring/summer, warm soil required"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Long season, successive plantings"
+  },
+  {
+    "plantName": "Yard Long Bean",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Thrives in heat and humidity"
+  },
+  {
+    "plantName": "Bok Choy",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, short season, bolt resistant types"
+  },
+  {
+    "plantName": "Bok Choy",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring or late summer for fall"
+  },
+  {
+    "plantName": "Bok Choy",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Spring or fall, bolts in heat"
+  },
+  {
+    "plantName": "Bok Choy",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop"
+  },
+  {
+    "plantName": "Bok Choy",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Cool season only, winter planting"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant, bolt resistant types"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "zoneGroup": "moderate",
+    "startMonth": 7,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Midsummer sow for fall harvest best"
+  },
+  {
+    "plantName": "Napa Cabbage",
+    "zoneGroup": "warm",
+    "startMonth": 8,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Late summer through fall"
+  },
+  {
+    "plantName": "Mizuna",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Fast crop, cold tolerant"
+  },
+  {
+    "plantName": "Mizuna",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or fall, very cold hardy"
+  },
+  {
+    "plantName": "Mizuna",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or fall successions"
+  },
+  {
+    "plantName": "Mizuna",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall through winter, nearly year-round"
+  },
+  {
+    "plantName": "Tatsoi",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or late summer for fall"
+  },
+  {
+    "plantName": "Tatsoi",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or fall, cold hardy rosettes"
+  },
+  {
+    "plantName": "Komatsuna",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through midsummer, heat tolerant"
+  },
+  {
+    "plantName": "Komatsuna",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Spring through fall, versatile"
+  },
+  {
+    "plantName": "Komatsuna",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Fall through early spring"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring or fall"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop, prefers cool"
+  },
+  {
+    "plantName": "Chinese Broccoli",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Winter crop"
+  },
+  {
+    "plantName": "Broccoli Rabe",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or fall sowing, fast crop"
+  },
+  {
+    "plantName": "Broccoli Rabe",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or fall, bolts in heat"
+  },
+  {
+    "plantName": "Broccoli Rabe",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop"
+  },
+  {
+    "plantName": "Romanesco",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant, needs long cool season"
+  },
+  {
+    "plantName": "Romanesco",
+    "zoneGroup": "moderate",
+    "startMonth": 7,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Midsummer transplant for fall harvest"
+  },
+  {
+    "plantName": "Romanesco",
+    "zoneGroup": "warm",
+    "startMonth": 8,
+    "endMonth": 10,
+    "method": "transplant",
+    "notes": "Late summer transplant for winter"
+  },
+  {
+    "plantName": "Bitter Melon",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, needs long hot season"
+  },
+  {
+    "plantName": "Bitter Melon",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Thrives in heat and humidity"
+  },
+  {
+    "plantName": "Luffa",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, needs 150+ frost-free days"
+  },
+  {
+    "plantName": "Luffa",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Long warm season needed for sponge maturity"
+  },
+  {
+    "plantName": "Luffa",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Thrives in tropical heat"
+  },
+  {
+    "plantName": "Chayote",
+    "zoneGroup": "moderate",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, plant whole fruit"
+  },
+  {
+    "plantName": "Chayote",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Plant sprouted fruit, perennial in warm zones"
+  },
+  {
+    "plantName": "Chayote",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Year-round in frost-free areas"
+  },
+  {
+    "plantName": "Calabash",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Calabash",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring planting, needs warm season"
+  },
+  {
+    "plantName": "Calabash",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Long season for mature gourds"
+  },
+  {
+    "plantName": "Calabash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Very long season, full maturity for crafts"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, needs 90+ warm days"
+  },
+  {
+    "plantName": "Kabocha Squash",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring planting, long growing season"
+  },
+  {
+    "plantName": "Delicata Squash",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors or direct sow after frost"
+  },
+  {
+    "plantName": "Delicata Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, relatively short season for squash"
+  },
+  {
+    "plantName": "Delicata Squash",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring, stores well into winter"
+  },
+  {
+    "plantName": "Hubbard Squash",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, needs long season"
+  },
+  {
+    "plantName": "Hubbard Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring planting, 100+ days to maturity"
+  },
+  {
+    "plantName": "Hubbard Squash",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Early spring, harvest before first frost"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After frost, fast summer squash"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through summer, successive plantings"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Very long season, prolific"
+  },
+  {
+    "plantName": "Patty Pan Squash",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Nearly year-round"
+  },
+  {
+    "plantName": "Snake Gourd",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, needs trellis and heat"
+  },
+  {
+    "plantName": "Snake Gourd",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Tropical, needs long hot season"
+  },
+  {
+    "plantName": "Tomatillo",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Tomatillo",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "After frost, plant 2+ for pollination"
+  },
+  {
+    "plantName": "Tomatillo",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "either",
+    "notes": "Long season, very productive"
+  },
+  {
+    "plantName": "Tomatillo",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Nearly year-round, self-sows"
+  },
+  {
+    "plantName": "Ground Cherry",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors 6-8 weeks early"
+  },
+  {
+    "plantName": "Ground Cherry",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Gooseberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant bare root in early spring"
+  },
+  {
+    "plantName": "Gooseberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring planting, partial shade OK"
+  },
+  {
+    "plantName": "Gooseberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/early spring, needs some chill"
+  },
+  {
+    "plantName": "Currant",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant bare root in early spring"
+  },
+  {
+    "plantName": "Currant",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, tolerates partial shade"
+  },
+  {
+    "plantName": "Currant",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter planting"
+  },
+  {
+    "plantName": "Elderberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Plant in spring after ground thaws"
+  },
+  {
+    "plantName": "Elderberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, needs 2 varieties for pollination"
+  },
+  {
+    "plantName": "Elderberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring planting"
+  },
+  {
+    "plantName": "Elderberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, adapts to heat"
+  },
+  {
+    "plantName": "Mulberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting, bare root or container"
+  },
+  {
+    "plantName": "Mulberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/early spring"
+  },
+  {
+    "plantName": "Pawpaw",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, needs shade when young, 2 varieties"
+  },
+  {
+    "plantName": "Pawpaw",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Early spring, plant in partial shade first years"
+  },
+  {
+    "plantName": "Pawpaw",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Late winter planting, protect from full sun"
+  },
+  {
+    "plantName": "American Persimmon",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring bare root planting"
+  },
+  {
+    "plantName": "American Persimmon",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, deep taproot"
+  },
+  {
+    "plantName": "American Persimmon",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, very adaptable"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, need male + female plants"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring planting, strong trellis needed"
+  },
+  {
+    "plantName": "Hardy Kiwi",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, vigorous vine"
+  },
+  {
+    "plantName": "Honeyberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Very early spring, extremely cold hardy"
+  },
+  {
+    "plantName": "Honeyberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Early spring, needs 2 varieties, very early bloom"
+  },
+  {
+    "plantName": "Serviceberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting, native shrub/tree"
+  },
+  {
+    "plantName": "Serviceberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, adaptable native"
+  },
+  {
+    "plantName": "Serviceberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring planting"
+  },
+  {
+    "plantName": "Serviceberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, some species heat tolerant"
+  },
+  {
+    "plantName": "Goji Berry",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring planting, full sun, drought tolerant once established"
+  },
+  {
+    "plantName": "Goji Berry",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, very adaptable"
+  },
+  {
+    "plantName": "Goji Berry",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Cranberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, needs acidic bog conditions"
+  },
+  {
+    "plantName": "Cranberry",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, acidic moist soil required"
+  },
+  {
+    "plantName": "Lingonberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, acidic soil, partial shade OK"
+  },
+  {
+    "plantName": "Lingonberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, evergreen groundcover"
+  },
+  {
+    "plantName": "Lingonberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, needs cool conditions"
+  },
+  {
+    "plantName": "Boysenberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, trellis needed"
+  },
+  {
+    "plantName": "Boysenberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, mild climates ideal"
+  },
+  {
+    "plantName": "Loganberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring dormant planting"
+  },
+  {
+    "plantName": "Loganberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting"
+  },
+  {
+    "plantName": "Marionberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, needs trellis"
+  },
+  {
+    "plantName": "Marionberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, Pacific NW specialty"
+  },
+  {
+    "plantName": "Tayberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, trailing habit, trellis needed"
+  },
+  {
+    "plantName": "Tayberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Dewberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, trailing wild blackberry type"
+  },
+  {
+    "plantName": "Dewberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Dewberry",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, spreading groundcover"
+  },
+  {
+    "plantName": "Huckleberry",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, acidic forest soil conditions"
+  },
+  {
+    "plantName": "Huckleberry",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, partial shade preferred"
+  },
+  {
+    "plantName": "Huckleberry",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, mountain conditions"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, strong trellis, warm summers"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, Southern specialty"
+  },
+  {
+    "plantName": "Muscadine Grape",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, heat and humidity loving"
+  },
+  {
+    "plantName": "Quince",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring bare root, needs winter chill"
+  },
+  {
+    "plantName": "Quince",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Quince",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost, annual"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, self-sows in mild areas"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "either",
+    "notes": "Long season, may perennialize"
+  },
+  {
+    "plantName": "Cape Gooseberry",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Nearly year-round, perennial"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Plant pads after frost, drought tolerant"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring, very drought tolerant once established"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "transplant",
+    "notes": "Nearly year-round planting"
+  },
+  {
+    "plantName": "Prickly Pear",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 11,
+    "method": "transplant",
+    "notes": "Year-round, native desert plant"
+  },
+  {
+    "plantName": "Che Fruit",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting, Osage orange relative"
+  },
+  {
+    "plantName": "Che Fruit",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Che Fruit",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting"
+  },
+  {
+    "plantName": "Pomegranate",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, needs long hot summer"
+  },
+  {
+    "plantName": "Pomegranate",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, ideal climate"
+  },
+  {
+    "plantName": "Pomegranate",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, thrives in dry heat"
+  },
+  {
+    "plantName": "Jujube",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, tolerates poor soil and drought"
+  },
+  {
+    "plantName": "Jujube",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, very adaptable"
+  },
+  {
+    "plantName": "Jujube",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, loves heat"
+  },
+  {
+    "plantName": "Guava",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, protect from cold first years"
+  },
+  {
+    "plantName": "Guava",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, tropical"
+  },
+  {
+    "plantName": "Loquat",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring, evergreen fruit tree"
+  },
+  {
+    "plantName": "Loquat",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting, fruits in winter/spring"
+  },
+  {
+    "plantName": "Dragonfruit",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring, needs support structure, frost kills"
+  },
+  {
+    "plantName": "Banana",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost danger, protect in winter"
+  },
+  {
+    "plantName": "Banana",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring/summer, year-round production once established"
+  },
+  {
+    "plantName": "Lemon",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting, protect from frost"
+  },
+  {
+    "plantName": "Lemon",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, everbearing once established"
+  },
+  {
+    "plantName": "Lime",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, most cold-sensitive citrus"
+  },
+  {
+    "plantName": "Lime",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, needs frost-free"
+  },
+  {
+    "plantName": "Orange",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring planting, needs winter protection zone 8-9"
+  },
+  {
+    "plantName": "Orange",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, ideal citrus climate"
+  },
+  {
+    "plantName": "Grapefruit",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, needs most heat of any citrus"
+  },
+  {
+    "plantName": "Grapefruit",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, needs long hot summers"
+  },
+  {
+    "plantName": "Kumquat",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, most cold-hardy citrus"
+  },
+  {
+    "plantName": "Kumquat",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Meyer Lemon",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, hardier than true lemons"
+  },
+  {
+    "plantName": "Meyer Lemon",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, great container citrus"
+  },
+  {
+    "plantName": "Satsuma",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, most cold-hardy mandarin"
+  },
+  {
+    "plantName": "Satsuma",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, early ripening"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring sow or transplant, spreads freely"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, perennial, self-sows"
+  },
+  {
+    "plantName": "Lemon Balm",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Chamomile",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, self-sows for annual type"
+  },
+  {
+    "plantName": "Chamomile",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring or fall sowing"
+  },
+  {
+    "plantName": "Chamomile",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall through winter, cool season"
+  },
+  {
+    "plantName": "Stevia",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "After frost, tropical perennial"
+  },
+  {
+    "plantName": "Stevia",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Late winter/spring, year-round in frost-free"
+  },
+  {
+    "plantName": "Catnip",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, very hardy perennial"
+  },
+  {
+    "plantName": "Catnip",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, spreads readily"
+  },
+  {
+    "plantName": "Catnip",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Hyssop",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, perennial, pollinator plant"
+  },
+  {
+    "plantName": "Hyssop",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, drought tolerant"
+  },
+  {
+    "plantName": "Hyssop",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Borage",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After frost, self-sows prolifically"
+  },
+  {
+    "plantName": "Borage",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring/summer, attracts pollinators"
+  },
+  {
+    "plantName": "Borage",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Late winter through spring"
+  },
+  {
+    "plantName": "Borage",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Fall through early spring"
+  },
+  {
+    "plantName": "Comfrey",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring root cuttings, extremely hardy"
+  },
+  {
+    "plantName": "Comfrey",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Early spring, plant root divisions"
+  },
+  {
+    "plantName": "Comfrey",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Late winter through spring"
+  },
+  {
+    "plantName": "Comfrey",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Winter/spring planting"
+  },
+  {
+    "plantName": "Feverfew",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Feverfew",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring, self-sows once established"
+  },
+  {
+    "plantName": "Feverfew",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Valerian",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring transplant, harvest root year 2"
+  },
+  {
+    "plantName": "Valerian",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, moist partial shade"
+  },
+  {
+    "plantName": "Valerian",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Echinacea",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring sow, needs cold stratification"
+  },
+  {
+    "plantName": "Echinacea",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring, native prairie plant"
+  },
+  {
+    "plantName": "Echinacea",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, drought tolerant perennial"
+  },
+  {
+    "plantName": "Echinacea",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Bee Balm",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring, perennial, hummingbird magnet"
+  },
+  {
+    "plantName": "Bee Balm",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring transplant"
+  },
+  {
+    "plantName": "Bee Balm",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Anise",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, needs long warm season for seed"
+  },
+  {
+    "plantName": "Anise",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring, full sun, well-drained soil"
+  },
+  {
+    "plantName": "Anise",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Caraway",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or fall sow, biennial, seeds year 2"
+  },
+  {
+    "plantName": "Caraway",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring or fall"
+  },
+  {
+    "plantName": "Caraway",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall sowing, overwinters"
+  },
+  {
+    "plantName": "Herb Fennel",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, perennial herb form"
+  },
+  {
+    "plantName": "Herb Fennel",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring, self-sows"
+  },
+  {
+    "plantName": "Herb Fennel",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Epazote",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After frost, self-sows aggressively"
+  },
+  {
+    "plantName": "Epazote",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Epazote",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Nearly year-round"
+  },
+  {
+    "plantName": "Shiso",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Shiso",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, self-sows freely"
+  },
+  {
+    "plantName": "Shiso",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Shiso",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Nearly year-round"
+  },
+  {
+    "plantName": "Summer Savory",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, annual"
+  },
+  {
+    "plantName": "Summer Savory",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After frost, warm soil needed"
+  },
+  {
+    "plantName": "Summer Savory",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Summer Savory",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Long season"
+  },
+  {
+    "plantName": "Summer Savory",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Nearly year-round"
+  },
+  {
+    "plantName": "Winter Savory",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, perennial subshrub"
+  },
+  {
+    "plantName": "Winter Savory",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, drought tolerant"
+  },
+  {
+    "plantName": "Winter Savory",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "French Tarragon",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring divisions only, does not set seed"
+  },
+  {
+    "plantName": "French Tarragon",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, propagate by division"
+  },
+  {
+    "plantName": "French Tarragon",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Marjoram",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, tender perennial, frost sensitive"
+  },
+  {
+    "plantName": "Marjoram",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Late winter/spring, year-round in frost-free"
+  },
+  {
+    "plantName": "Lovage",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, very cold hardy perennial"
+  },
+  {
+    "plantName": "Lovage",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, celery-like flavor"
+  },
+  {
+    "plantName": "Lovage",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Angelica",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or fall sow, biennial, needs fresh seed"
+  },
+  {
+    "plantName": "Angelica",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, partial shade preferred"
+  },
+  {
+    "plantName": "Angelica",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall sow for spring growth"
+  },
+  {
+    "plantName": "Rue",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, drought tolerant perennial"
+  },
+  {
+    "plantName": "Rue",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring"
+  },
+  {
+    "plantName": "Rue",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Sweet Woodruff",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, shade-loving groundcover"
+  },
+  {
+    "plantName": "Sweet Woodruff",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Early spring, needs shade and moisture"
+  },
+  {
+    "plantName": "Salad Burnet",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring, evergreen in mild winters"
+  },
+  {
+    "plantName": "Salad Burnet",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring or fall"
+  },
+  {
+    "plantName": "Sweet Cicely",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Spring, needs cold stratification"
+  },
+  {
+    "plantName": "Sweet Cicely",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, shade tolerant"
+  },
+  {
+    "plantName": "Chervil",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring, bolts in heat"
+  },
+  {
+    "plantName": "Chervil",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Late winter/early spring, or fall sow"
+  },
+  {
+    "plantName": "Chervil",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Fall/winter crop, cool season"
+  },
+  {
+    "plantName": "Curry Leaf",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, tropical tree"
+  },
+  {
+    "plantName": "Curry Leaf",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring, year-round in frost-free"
+  },
+  {
+    "plantName": "Lemon Verbena",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, deciduous in cool areas"
+  },
+  {
+    "plantName": "Lemon Verbena",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring, evergreen in frost-free zones"
+  },
+  {
+    "plantName": "Pineapple Sage",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, blooms in fall short days"
+  },
+  {
+    "plantName": "Pineapple Sage",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring, perennial in frost-free"
+  },
+  {
+    "plantName": "Mexican Oregano",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, drought tolerant shrub"
+  },
+  {
+    "plantName": "Mexican Oregano",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "transplant",
+    "notes": "Spring, native to arid regions"
+  },
+  {
+    "plantName": "Cuban Oregano",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, succulent herb"
+  },
+  {
+    "plantName": "Cuban Oregano",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Spring/summer, frost-free zones"
+  },
+  {
+    "plantName": "Vietnamese Coriander",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, needs moisture"
+  },
+  {
+    "plantName": "Vietnamese Coriander",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Spring, thrives in heat and humidity"
+  },
+  {
+    "plantName": "Culantro",
+    "zoneGroup": "warm",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "After frost, partial shade, tropical"
+  },
+  {
+    "plantName": "Culantro",
+    "zoneGroup": "hot",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "transplant",
+    "notes": "Spring, biennial in frost-free"
+  },
+  {
+    "plantName": "Thai Basil",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Thai Basil",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 7,
+    "method": "either",
+    "notes": "After frost, heat-loving annual"
+  },
+  {
+    "plantName": "Thai Basil",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 9,
+    "method": "either",
+    "notes": "Spring through fall"
+  },
+  {
+    "plantName": "Thai Basil",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Nearly year-round, may perennialize"
+  },
+  {
+    "plantName": "Horehound",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, very drought tolerant"
+  },
+  {
+    "plantName": "Horehound",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, spreads by seed"
+  },
+  {
+    "plantName": "Horehound",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Wormwood",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, drought tolerant perennial"
+  },
+  {
+    "plantName": "Wormwood",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring"
+  },
+  {
+    "plantName": "Wormwood",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Tansy",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, very cold hardy, can be invasive"
+  },
+  {
+    "plantName": "Tansy",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Early spring, spreads aggressively"
+  },
+  {
+    "plantName": "Tansy",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Pennyroyal",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring, creeping mint relative"
+  },
+  {
+    "plantName": "Pennyroyal",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, groundcover"
+  },
+  {
+    "plantName": "Pennyroyal",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Betony",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Spring, woodland perennial"
+  },
+  {
+    "plantName": "Betony",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring, partial shade OK"
+  },
+  {
+    "plantName": "Meadowsweet",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, moist meadow conditions"
+  },
+  {
+    "plantName": "Meadowsweet",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Early spring, needs moisture"
+  },
+  {
+    "plantName": "Meadowsweet",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Costmary",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring divisions, perennial"
+  },
+  {
+    "plantName": "Costmary",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring"
+  },
+  {
+    "plantName": "Soapwort",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Spring, very hardy, can spread"
+  },
+  {
+    "plantName": "Soapwort",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Early spring, easy to grow"
+  },
+  {
+    "plantName": "Soapwort",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Soapwort",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 4,
+    "method": "either",
+    "notes": "Winter/spring planting"
+  },
+  {
+    "plantName": "Elecampane",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, tall medicinal perennial"
+  },
+  {
+    "plantName": "Elecampane",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, harvest root year 2-3"
+  },
+  {
+    "plantName": "Elecampane",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Nasturtium",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, annual, easy"
+  },
+  {
+    "plantName": "Nasturtium",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After frost, poor soil is fine"
+  },
+  {
+    "plantName": "Nasturtium",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Spring through summer, self-sows"
+  },
+  {
+    "plantName": "Nasturtium",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Long season, may go year-round"
+  },
+  {
+    "plantName": "Nasturtium",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 4,
+    "method": "direct_sow",
+    "notes": "Fall through spring, heat dormancy"
+  },
+  {
+    "plantName": "Calendula",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, cool season annual"
+  },
+  {
+    "plantName": "Calendula",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring, self-sows, likes cool weather"
+  },
+  {
+    "plantName": "Calendula",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring or fall"
+  },
+  {
+    "plantName": "Calendula",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 3,
+    "method": "direct_sow",
+    "notes": "Fall through spring, winter flower"
+  },
+  {
+    "plantName": "Calendula",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Cool season only, winter bloom"
+  },
+  {
+    "plantName": "Viola",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring transplant, cold hardy"
+  },
+  {
+    "plantName": "Viola",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring or fall"
+  },
+  {
+    "plantName": "Viola",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall through spring, winter color"
+  },
+  {
+    "plantName": "Viola",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "transplant",
+    "notes": "Cool season bedding plant"
+  },
+  {
+    "plantName": "Sunflower",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "After last frost, direct sow only"
+  },
+  {
+    "plantName": "Sunflower",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "After frost, full sun"
+  },
+  {
+    "plantName": "Sunflower",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Spring through early summer"
+  },
+  {
+    "plantName": "Sunflower",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Late winter through summer"
+  },
+  {
+    "plantName": "Sunflower",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 9,
+    "method": "direct_sow",
+    "notes": "Long season, multiple successions"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 7,
+    "method": "either",
+    "notes": "After frost, continuous bloom"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 8,
+    "method": "direct_sow",
+    "notes": "Spring through summer"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "zoneGroup": "warm",
+    "startMonth": 2,
+    "endMonth": 10,
+    "method": "direct_sow",
+    "notes": "Long season, nearly year-round"
+  },
+  {
+    "plantName": "Signet Marigold",
+    "zoneGroup": "hot",
+    "startMonth": 1,
+    "endMonth": 11,
+    "method": "direct_sow",
+    "notes": "Year-round in frost-free"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "zoneGroup": "cold",
+    "startMonth": 5,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors early, needs 150+ days"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "zoneGroup": "moderate",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Start indoors, transplant after frost"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "zoneGroup": "warm",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "either",
+    "notes": "Long warm season for calyx harvest"
+  },
+  {
+    "plantName": "Hibiscus (Roselle)",
+    "zoneGroup": "hot",
+    "startMonth": 2,
+    "endMonth": 7,
+    "method": "direct_sow",
+    "notes": "Thrives in tropical heat"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, extremely cold hardy"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Early spring, disease resistant"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Late winter/spring"
+  },
+  {
+    "plantName": "Rose (Rugosa)",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 3,
+    "method": "transplant",
+    "notes": "Winter planting"
+  },
+  {
+    "plantName": "Dianthus",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Spring, perennial, needs good drainage"
+  },
+  {
+    "plantName": "Dianthus",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "either",
+    "notes": "Early spring or fall"
+  },
+  {
+    "plantName": "Dianthus",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 3,
+    "method": "either",
+    "notes": "Fall through spring"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "zoneGroup": "cold",
+    "startMonth": 4,
+    "endMonth": 6,
+    "method": "direct_sow",
+    "notes": "Spring or fall, cool season green"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "zoneGroup": "moderate",
+    "startMonth": 3,
+    "endMonth": 5,
+    "method": "direct_sow",
+    "notes": "Early spring or fall successions"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "zoneGroup": "warm",
+    "startMonth": 9,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Fall through winter"
+  },
+  {
+    "plantName": "Edible Chrysanthemum",
+    "zoneGroup": "hot",
+    "startMonth": 10,
+    "endMonth": 2,
+    "method": "direct_sow",
+    "notes": "Cool season only"
+  },
+  {
+    "plantName": "Daylily",
+    "zoneGroup": "extreme_cold",
+    "startMonth": 4,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Spring, extremely cold hardy perennial"
+  },
+  {
+    "plantName": "Daylily",
+    "zoneGroup": "cold",
+    "startMonth": 3,
+    "endMonth": 6,
+    "method": "transplant",
+    "notes": "Early spring or fall divisions"
+  },
+  {
+    "plantName": "Daylily",
+    "zoneGroup": "moderate",
+    "startMonth": 2,
+    "endMonth": 5,
+    "method": "transplant",
+    "notes": "Late winter through spring"
+  },
+  {
+    "plantName": "Daylily",
+    "zoneGroup": "warm",
+    "startMonth": 1,
+    "endMonth": 4,
+    "method": "transplant",
+    "notes": "Winter/spring, nearly evergreen"
+  }
+]

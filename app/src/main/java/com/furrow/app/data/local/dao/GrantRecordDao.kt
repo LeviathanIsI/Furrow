@@ -27,6 +27,6 @@ interface GrantRecordDao {
     @Query("SELECT * FROM grant_records WHERE id = :id")
     fun getById(id: Long): Flow<GrantRecord?>
 
-    @Query("SELECT * FROM grant_records WHERE status = 'active' ORDER BY contract_end_date ASC")
+    @Query("SELECT * FROM grant_records WHERE LOWER(status) = 'active' ORDER BY contract_end_date ASC")
     fun getActive(): Flow<List<GrantRecord>>
 }

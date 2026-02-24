@@ -1,7 +1,3 @@
-package com.furrow.app.data
-
-object NACatalogJson {
-    val RAW: String = """
 {
   "schema_version": "1.0",
   "generated_on": "2026-02-20",
@@ -1907,6 +1903,4 @@ object NACatalogJson {
       "notes": ""
     }
   ]
-}
-""".trimIndent()
 }

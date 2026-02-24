@@ -62,4 +62,11 @@ class SettingsViewModel @Inject constructor(
             modulePreferenceRepository.setEnabled(moduleName, enabled)
         }
     }
+
+    fun updateTimezone(timezone: String) {
+        viewModelScope.launch {
+            val current = profile.value ?: return@launch
+            repository.saveProfile(current.copy(timezone = timezone))
+        }
+    }
 }
