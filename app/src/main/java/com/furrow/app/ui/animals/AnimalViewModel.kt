@@ -51,8 +51,7 @@ class AnimalViewModel @Inject constructor(
     private val animalId: Long? = savedStateHandle.get<Long>("animalId")
 
     internal val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
     private val today = LocalDate.now(zone)
     private val weekStart = today.minusDays(6)

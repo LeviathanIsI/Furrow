@@ -43,7 +43,7 @@ internal fun HarvestsTab(
     plantingNames: Map<Long, String>,
     harvestTotals: Map<Long, HarvestTotal>,
     onLongPress: (HarvestLog) -> Unit,
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current

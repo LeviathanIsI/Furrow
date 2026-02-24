@@ -352,6 +352,7 @@ private fun HarvestForm(
         dateMillis = date,
         onDateChange = { date = it },
         useTodayDefault = !isEditMode,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     InputField(
@@ -436,6 +437,7 @@ private fun PruningForm(
         dateMillis = date,
         onDateChange = { date = it },
         useTodayDefault = !isEditMode,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     SearchableSelector(
@@ -527,6 +529,7 @@ private fun SprayForm(
         dateMillis = date,
         onDateChange = { date = it },
         useTodayDefault = !isEditMode,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     InputField(
@@ -638,6 +641,7 @@ private fun BloomForm(
         dateMillis = firstBloomDate,
         onDateChange = { firstBloomDate = it },
         useTodayDefault = if (isEditMode) useFirstBloomToday else true,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     DateFieldWithToggle(
@@ -645,6 +649,7 @@ private fun BloomForm(
         dateMillis = fullBloomDate,
         onDateChange = { fullBloomDate = it },
         useTodayDefault = if (isEditMode) useFullBloomToday else true,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     InputField(
@@ -709,6 +714,7 @@ private fun GraftingForm(
         dateMillis = date,
         onDateChange = { date = it },
         useTodayDefault = !isEditMode,
+        zone = viewModel.zone,
         accentColor = OrchardGlow,
     )
     InputField(

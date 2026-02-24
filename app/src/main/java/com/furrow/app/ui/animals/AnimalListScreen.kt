@@ -262,7 +262,7 @@ fun AnimalListScreen(
                                                 eggLogForAction = entry
                                             })
                                         },
-                                        title = DateUtil.formatDate(entry.date),
+                                        title = DateUtil.formatDate(entry.date, viewModel.zone),
                                         subtitle = entry.notes,
                                         trailingText = "${entry.count} eggs",
                                         showDivider = index != (eggLogs.take(10).lastIndex),
@@ -354,7 +354,7 @@ fun AnimalListScreen(
 
     eggLogToDelete?.let { eggLog ->
         DeleteConfirmationDialog(
-            itemName = "egg log from ${DateUtil.formatDate(eggLog.date)}",
+            itemName = "egg log from ${DateUtil.formatDate(eggLog.date, viewModel.zone)}",
             onConfirm = {
                 viewModel.deleteEggLog(eggLog)
                 eggLogToDelete = null

@@ -160,6 +160,7 @@ fun HiveListScreen(
             },
             allRaces = allRaces,
             zoneGroup = userProfile?.zoneGroup,
+            zone = viewModel.zone,
             onInsertRace = { race -> viewModel.insertRace(race) },
             onUpdateRace = { race -> viewModel.updateRace(race) },
             onDeleteRace = { race -> viewModel.deleteRace(race) },
@@ -175,7 +176,7 @@ private fun HiveCard(
     lastInspectionDate: Long?,
     onClick: () -> Unit,
     showDivider: Boolean,
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
 ) {
     val today = LocalDate.now(zone)
     val daysAgo = lastInspectionDate?.let {
@@ -193,7 +194,7 @@ private fun HiveCard(
 
     com.furrow.app.ui.components.ListRow(
         title = hive.name,
-        subtitle = "${hive.beeRace ?: "Unknown"} • Queen: $queenLabel • Installed ${DateUtil.formatDate(hive.installDate)}",
+        subtitle = "${hive.beeRace ?: "Unknown"} • Queen: $queenLabel • Installed ${DateUtil.formatDate(hive.installDate, zone)}",
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.BugReport,
@@ -224,6 +225,7 @@ private fun AddHiveSheet(
     onSave: (Hive) -> Unit,
     allRaces: List<BeeRaceInfo>,
     zoneGroup: String?,
+    zone: ZoneId,
     onInsertRace: (BeeRaceInfo) -> Unit,
     onUpdateRace: (BeeRaceInfo) -> Unit,
     onDeleteRace: (BeeRaceInfo) -> Unit,
@@ -335,6 +337,7 @@ private fun AddHiveSheet(
                 dateMillis = installDate,
                 onDateChange = { installDate = it },
                 useTodayDefault = !isEditMode,
+                zone = zone,
             )
             DropdownSelector(
                 label = "Queen Status",

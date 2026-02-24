@@ -53,7 +53,7 @@ internal fun PlantingsTab(
     onLongPress: (Planting) -> Unit,
     onPlantingClick: (Planting) -> Unit,
     onMarkSprouted: (Planting) -> Unit = {},
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current

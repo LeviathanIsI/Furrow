@@ -35,8 +35,7 @@ class BeeViewModel @Inject constructor(
     private val hiveId: Long? = savedStateHandle.get<Long>("hiveId")
 
     internal val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
 
     // -- Bee race reference data --

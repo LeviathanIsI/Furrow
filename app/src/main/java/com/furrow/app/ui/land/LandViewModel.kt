@@ -14,18 +14,28 @@ import com.furrow.app.data.local.entity.WaterSource
 import com.furrow.app.data.local.entity.WeatherLog
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.repository.LandRepository
+import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
 class LandViewModel @Inject constructor(
     private val repository: LandRepository,
+    private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
+
+    internal val zone: ZoneId = runBlocking {
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
+    }
 
     val properties: StateFlow<List<Property>> = repository.getAllProperties()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

@@ -194,6 +194,7 @@ private fun PermitForm(
             dateMillis = issueDate,
             onDateChange = { issueDate = it },
             useTodayDefault = !isEditMode,
+            zone = viewModel.zone,
             accentColor = ComplianceGlow,
         )
 
@@ -202,6 +203,7 @@ private fun PermitForm(
             dateMillis = expiration,
             onDateChange = { expiration = it },
             useTodayDefault = false,
+            zone = viewModel.zone,
             accentColor = ComplianceGlow,
         )
 
@@ -284,6 +286,7 @@ private fun InspectionForm(
             dateMillis = date,
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
+            zone = viewModel.zone,
             accentColor = ComplianceGlow,
         )
 
@@ -635,6 +638,7 @@ private fun DocumentForm(
             dateMillis = issueDate,
             onDateChange = { issueDate = it },
             useTodayDefault = !isEditMode,
+            zone = viewModel.zone,
             accentColor = ComplianceGlow,
         )
 
@@ -643,6 +647,7 @@ private fun DocumentForm(
             dateMillis = expirationDate,
             onDateChange = { expirationDate = it },
             useTodayDefault = false,
+            zone = viewModel.zone,
             accentColor = ComplianceGlow,
         )
 

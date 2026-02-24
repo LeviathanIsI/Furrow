@@ -219,7 +219,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.recipeName,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = DateUtil.formatDate(batch.dateProcessed),
+                                            metadata = DateUtil.formatDate(batch.dateProcessed, viewModel.zone),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("canning", batch.id) },
                                                 onLongClick = { canningForAction = batch },
@@ -268,7 +268,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle,
-                                            metadata = DateUtil.formatDate(batch.date),
+                                            metadata = DateUtil.formatDate(batch.date, viewModel.zone),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("dehydrating", batch.id) },
                                                 onLongClick = { dehydratingForAction = batch },
@@ -318,7 +318,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = DateUtil.formatDate(batch.startDate),
+                                            metadata = DateUtil.formatDate(batch.startDate, viewModel.zone),
                                             trailing = if (batch.endDate == null) {
                                                 {
                                                     StatusPill(text = "Active", active = true)
@@ -376,7 +376,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.item,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = DateUtil.formatDate(batch.dateFrozen),
+                                            metadata = DateUtil.formatDate(batch.dateFrozen, viewModel.zone),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("freezing", batch.id) },
                                                 onLongClick = { freezingForAction = batch },
@@ -426,7 +426,7 @@ fun PreservationListScreen(
                                         ListRow(
                                             title = batch.meatType,
                                             subtitle = subtitle.ifEmpty { null },
-                                            metadata = DateUtil.formatDate(batch.cureStart),
+                                            metadata = DateUtil.formatDate(batch.cureStart, viewModel.zone),
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditBatch("smoking", batch.id) },
                                                 onLongClick = { smokingForAction = batch },

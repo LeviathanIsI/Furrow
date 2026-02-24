@@ -350,6 +350,7 @@ fun BedDetailScreen(
     if (showWateringForm) {
         WateringFormSheet(
             onDismiss = { showWateringForm = false },
+            zone = viewModel.zone,
             onSave = { date, amount, method, notes ->
                 bed?.let { b ->
                     viewModel.addWateringLog(
@@ -370,6 +371,7 @@ fun BedDetailScreen(
     if (showFertilizerForm) {
         FertilizerFormSheet(
             onDismiss = { showFertilizerForm = false },
+            zone = viewModel.zone,
             onSave = { date, product, amount, notes ->
                 bed?.let { b ->
                     viewModel.addFertilizerLog(
@@ -512,6 +514,7 @@ private fun CareLogPickerSheet(
 private fun WateringFormSheet(
     onDismiss: () -> Unit,
     onSave: (date: Long, amount: Float?, method: String?, notes: String?) -> Unit,
+    zone: ZoneId,
 ) {
     var date by remember { mutableStateOf(System.currentTimeMillis()) }
     var amount by remember { mutableStateOf("") }
@@ -540,6 +543,7 @@ private fun WateringFormSheet(
                 onDateChange = { date = it },
                 useTodayDefault = true,
                 accentColor = GardenGlow,
+                zone = zone,
             )
             AppTextField(
                 value = amount,
@@ -572,7 +576,7 @@ private fun WateringFormSheet(
 @Composable
 private fun SproutedFormSheet(
     planting: Planting,
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
     onDismiss: () -> Unit,
     onSave: (date: Long, seedsSprouted: Int?) -> Unit,
 ) {
@@ -626,6 +630,7 @@ private fun SproutedFormSheet(
 private fun FertilizerFormSheet(
     onDismiss: () -> Unit,
     onSave: (date: Long, product: String?, amount: String?, notes: String?) -> Unit,
+    zone: ZoneId,
 ) {
     var date by remember { mutableStateOf(System.currentTimeMillis()) }
     var product by remember { mutableStateOf("") }
@@ -654,6 +659,7 @@ private fun FertilizerFormSheet(
                 onDateChange = { date = it },
                 useTodayDefault = true,
                 accentColor = GardenGlow,
+                zone = zone,
             )
             AppTextField(
                 value = product,

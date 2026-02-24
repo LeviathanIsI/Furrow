@@ -42,7 +42,7 @@ internal fun CareLogTab(
     plantInfoMap: Map<String, PlantInfo>,
     onWateringLongPress: (WateringLog) -> Unit,
     onFertilizerLongPress: (FertilizerLog) -> Unit,
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current

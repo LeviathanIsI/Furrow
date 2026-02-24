@@ -137,7 +137,7 @@ fun HiveDetailScreen(
                         color = TextSecondary,
                     )
                     Text(
-                        "Installed ${DateUtil.formatDate(h.installDate)}",
+                        "Installed ${DateUtil.formatDate(h.installDate, viewModel.zone)}",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextTertiary,
                     )
@@ -191,11 +191,13 @@ fun HiveDetailScreen(
                     inspections = inspections,
                     modifier = Modifier.weight(1f),
                     onLongPress = { inspectionForAction = it },
+                    zone = viewModel.zone,
                 )
                 1 -> TreatmentList(
                     treatments = treatments,
                     modifier = Modifier.weight(1f),
                     onLongPress = { treatmentForAction = it },
+                    zone = viewModel.zone,
                 )
             }
         }
@@ -205,7 +207,7 @@ fun HiveDetailScreen(
 
     inspectionToDelete?.let { inspection ->
         DeleteConfirmationDialog(
-            itemName = "inspection from ${DateUtil.formatDate(inspection.date)}",
+            itemName = "inspection from ${DateUtil.formatDate(inspection.date, viewModel.zone)}",
             onConfirm = { viewModel.deleteInspection(inspection); inspectionToDelete = null },
             onDismiss = { inspectionToDelete = null },
         )
@@ -243,6 +245,7 @@ private fun InspectionList(
     inspections: List<Inspection>,
     modifier: Modifier = Modifier,
     onLongPress: (Inspection) -> Unit,
+    zone: java.time.ZoneId,
 ) {
     val view = LocalView.current
     if (inspections.isEmpty()) {
@@ -280,7 +283,7 @@ private fun InspectionList(
                                     onLongPress(inspection)
                                 })
                             },
-                            title = DateUtil.formatDate(inspection.date),
+                            title = DateUtil.formatDate(inspection.date, zone),
                             subtitle = listOfNotNull(
                                 findings.joinToString(" • ").takeIf { it.isNotBlank() },
                                 inspection.notes,
@@ -304,6 +307,7 @@ private fun TreatmentList(
     treatments: List<Treatment>,
     modifier: Modifier = Modifier,
     onLongPress: (Treatment) -> Unit,
+    zone: java.time.ZoneId,
 ) {
     val view = LocalView.current
     if (treatments.isEmpty()) {
@@ -337,7 +341,7 @@ private fun TreatmentList(
                             append(treatment.type.displayFormat())
                             treatment.method?.let { append(" \u2022 Method: ${it.displayFormat()}") }
                             treatment.dose?.let { append(" • Dose: $it") }
-                            treatment.endDate?.let { append(" • Until ${DateUtil.formatDate(it)}") }
+                            treatment.endDate?.let { append(" • Until ${DateUtil.formatDate(it, zone)}") }
                             treatment.notes?.let { append(" • $it") }
                         }
                         com.furrow.app.ui.components.ListRow(
@@ -347,7 +351,7 @@ private fun TreatmentList(
                                     onLongPress(treatment)
                                 })
                             },
-                            title = DateUtil.formatDate(treatment.date),
+                            title = DateUtil.formatDate(treatment.date, zone),
                             subtitle = details,
                             leadingIcon = {
                                 Icon(Icons.Outlined.Vaccines, contentDescription = null, tint = TextSecondary)

@@ -155,6 +155,7 @@ fun InspectionFormScreen(
                 dateMillis = date,
                 onDateChange = { date = it },
                 useTodayDefault = !isEditMode,
+                zone = viewModel.zone,
             )
 
             // ── Colony Status ──

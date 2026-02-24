@@ -176,6 +176,7 @@ private fun ExpenseForm(
             label = "Date",
             dateMillis = date,
             onDateChange = { date = it },
+            zone = viewModel.zone,
             useTodayDefault = !isEditMode,
             accentColor = FinanceGlow,
         )
@@ -315,6 +316,7 @@ private fun RevenueForm(
             label = "Date",
             dateMillis = date,
             onDateChange = { date = it },
+            zone = viewModel.zone,
             useTodayDefault = !isEditMode,
             accentColor = FinanceGlow,
         )
@@ -485,6 +487,7 @@ private fun MileageForm(
             label = "Date",
             dateMillis = date,
             onDateChange = { date = it },
+            zone = viewModel.zone,
             useTodayDefault = !isEditMode,
             accentColor = FinanceGlow,
         )
@@ -609,6 +612,7 @@ private fun BarterForm(
             label = "Date",
             dateMillis = date,
             onDateChange = { date = it },
+            zone = viewModel.zone,
             useTodayDefault = !isEditMode,
             accentColor = FinanceGlow,
         )
@@ -746,6 +750,7 @@ private fun GrantForm(
             label = "Application Date",
             dateMillis = applicationDate,
             onDateChange = { applicationDate = it },
+            zone = viewModel.zone,
             useTodayDefault = !isEditMode,
             accentColor = FinanceGlow,
         )

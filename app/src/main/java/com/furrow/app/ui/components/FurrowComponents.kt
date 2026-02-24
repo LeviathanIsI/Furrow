@@ -436,7 +436,7 @@ fun DateFieldWithToggle(
     onDateChange: (Long) -> Unit,
     useTodayDefault: Boolean = true,
     accentColor: Color = GardenGlow,
-    zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId,
 ) {
     var useToday by remember { mutableStateOf(useTodayDefault) }
     var showDatePicker by remember { mutableStateOf(false) }

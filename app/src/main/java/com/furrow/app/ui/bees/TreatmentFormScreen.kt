@@ -117,6 +117,7 @@ fun TreatmentFormScreen(
                 dateMillis = date,
                 onDateChange = { date = it },
                 useTodayDefault = !isEditMode,
+                zone = viewModel.zone,
             )
 
             // ── Section Header ──

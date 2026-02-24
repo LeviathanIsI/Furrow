@@ -36,8 +36,7 @@ class PlantDetailViewModel @Inject constructor(
     private val plantingId: Long = checkNotNull(savedStateHandle.get<Long>("plantingId"))
 
     val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
 
     val planting: StateFlow<Planting?> = gardenRepository.getPlantingById(plantingId)

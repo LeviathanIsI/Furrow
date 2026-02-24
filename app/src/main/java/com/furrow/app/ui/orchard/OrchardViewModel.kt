@@ -10,21 +10,31 @@ import com.furrow.app.data.local.entity.OrchardPlant
 import com.furrow.app.data.local.entity.PruningLog
 import com.furrow.app.data.local.entity.SprayLog
 import com.furrow.app.data.repository.OrchardRepository
+import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
 class OrchardViewModel @Inject constructor(
     private val repository: OrchardRepository,
+    private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
 ) : FurrowViewModel() {
+
+    internal val zone: ZoneId = runBlocking {
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
+    }
 
     private val plantId: Long? = savedStateHandle.get<Long>("plantId")
 

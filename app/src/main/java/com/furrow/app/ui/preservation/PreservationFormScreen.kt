@@ -45,6 +45,7 @@ import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.PreservationGlow
 import com.furrow.app.ui.theme.TextPrimary
+import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -153,6 +154,7 @@ private fun CanningForm(
             onDateChange = { dateProcessed = it },
             useTodayDefault = !isEditMode,
             accentColor = PreservationGlow,
+            zone = viewModel.zone,
         )
 
         SearchableSelector(
@@ -282,6 +284,7 @@ private fun DehydratingForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = PreservationGlow,
+            zone = viewModel.zone,
         )
 
         Spacer(modifier = Modifier.height(AppSpacing.xs))
@@ -405,6 +408,7 @@ private fun FermentingForm(
             onDateChange = { startDate = it },
             useTodayDefault = !isEditMode,
             accentColor = PreservationGlow,
+            zone = viewModel.zone,
         )
 
         ToggleRow(
@@ -426,6 +430,7 @@ private fun FermentingForm(
                 onDateChange = { endDate = it },
                 useTodayDefault = false,
                 accentColor = PreservationGlow,
+                zone = viewModel.zone,
             )
         }
 
@@ -531,6 +536,7 @@ private fun FreezingForm(
             onDateChange = { dateFrozen = it },
             useTodayDefault = !isEditMode,
             accentColor = PreservationGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -665,6 +671,7 @@ private fun SmokingForm(
             onDateChange = { cureStart = it },
             useTodayDefault = !isEditMode,
             accentColor = PreservationGlow,
+            zone = viewModel.zone,
         )
 
         SearchableSelector(
@@ -834,6 +841,7 @@ private fun PantryForm(
                 onDateChange = { dateProduced = it },
                 useTodayDefault = !isEditMode,
                 accentColor = PreservationGlow,
+                zone = viewModel.zone,
             )
         }
 
@@ -856,6 +864,7 @@ private fun PantryForm(
                 onDateChange = { expirationDate = it },
                 useTodayDefault = false,
                 accentColor = PreservationGlow,
+                zone = viewModel.zone,
             )
         }
 

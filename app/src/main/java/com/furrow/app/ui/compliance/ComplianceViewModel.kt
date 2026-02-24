@@ -7,11 +7,15 @@ import com.furrow.app.data.local.entity.LabelTemplate
 import com.furrow.app.data.local.entity.LicensePermit
 import com.furrow.app.data.local.entity.SalesTracker
 import com.furrow.app.data.repository.ComplianceRepository
+import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.ZoneId
 import javax.inject.Inject
@@ -19,12 +23,17 @@ import javax.inject.Inject
 @HiltViewModel
 class ComplianceViewModel @Inject constructor(
     private val repository: ComplianceRepository,
+    private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
+
+    internal val zone: ZoneId = runBlocking {
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
+    }
 
     val licensePermits: StateFlow<List<LicensePermit>> = repository.getAllLicensePermits()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val ninetyDaysFromNow = Instant.now().atZone(ZoneId.systemDefault())
+    private val ninetyDaysFromNow = Instant.now().atZone(zone)
         .plusDays(90).toInstant().toEpochMilli()
 
     val expiringSoonPermits: StateFlow<List<LicensePermit>> = repository.getLicensePermitsExpiringSoon(ninetyDaysFromNow)

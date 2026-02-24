@@ -127,6 +127,7 @@ fun EggLogScreen(
                 onDateChange = { date = it },
                 useTodayDefault = !isEditMode,
                 accentColor = AnimalsGlow,
+                zone = viewModel.zone,
             )
 
             Spacer(modifier = Modifier.weight(1f))

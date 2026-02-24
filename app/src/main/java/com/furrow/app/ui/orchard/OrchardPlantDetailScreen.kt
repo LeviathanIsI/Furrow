@@ -76,6 +76,7 @@ import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 import com.furrow.app.util.DateUtil
+import java.time.ZoneId
 
 private enum class DetailTab(val label: String) {
     HARVESTS("Harvests"),
@@ -237,21 +238,25 @@ fun OrchardPlantDetailScreen(
             when (tabs[selectedTab]) {
                 DetailTab.HARVESTS -> HarvestsTab(
                     harvests = harvests,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { harvestForAction = it },
                 )
                 DetailTab.PRUNING -> PruningTab(
                     logs = pruningLogs,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { pruningForAction = it },
                 )
                 DetailTab.SPRAYS -> SpraysTab(
                     logs = sprayLogs,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { sprayForAction = it },
                 )
                 DetailTab.BLOOMS -> BloomsTab(
                     records = bloomRecords,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { bloomForAction = it },
                 )
@@ -357,6 +362,7 @@ fun OrchardPlantDetailScreen(
 @Composable
 private fun HarvestsTab(
     harvests: List<OrchardHarvest>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (OrchardHarvest) -> Unit,
 ) {
@@ -398,7 +404,7 @@ private fun HarvestsTab(
                             },
                             title = "${harvest.yieldLbs ?: 0.0} lbs",
                             subtitle = harvest.fruitQuality,
-                            metadata = DateUtil.formatDate(harvest.date),
+                            metadata = DateUtil.formatDate(harvest.date, zone),
                             showDivider = index != harvests.lastIndex,
                         )
                     }
@@ -413,6 +419,7 @@ private fun HarvestsTab(
 @Composable
 private fun PruningTab(
     logs: List<PruningLog>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (PruningLog) -> Unit,
 ) {
@@ -454,7 +461,7 @@ private fun PruningTab(
                             },
                             title = log.pruningType?.displayFormat() ?: "Pruning",
                             subtitle = log.method?.displayFormat(),
-                            metadata = DateUtil.formatDate(log.date),
+                            metadata = DateUtil.formatDate(log.date, zone),
                             showDivider = index != logs.lastIndex,
                         )
                     }
@@ -469,6 +476,7 @@ private fun PruningTab(
 @Composable
 private fun SpraysTab(
     logs: List<SprayLog>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (SprayLog) -> Unit,
 ) {
@@ -518,7 +526,7 @@ private fun SpraysTab(
                             },
                             title = log.product ?: "Spray",
                             subtitle = subtitle,
-                            metadata = DateUtil.formatDate(log.date),
+                            metadata = DateUtil.formatDate(log.date, zone),
                             trailing = if (log.organicApproved) {
                                 {
                                     Tag(
@@ -544,6 +552,7 @@ private fun SpraysTab(
 @Composable
 private fun BloomsTab(
     records: List<BloomRecord>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (BloomRecord) -> Unit,
 ) {
@@ -585,7 +594,7 @@ private fun BloomsTab(
                             },
                             title = "Bloom ${record.year}",
                             subtitle = record.fruitSet,
-                            metadata = record.firstBloomDate?.let { DateUtil.formatDate(it) },
+                            metadata = record.firstBloomDate?.let { DateUtil.formatDate(it, zone) },
                             showDivider = index != records.lastIndex,
                         )
                     }

@@ -8,12 +8,16 @@ import com.furrow.app.data.local.entity.PantryItem
 import com.furrow.app.data.local.entity.SmokingCuringBatch
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.repository.PreservationRepository
+import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.ZoneId
 import javax.inject.Inject
@@ -21,7 +25,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PreservationViewModel @Inject constructor(
     private val repository: PreservationRepository,
+    private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
+
+    internal val zone: ZoneId = runBlocking {
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
+    }
 
     // -- Canning --
     val canningBatches: StateFlow<List<CanningBatch>> = repository.getAllCanningBatches()
@@ -53,7 +62,7 @@ class PreservationViewModel @Inject constructor(
     val inStockPantry: StateFlow<List<PantryItem>> = repository.getInStockPantryItems()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val thirtyDaysFromNow = Instant.now().atZone(ZoneId.systemDefault())
+    private val thirtyDaysFromNow = Instant.now().atZone(zone)
         .plusDays(30).toInstant().toEpochMilli()
 
     val expiringSoon: StateFlow<List<PantryItem>> = repository.getExpiringSoonPantryItems(thirtyDaysFromNow)

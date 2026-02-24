@@ -294,6 +294,7 @@ private fun AnimalForm(
                 onDateChange = { dob = it; useDob = true },
                 useTodayDefault = false,
                 accentColor = AnimalsGlow,
+                zone = viewModel.zone,
             )
         } else {
             DateFieldWithToggle(
@@ -302,6 +303,7 @@ private fun AnimalForm(
                 onDateChange = { dob = it; useDob = true },
                 useTodayDefault = false,
                 accentColor = AnimalsGlow,
+                zone = viewModel.zone,
             )
         }
 
@@ -311,6 +313,7 @@ private fun AnimalForm(
             onDateChange = { acquisitionDate = it },
             useTodayDefault = !isEditMode,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -427,6 +430,7 @@ private fun HealthForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -585,6 +589,7 @@ private fun BreedingForm(
             onDateChange = { breedingDate = it },
             useTodayDefault = !isEditMode,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         SearchableSelector(
@@ -606,6 +611,7 @@ private fun BreedingForm(
             onDateChange = { dueDate = it; useDueDate = true },
             useTodayDefault = false,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -678,6 +684,7 @@ private fun WeightForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -759,6 +766,7 @@ private fun FeedForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = AnimalsGlow,
+            zone = viewModel.zone,
         )
 
         SearchableSelector(

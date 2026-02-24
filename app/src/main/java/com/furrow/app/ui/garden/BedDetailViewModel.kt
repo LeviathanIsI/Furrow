@@ -46,8 +46,7 @@ class BedDetailViewModel @Inject constructor(
     private val bedId: Long = checkNotNull(savedStateHandle.get<Long>("bedId"))
 
     internal val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
     private val today = LocalDate.now(zone)
 

@@ -104,7 +104,7 @@ fun ComplianceListScreen(
     val expiringSoonIds = remember(expiringSoon) { expiringSoon.map { it.id }.toSet() }
 
     val ninetyDaysFromNow = remember {
-        Instant.now().atZone(ZoneId.systemDefault())
+        Instant.now().atZone(viewModel.zone)
             .plusDays(90).toInstant().toEpochMilli()
     }
 
@@ -194,11 +194,13 @@ fun ComplianceListScreen(
                 0 -> PermitsTab(
                     permits = permits,
                     expiringSoonIds = expiringSoonIds,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { permitForAction = it },
                 )
                 1 -> InspectionsTab(
                     inspections = inspections,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { inspectionForAction = it },
                 )
@@ -215,6 +217,7 @@ fun ComplianceListScreen(
                 4 -> DocumentsTab(
                     documents = documents,
                     ninetyDaysFromNow = ninetyDaysFromNow,
+                    zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { documentForAction = it },
                 )
@@ -328,6 +331,7 @@ fun ComplianceListScreen(
 private fun PermitsTab(
     permits: List<LicensePermit>,
     expiringSoonIds: Set<Long>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (LicensePermit) -> Unit,
 ) {
@@ -377,7 +381,7 @@ private fun PermitsTab(
                                     append("# $it")
                                 }
                             }.ifBlank { null },
-                            metadata = permit.expiration?.let { DateUtil.formatDate(it) },
+                            metadata = permit.expiration?.let { DateUtil.formatDate(it, zone) },
                             trailing = if (isExpiring) {
                                 {
                                     Icon(
@@ -402,6 +406,7 @@ private fun PermitsTab(
 @Composable
 private fun InspectionsTab(
     inspections: List<ComplianceInspection>,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (ComplianceInspection) -> Unit,
 ) {
@@ -450,7 +455,7 @@ private fun InspectionsTab(
                                     append(it.displayFormat())
                                 }
                             }.ifBlank { null },
-                            metadata = DateUtil.formatDate(inspection.date),
+                            metadata = DateUtil.formatDate(inspection.date, zone),
                             showDivider = index != inspections.lastIndex,
                         )
                     }
@@ -585,6 +590,7 @@ private fun LabelsTab(
 private fun DocumentsTab(
     documents: List<ComplianceDocument>,
     ninetyDaysFromNow: Long,
+    zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (ComplianceDocument) -> Unit,
 ) {
@@ -631,7 +637,7 @@ private fun DocumentsTab(
                                 },
                             title = document.name,
                             subtitle = document.type,
-                            metadata = document.issueDate?.let { DateUtil.formatDate(it) },
+                            metadata = document.issueDate?.let { DateUtil.formatDate(it, zone) },
                             trailing = if (isApproaching) {
                                 {
                                     Icon(

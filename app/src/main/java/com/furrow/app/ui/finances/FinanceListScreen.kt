@@ -248,7 +248,7 @@ fun FinanceListScreen(
                                                     color = StatusBad,
                                                 )
                                                 Text(
-                                                    text = DateUtil.formatDate(expense.date),
+                                                    text = DateUtil.formatDate(expense.date, viewModel.zone),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -305,7 +305,7 @@ fun FinanceListScreen(
                                                     color = StatusGood,
                                                 )
                                                 Text(
-                                                    text = DateUtil.formatDate(revenue.date),
+                                                    text = DateUtil.formatDate(revenue.date, viewModel.zone),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -364,7 +364,7 @@ fun FinanceListScreen(
                                                     color = TextPrimary,
                                                 )
                                                 Text(
-                                                    text = DateUtil.formatDate(log.date),
+                                                    text = DateUtil.formatDate(log.date, viewModel.zone),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = TextTertiary,
                                                 )
@@ -410,7 +410,7 @@ fun FinanceListScreen(
                                             append("Gave: ${trade.givenItems ?: "?"}")
                                             append(" \u2192 Got: ${trade.receivedItems ?: "?"}")
                                         },
-                                        metadata = DateUtil.formatDate(trade.date),
+                                        metadata = DateUtil.formatDate(trade.date, viewModel.zone),
                                         modifier = Modifier.combinedClickable(
                                             onClick = { onEditItem("barter", trade.id) },
                                             onLongClick = { barterForAction = trade },
@@ -465,7 +465,7 @@ fun FinanceListScreen(
                                                 }
                                                 grant.applicationDate?.let { date ->
                                                     Text(
-                                                        text = DateUtil.formatDate(date),
+                                                        text = DateUtil.formatDate(date, viewModel.zone),
                                                         style = MaterialTheme.typography.labelSmall,
                                                         color = TextTertiary,
                                                     )

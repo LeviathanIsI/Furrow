@@ -28,9 +28,8 @@ class FinanceViewModel @Inject constructor(
     userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
 
-    private val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+    internal val zone: ZoneId = runBlocking {
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
     private val today = LocalDate.now(zone)
     private val monthStart = today.withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli()

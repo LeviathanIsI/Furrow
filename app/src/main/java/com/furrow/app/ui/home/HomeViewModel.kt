@@ -50,8 +50,7 @@ class HomeViewModel @Inject constructor(
 ) : FurrowViewModel() {
 
     internal val zone: ZoneId = runBlocking {
-        userProfileRepository.getProfile().firstOrNull()
-            ?.let { DateUtil.profileZone(it) } ?: ZoneId.systemDefault()
+        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
     }
     private val today = LocalDate.now(zone)
     private val currentMonth = today.monthValue

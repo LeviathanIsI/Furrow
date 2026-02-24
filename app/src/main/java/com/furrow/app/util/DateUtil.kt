@@ -15,7 +15,7 @@ object DateUtil {
     private val shortDateWithYearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
     private val frostDateParser: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d", Locale.US)
 
-    fun formatDate(millis: Long, zone: ZoneId = ZoneId.systemDefault()): String {
+    fun formatDate(millis: Long, zone: ZoneId): String {
         return Instant.ofEpochMilli(millis)
             .atZone(zone)
             .toLocalDate()

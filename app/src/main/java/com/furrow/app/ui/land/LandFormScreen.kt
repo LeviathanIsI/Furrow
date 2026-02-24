@@ -254,6 +254,7 @@ private fun PropertyForm(
             onDateChange = { purchaseDate = it; usePurchaseDate = true },
             useTodayDefault = false,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -380,6 +381,7 @@ private fun StructureForm(
             onDateChange = { buildDate = it; useBuildDate = true },
             useTodayDefault = false,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -514,6 +516,7 @@ private fun FenceForm(
             onDateChange = { installDate = it; useInstallDate = true },
             useTodayDefault = false,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -747,6 +750,7 @@ private fun WaterSourceForm(
             onDateChange = { waterTestDate = it; useWaterTestDate = true },
             useTodayDefault = false,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -857,6 +861,7 @@ private fun CompostBinForm(
             onDateChange = { startDate = it; useStartDate = true },
             useTodayDefault = false,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         DropdownSelector(
@@ -944,6 +949,7 @@ private fun SoilTestForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
@@ -1094,6 +1100,7 @@ private fun WeatherForm(
             onDateChange = { date = it },
             useTodayDefault = !isEditMode,
             accentColor = LandGlow,
+            zone = viewModel.zone,
         )
 
         InputField(
