@@ -18,6 +18,7 @@ import androidx.compose.material.icons.outlined.Grass
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,6 +38,7 @@ import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
@@ -64,7 +66,11 @@ fun GardenBedListScreen(
     var bedForAction by remember { mutableStateOf<GardenBed?>(null) }
     var bedToEdit by remember { mutableStateOf<GardenBed?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = "Garden",

@@ -1,7 +1,6 @@
 package com.furrow.app.ui.garden
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.GardenBed
 import com.furrow.app.data.local.entity.HarvestLog
@@ -16,6 +15,7 @@ import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
@@ -42,7 +41,7 @@ class BedDetailViewModel @Inject constructor(
     private val plantRepository: PlantRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val bedId: Long = checkNotNull(savedStateHandle.get<Long>("bedId"))
 
@@ -154,88 +153,88 @@ class BedDetailViewModel @Inject constructor(
     // -- Planting actions --
 
     fun addPlanting(planting: Planting) {
-        viewModelScope.launch { repository.insertPlanting(planting) }
+        safeLaunch { repository.insertPlanting(planting) }
     }
 
     fun updatePlanting(planting: Planting) {
-        viewModelScope.launch { repository.updatePlanting(planting) }
+        safeLaunch { repository.updatePlanting(planting) }
     }
 
     fun deletePlanting(planting: Planting) {
-        viewModelScope.launch { repository.deletePlanting(planting) }
+        safeLaunch { repository.deletePlanting(planting) }
     }
 
     // -- Harvest actions --
 
     fun addHarvest(harvest: HarvestLog) {
-        viewModelScope.launch { repository.insertHarvest(harvest) }
+        safeLaunch { repository.insertHarvest(harvest) }
     }
 
     fun updateHarvest(harvest: HarvestLog) {
-        viewModelScope.launch { repository.updateHarvest(harvest) }
+        safeLaunch { repository.updateHarvest(harvest) }
     }
 
     fun deleteHarvest(harvest: HarvestLog) {
-        viewModelScope.launch { repository.deleteHarvest(harvest) }
+        safeLaunch { repository.deleteHarvest(harvest) }
     }
 
     // -- Watering actions --
 
     fun addWateringLog(log: WateringLog) {
-        viewModelScope.launch { repository.insertWateringLog(log) }
+        safeLaunch { repository.insertWateringLog(log) }
     }
 
     fun deleteWateringLog(log: WateringLog) {
-        viewModelScope.launch { repository.deleteWateringLog(log) }
+        safeLaunch { repository.deleteWateringLog(log) }
     }
 
     // -- Fertilizer actions --
 
     fun addFertilizerLog(log: FertilizerLog) {
-        viewModelScope.launch { repository.insertFertilizerLog(log) }
+        safeLaunch { repository.insertFertilizerLog(log) }
     }
 
     fun deleteFertilizerLog(log: FertilizerLog) {
-        viewModelScope.launch { repository.deleteFertilizerLog(log) }
+        safeLaunch { repository.deleteFertilizerLog(log) }
     }
 
     // -- Pest/Disease actions --
 
     fun addPestLog(log: PestDiseaseLog) {
-        viewModelScope.launch { repository.insertPestLog(log) }
+        safeLaunch { repository.insertPestLog(log) }
     }
 
     fun updatePestLog(log: PestDiseaseLog) {
-        viewModelScope.launch { repository.updatePestLog(log) }
+        safeLaunch { repository.updatePestLog(log) }
     }
 
     fun deletePestLog(log: PestDiseaseLog) {
-        viewModelScope.launch { repository.deletePestLog(log) }
+        safeLaunch { repository.deletePestLog(log) }
     }
 
     // -- Plant CRUD (for custom plants in forms) --
 
     fun insertPlant(plant: PlantInfo) {
-        viewModelScope.launch { plantRepository.insertPlant(plant) }
+        safeLaunch { plantRepository.insertPlant(plant) }
     }
 
     fun updatePlant(plant: PlantInfo) {
-        viewModelScope.launch { plantRepository.updatePlant(plant) }
+        safeLaunch { plantRepository.updatePlant(plant) }
     }
 
     fun deletePlant(plant: PlantInfo) {
-        viewModelScope.launch { plantRepository.deletePlant(plant) }
+        safeLaunch { plantRepository.deletePlant(plant) }
     }
 
     fun insertVariety(variety: PlantVariety) {
-        viewModelScope.launch { plantRepository.insertVariety(variety) }
+        safeLaunch { plantRepository.insertVariety(variety) }
     }
 
     fun updateVariety(variety: PlantVariety) {
-        viewModelScope.launch { plantRepository.updateVariety(variety) }
+        safeLaunch { plantRepository.updateVariety(variety) }
     }
 
     fun deleteVariety(variety: PlantVariety) {
-        viewModelScope.launch { plantRepository.deleteVariety(variety) }
+        safeLaunch { plantRepository.deleteVariety(variety) }
     }
 }

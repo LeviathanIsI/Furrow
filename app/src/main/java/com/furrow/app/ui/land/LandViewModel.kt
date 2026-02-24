@@ -1,7 +1,5 @@
 package com.furrow.app.ui.land
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.CompostBin
 import com.furrow.app.data.local.entity.CompostInputLog
 import com.furrow.app.data.local.entity.Fence
@@ -14,19 +12,20 @@ import com.furrow.app.data.local.entity.Structure
 import com.furrow.app.data.local.entity.StructureMaintenanceLog
 import com.furrow.app.data.local.entity.WaterSource
 import com.furrow.app.data.local.entity.WeatherLog
+import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.repository.LandRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LandViewModel @Inject constructor(
     private val repository: LandRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     val properties: StateFlow<List<Property>> = repository.getAllProperties()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -67,35 +66,35 @@ class LandViewModel @Inject constructor(
     fun getWeatherLogById(id: Long) = repository.getWeatherLogById(id)
 
     // -- Actions --
-    fun addProperty(p: Property) { viewModelScope.launch { repository.insertProperty(p) } }
-    fun updateProperty(p: Property) { viewModelScope.launch { repository.updateProperty(p) } }
-    fun deleteProperty(p: Property) { viewModelScope.launch { repository.deleteProperty(p) } }
+    fun addProperty(p: Property) { safeLaunch { repository.insertProperty(p) } }
+    fun updateProperty(p: Property) { safeLaunch { repository.updateProperty(p) } }
+    fun deleteProperty(p: Property) { safeLaunch { repository.deleteProperty(p) } }
 
-    fun addFence(f: Fence) { viewModelScope.launch { repository.insertFence(f) } }
-    fun updateFence(f: Fence) { viewModelScope.launch { repository.updateFence(f) } }
-    fun deleteFence(f: Fence) { viewModelScope.launch { repository.deleteFence(f) } }
+    fun addFence(f: Fence) { safeLaunch { repository.insertFence(f) } }
+    fun updateFence(f: Fence) { safeLaunch { repository.updateFence(f) } }
+    fun deleteFence(f: Fence) { safeLaunch { repository.deleteFence(f) } }
 
-    fun addStructure(s: Structure) { viewModelScope.launch { repository.insertStructure(s) } }
-    fun updateStructure(s: Structure) { viewModelScope.launch { repository.updateStructure(s) } }
-    fun deleteStructure(s: Structure) { viewModelScope.launch { repository.deleteStructure(s) } }
+    fun addStructure(s: Structure) { safeLaunch { repository.insertStructure(s) } }
+    fun updateStructure(s: Structure) { safeLaunch { repository.updateStructure(s) } }
+    fun deleteStructure(s: Structure) { safeLaunch { repository.deleteStructure(s) } }
 
-    fun addPaddock(p: Paddock) { viewModelScope.launch { repository.insertPaddock(p) } }
-    fun updatePaddock(p: Paddock) { viewModelScope.launch { repository.updatePaddock(p) } }
-    fun deletePaddock(p: Paddock) { viewModelScope.launch { repository.deletePaddock(p) } }
+    fun addPaddock(p: Paddock) { safeLaunch { repository.insertPaddock(p) } }
+    fun updatePaddock(p: Paddock) { safeLaunch { repository.updatePaddock(p) } }
+    fun deletePaddock(p: Paddock) { safeLaunch { repository.deletePaddock(p) } }
 
-    fun addWaterSource(w: WaterSource) { viewModelScope.launch { repository.insertWaterSource(w) } }
-    fun updateWaterSource(w: WaterSource) { viewModelScope.launch { repository.updateWaterSource(w) } }
-    fun deleteWaterSource(w: WaterSource) { viewModelScope.launch { repository.deleteWaterSource(w) } }
+    fun addWaterSource(w: WaterSource) { safeLaunch { repository.insertWaterSource(w) } }
+    fun updateWaterSource(w: WaterSource) { safeLaunch { repository.updateWaterSource(w) } }
+    fun deleteWaterSource(w: WaterSource) { safeLaunch { repository.deleteWaterSource(w) } }
 
-    fun addCompostBin(b: CompostBin) { viewModelScope.launch { repository.insertCompostBin(b) } }
-    fun updateCompostBin(b: CompostBin) { viewModelScope.launch { repository.updateCompostBin(b) } }
-    fun deleteCompostBin(b: CompostBin) { viewModelScope.launch { repository.deleteCompostBin(b) } }
+    fun addCompostBin(b: CompostBin) { safeLaunch { repository.insertCompostBin(b) } }
+    fun updateCompostBin(b: CompostBin) { safeLaunch { repository.updateCompostBin(b) } }
+    fun deleteCompostBin(b: CompostBin) { safeLaunch { repository.deleteCompostBin(b) } }
 
-    fun addSoilTest(s: SoilTest) { viewModelScope.launch { repository.insertSoilTest(s) } }
-    fun updateSoilTest(s: SoilTest) { viewModelScope.launch { repository.updateSoilTest(s) } }
-    fun deleteSoilTest(s: SoilTest) { viewModelScope.launch { repository.deleteSoilTest(s) } }
+    fun addSoilTest(s: SoilTest) { safeLaunch { repository.insertSoilTest(s) } }
+    fun updateSoilTest(s: SoilTest) { safeLaunch { repository.updateSoilTest(s) } }
+    fun deleteSoilTest(s: SoilTest) { safeLaunch { repository.deleteSoilTest(s) } }
 
-    fun addWeatherLog(w: WeatherLog) { viewModelScope.launch { repository.insertWeatherLog(w) } }
-    fun updateWeatherLog(w: WeatherLog) { viewModelScope.launch { repository.updateWeatherLog(w) } }
-    fun deleteWeatherLog(w: WeatherLog) { viewModelScope.launch { repository.deleteWeatherLog(w) } }
+    fun addWeatherLog(w: WeatherLog) { safeLaunch { repository.insertWeatherLog(w) } }
+    fun updateWeatherLog(w: WeatherLog) { safeLaunch { repository.updateWeatherLog(w) } }
+    fun deleteWeatherLog(w: WeatherLog) { safeLaunch { repository.deleteWeatherLog(w) } }
 }

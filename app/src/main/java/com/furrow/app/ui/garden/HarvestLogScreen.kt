@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,6 +52,7 @@ import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.NumberStepper
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
@@ -95,7 +97,11 @@ fun HarvestLogScreen(
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = if (isEditMode) "Edit harvest" else "Log harvest",

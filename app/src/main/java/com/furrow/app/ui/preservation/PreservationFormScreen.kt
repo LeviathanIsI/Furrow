@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import com.furrow.app.data.local.entity.PantryItem
 import com.furrow.app.data.local.entity.SmokingCuringBatch
 import com.furrow.app.data.ModuleCatalogData
 import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
@@ -54,13 +56,16 @@ fun PreservationFormScreen(
 ) {
     val isEditMode = editId > 0L
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     when (type) {
-        "canning" -> CanningForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
-        "dehydrating" -> DehydratingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
-        "fermenting" -> FermentingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
-        "freezing" -> FreezingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
-        "smoking" -> SmokingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
-        "pantry" -> PantryForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel)
+        "canning" -> CanningForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
+        "dehydrating" -> DehydratingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
+        "fermenting" -> FermentingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
+        "freezing" -> FreezingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
+        "smoking" -> SmokingForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
+        "pantry" -> PantryForm(editId = editId, isEditMode = isEditMode, onBack = onBack, viewModel = viewModel, snackbarHostState = snackbarHostState)
     }
 }
 
@@ -72,6 +77,7 @@ private fun CanningForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var recipeName by remember { mutableStateOf("") }
     var method by remember { mutableStateOf("Water Bath") }
@@ -98,7 +104,7 @@ private fun CanningForm(
 
     val title = if (isEditMode) "Edit Canning Batch" else "Add Canning Batch"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         InputField(
             value = recipeName,
             onValueChange = { recipeName = it },
@@ -204,6 +210,7 @@ private fun DehydratingForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var product by remember { mutableStateOf("") }
     var weightBeforeLbs by remember { mutableStateOf("") }
@@ -228,7 +235,7 @@ private fun DehydratingForm(
 
     val title = if (isEditMode) "Edit Dehydrating Batch" else "Add Dehydrating Batch"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         InputField(
             value = product,
             onValueChange = { product = it },
@@ -310,6 +317,7 @@ private fun FermentingForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var product by remember { mutableStateOf("") }
     var ingredients by remember { mutableStateOf("") }
@@ -340,7 +348,7 @@ private fun FermentingForm(
 
     val title = if (isEditMode) "Edit Fermenting Batch" else "Add Fermenting Batch"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         InputField(
             value = product,
             onValueChange = { product = it },
@@ -455,6 +463,7 @@ private fun FreezingForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var item by remember { mutableStateOf("") }
     var quantityLbs by remember { mutableStateOf("") }
@@ -479,7 +488,7 @@ private fun FreezingForm(
 
     val title = if (isEditMode) "Edit Freezing Batch" else "Add Freezing Batch"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         InputField(
             value = item,
             onValueChange = { item = it },
@@ -565,6 +574,7 @@ private fun SmokingForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var meatType by remember { mutableStateOf("") }
     var cut by remember { mutableStateOf("") }
@@ -593,7 +603,7 @@ private fun SmokingForm(
 
     val title = if (isEditMode) "Edit Smoking Batch" else "Add Smoking Batch"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         SearchableSelector(
             query = meatType,
             onQueryChange = { meatType = it },
@@ -713,6 +723,7 @@ private fun PantryForm(
     isEditMode: Boolean,
     onBack: () -> Unit,
     viewModel: PreservationViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
     var name by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
@@ -753,7 +764,7 @@ private fun PantryForm(
 
     val title = if (isEditMode) "Edit Pantry Item" else "Add Pantry Item"
 
-    FormScaffold(title = title, onBack = onBack) {
+    FormScaffold(title = title, onBack = onBack, snackbarHostState = snackbarHostState) {
         InputField(
             value = name,
             onValueChange = { name = it },
@@ -894,9 +905,11 @@ private fun PantryForm(
 private fun FormScaffold(
     title: String,
     onBack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     content: @Composable () -> Unit,
 ) {
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = title,

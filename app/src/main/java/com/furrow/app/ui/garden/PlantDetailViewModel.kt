@@ -1,8 +1,8 @@
 package com.furrow.app.ui.garden
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.Planting
@@ -31,7 +31,7 @@ class PlantDetailViewModel @Inject constructor(
     private val plantRepository: PlantRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val plantingId: Long = checkNotNull(savedStateHandle.get<Long>("plantingId"))
 

@@ -20,6 +20,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +40,7 @@ import com.furrow.app.data.local.entity.Structure
 import com.furrow.app.data.local.entity.WaterSource
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.InlineStat
@@ -99,7 +101,11 @@ fun LandListScreen(
     val allEmpty = properties.isEmpty() && structures.isEmpty() && fences.isEmpty() &&
         paddocks.isEmpty() && waterSources.isEmpty() && compostBins.isEmpty()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(title = "Land Management")
         },

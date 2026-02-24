@@ -1,7 +1,6 @@
 package com.furrow.app.ui.orchard
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.BloomRecord
 import com.furrow.app.data.local.entity.ChillHoursLog
@@ -11,6 +10,7 @@ import com.furrow.app.data.local.entity.OrchardPlant
 import com.furrow.app.data.local.entity.PruningLog
 import com.furrow.app.data.local.entity.SprayLog
 import com.furrow.app.data.repository.OrchardRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,14 +18,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrchardViewModel @Inject constructor(
     private val repository: OrchardRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val plantId: Long? = savedStateHandle.get<Long>("plantId")
 
@@ -105,33 +104,33 @@ class OrchardViewModel @Inject constructor(
 
     // -- Actions --
 
-    fun addPlant(plant: OrchardPlant) { viewModelScope.launch { repository.insertPlant(plant) } }
-    fun updatePlant(plant: OrchardPlant) { viewModelScope.launch { repository.updatePlant(plant) } }
-    fun deletePlant(plant: OrchardPlant) { viewModelScope.launch { repository.deletePlant(plant) } }
+    fun addPlant(plant: OrchardPlant) { safeLaunch { repository.insertPlant(plant) } }
+    fun updatePlant(plant: OrchardPlant) { safeLaunch { repository.updatePlant(plant) } }
+    fun deletePlant(plant: OrchardPlant) { safeLaunch { repository.deletePlant(plant) } }
 
-    fun addHarvest(harvest: OrchardHarvest) { viewModelScope.launch { repository.insertHarvest(harvest) } }
-    fun updateHarvest(harvest: OrchardHarvest) { viewModelScope.launch { repository.updateHarvest(harvest) } }
-    fun deleteHarvest(harvest: OrchardHarvest) { viewModelScope.launch { repository.deleteHarvest(harvest) } }
+    fun addHarvest(harvest: OrchardHarvest) { safeLaunch { repository.insertHarvest(harvest) } }
+    fun updateHarvest(harvest: OrchardHarvest) { safeLaunch { repository.updateHarvest(harvest) } }
+    fun deleteHarvest(harvest: OrchardHarvest) { safeLaunch { repository.deleteHarvest(harvest) } }
 
-    fun addPruningLog(log: PruningLog) { viewModelScope.launch { repository.insertPruningLog(log) } }
-    fun updatePruningLog(log: PruningLog) { viewModelScope.launch { repository.updatePruningLog(log) } }
-    fun deletePruningLog(log: PruningLog) { viewModelScope.launch { repository.deletePruningLog(log) } }
+    fun addPruningLog(log: PruningLog) { safeLaunch { repository.insertPruningLog(log) } }
+    fun updatePruningLog(log: PruningLog) { safeLaunch { repository.updatePruningLog(log) } }
+    fun deletePruningLog(log: PruningLog) { safeLaunch { repository.deletePruningLog(log) } }
 
-    fun addSprayLog(log: SprayLog) { viewModelScope.launch { repository.insertSprayLog(log) } }
-    fun updateSprayLog(log: SprayLog) { viewModelScope.launch { repository.updateSprayLog(log) } }
-    fun deleteSprayLog(log: SprayLog) { viewModelScope.launch { repository.deleteSprayLog(log) } }
+    fun addSprayLog(log: SprayLog) { safeLaunch { repository.insertSprayLog(log) } }
+    fun updateSprayLog(log: SprayLog) { safeLaunch { repository.updateSprayLog(log) } }
+    fun deleteSprayLog(log: SprayLog) { safeLaunch { repository.deleteSprayLog(log) } }
 
-    fun addBloomRecord(record: BloomRecord) { viewModelScope.launch { repository.insertBloomRecord(record) } }
-    fun updateBloomRecord(record: BloomRecord) { viewModelScope.launch { repository.updateBloomRecord(record) } }
-    fun deleteBloomRecord(record: BloomRecord) { viewModelScope.launch { repository.deleteBloomRecord(record) } }
+    fun addBloomRecord(record: BloomRecord) { safeLaunch { repository.insertBloomRecord(record) } }
+    fun updateBloomRecord(record: BloomRecord) { safeLaunch { repository.updateBloomRecord(record) } }
+    fun deleteBloomRecord(record: BloomRecord) { safeLaunch { repository.deleteBloomRecord(record) } }
 
-    fun addGraftingLog(log: GraftingLog) { viewModelScope.launch { repository.insertGraftingLog(log) } }
-    fun updateGraftingLog(log: GraftingLog) { viewModelScope.launch { repository.updateGraftingLog(log) } }
-    fun deleteGraftingLog(log: GraftingLog) { viewModelScope.launch { repository.deleteGraftingLog(log) } }
+    fun addGraftingLog(log: GraftingLog) { safeLaunch { repository.insertGraftingLog(log) } }
+    fun updateGraftingLog(log: GraftingLog) { safeLaunch { repository.updateGraftingLog(log) } }
+    fun deleteGraftingLog(log: GraftingLog) { safeLaunch { repository.deleteGraftingLog(log) } }
 
-    fun addChillHoursLog(log: ChillHoursLog) { viewModelScope.launch { repository.insertChillHoursLog(log) } }
-    fun updateChillHoursLog(log: ChillHoursLog) { viewModelScope.launch { repository.updateChillHoursLog(log) } }
-    fun deleteChillHoursLog(log: ChillHoursLog) { viewModelScope.launch { repository.deleteChillHoursLog(log) } }
+    fun addChillHoursLog(log: ChillHoursLog) { safeLaunch { repository.insertChillHoursLog(log) } }
+    fun updateChillHoursLog(log: ChillHoursLog) { safeLaunch { repository.updateChillHoursLog(log) } }
+    fun deleteChillHoursLog(log: ChillHoursLog) { safeLaunch { repository.deleteChillHoursLog(log) } }
 
     fun setCategoryFilter(category: String?) { selectedCategory.value = category }
 }

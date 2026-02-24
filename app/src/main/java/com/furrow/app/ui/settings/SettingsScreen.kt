@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +40,7 @@ import com.furrow.app.data.ModuleCategory
 import com.furrow.app.data.ZoneLookup
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
@@ -90,7 +92,11 @@ fun SettingsScreen(
         permissionGranted = granted
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = "Settings",

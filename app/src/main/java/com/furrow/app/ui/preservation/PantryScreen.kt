@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Kitchen
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.PantryItem
 import com.furrow.app.util.displayFormat
 import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
@@ -61,7 +63,11 @@ fun PantryScreen(
     var itemForAction by remember { mutableStateOf<PantryItem?>(null) }
     var itemToDelete by remember { mutableStateOf<PantryItem?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = "Pantry",

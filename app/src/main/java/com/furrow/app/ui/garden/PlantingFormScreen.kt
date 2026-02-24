@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -49,6 +50,7 @@ import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.components.StatusPill
@@ -179,7 +181,11 @@ fun PlantingFormScreen(
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = if (isEditMode) "Edit planting" else "Add planting",

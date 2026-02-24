@@ -26,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
@@ -50,6 +51,7 @@ import com.furrow.app.data.local.entity.FeedLog
 import com.furrow.app.data.local.entity.HealthRecord
 import com.furrow.app.data.local.entity.WeightLog
 import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
@@ -107,7 +109,11 @@ fun AnimalDetailScreen(
     val view = LocalView.current
     val now = remember { System.currentTimeMillis() }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = animal?.name ?: animal?.tagId ?: "Animal",

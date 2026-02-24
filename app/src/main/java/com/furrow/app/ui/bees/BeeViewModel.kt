@@ -1,7 +1,6 @@
 package com.furrow.app.ui.bees
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.BeeCalendar
 import com.furrow.app.data.local.entity.BeeRaceInfo
@@ -11,6 +10,7 @@ import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.BeeRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
@@ -31,7 +30,7 @@ class BeeViewModel @Inject constructor(
     private val repository: BeeRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val hiveId: Long? = savedStateHandle.get<Long>("hiveId")
 
@@ -125,50 +124,50 @@ class BeeViewModel @Inject constructor(
     // -- Actions --
 
     fun addHive(hive: Hive) {
-        viewModelScope.launch { repository.insertHive(hive) }
+        safeLaunch { repository.insertHive(hive) }
     }
 
     fun updateHive(hive: Hive) {
-        viewModelScope.launch { repository.updateHive(hive) }
+        safeLaunch { repository.updateHive(hive) }
     }
 
     fun deleteHive(hive: Hive) {
-        viewModelScope.launch { repository.deleteHive(hive) }
+        safeLaunch { repository.deleteHive(hive) }
     }
 
     fun addInspection(inspection: Inspection) {
-        viewModelScope.launch { repository.insertInspection(inspection) }
+        safeLaunch { repository.insertInspection(inspection) }
     }
 
     fun updateInspection(inspection: Inspection) {
-        viewModelScope.launch { repository.updateInspection(inspection) }
+        safeLaunch { repository.updateInspection(inspection) }
     }
 
     fun deleteInspection(inspection: Inspection) {
-        viewModelScope.launch { repository.deleteInspection(inspection) }
+        safeLaunch { repository.deleteInspection(inspection) }
     }
 
     fun addTreatment(treatment: Treatment) {
-        viewModelScope.launch { repository.insertTreatment(treatment) }
+        safeLaunch { repository.insertTreatment(treatment) }
     }
 
     fun updateTreatment(treatment: Treatment) {
-        viewModelScope.launch { repository.updateTreatment(treatment) }
+        safeLaunch { repository.updateTreatment(treatment) }
     }
 
     fun deleteTreatment(treatment: Treatment) {
-        viewModelScope.launch { repository.deleteTreatment(treatment) }
+        safeLaunch { repository.deleteTreatment(treatment) }
     }
 
     fun insertRace(race: BeeRaceInfo) {
-        viewModelScope.launch { repository.insertRace(race) }
+        safeLaunch { repository.insertRace(race) }
     }
 
     fun updateRace(race: BeeRaceInfo) {
-        viewModelScope.launch { repository.updateRace(race) }
+        safeLaunch { repository.updateRace(race) }
     }
 
     fun deleteRace(race: BeeRaceInfo) {
-        viewModelScope.launch { repository.deleteRace(race) }
+        safeLaunch { repository.deleteRace(race) }
     }
 }

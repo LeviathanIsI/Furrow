@@ -1,6 +1,5 @@
 package com.furrow.app.ui.garden
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.GardenBed
 import com.furrow.app.data.local.entity.HarvestLog
@@ -12,6 +11,7 @@ import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import com.furrow.app.util.DateUtil
 import java.time.Instant
 import java.time.LocalDate
@@ -96,7 +95,7 @@ class GardenViewModel @Inject constructor(
     private val repository: GardenRepository,
     private val plantRepository: PlantRepository,
     private val userProfileRepository: UserProfileRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     internal val zone: ZoneId = runBlocking {
         userProfileRepository.getProfile().firstOrNull()
@@ -347,15 +346,15 @@ class GardenViewModel @Inject constructor(
     // -- Bed actions --
 
     fun addBed(bed: GardenBed) {
-        viewModelScope.launch { repository.insertBed(bed) }
+        safeLaunch { repository.insertBed(bed) }
     }
 
     fun updateBed(bed: GardenBed) {
-        viewModelScope.launch { repository.updateBed(bed) }
+        safeLaunch { repository.updateBed(bed) }
     }
 
     fun deleteBed(bed: GardenBed) {
-        viewModelScope.launch { repository.deleteBed(bed) }
+        safeLaunch { repository.deleteBed(bed) }
     }
 
     private fun parseFrostDate(dateStr: String, year: Int): LocalDate? =

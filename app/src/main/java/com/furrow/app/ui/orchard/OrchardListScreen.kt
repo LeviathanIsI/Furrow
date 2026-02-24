@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Forest
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,6 +34,7 @@ import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.InlineStat
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
@@ -62,7 +64,11 @@ fun OrchardListScreen(
     var plantForAction by remember { mutableStateOf<OrchardPlant?>(null) }
     var plantToDelete by remember { mutableStateOf<OrchardPlant?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(title = "Orchard")
         },

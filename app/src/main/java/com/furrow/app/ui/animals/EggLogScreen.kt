@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.components.AppScaffold
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
@@ -92,7 +94,11 @@ fun EggLogScreen(
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = AnimalsGlow, bordered = true)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = if (isEditMode) "Edit egg log" else "Log eggs",

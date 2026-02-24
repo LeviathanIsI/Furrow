@@ -1,8 +1,8 @@
 package com.furrow.app.ui
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.FurrowModule
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.data.repository.ModulePreferenceRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.util.NotificationPreferences
@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,7 +18,7 @@ class MainViewModel @Inject constructor(
     userProfileRepository: UserProfileRepository,
     private val notificationPreferences: NotificationPreferences,
     modulePreferenceRepository: ModulePreferenceRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     val hasProfile: StateFlow<Boolean?> = userProfileRepository.getProfile()
         .map { it != null }
@@ -48,7 +47,7 @@ class MainViewModel @Inject constructor(
         )
 
     fun onNotificationPromptDone() {
-        viewModelScope.launch {
+        safeLaunch {
             notificationPreferences.setNotificationPromptShown(true)
         }
     }

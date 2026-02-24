@@ -1,7 +1,6 @@
 package com.furrow.app.ui.animals
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.Animal
 import com.furrow.app.data.local.entity.AnimalBreedInfo
@@ -15,6 +14,7 @@ import com.furrow.app.data.local.entity.ProcessingRecord
 import com.furrow.app.data.local.entity.WeightLog
 import com.furrow.app.data.repository.AnimalRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
@@ -47,7 +46,7 @@ class AnimalViewModel @Inject constructor(
     private val repository: AnimalRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val animalId: Long? = savedStateHandle.get<Long>("animalId")
 
@@ -210,45 +209,45 @@ class AnimalViewModel @Inject constructor(
 
     // -- Actions --
 
-    fun addAnimal(animal: Animal) { viewModelScope.launch { repository.insertAnimal(animal) } }
-    fun updateAnimal(animal: Animal) { viewModelScope.launch { repository.updateAnimal(animal) } }
-    fun deleteAnimal(animal: Animal) { viewModelScope.launch { repository.deleteAnimal(animal) } }
+    fun addAnimal(animal: Animal) { safeLaunch { repository.insertAnimal(animal) } }
+    fun updateAnimal(animal: Animal) { safeLaunch { repository.updateAnimal(animal) } }
+    fun deleteAnimal(animal: Animal) { safeLaunch { repository.deleteAnimal(animal) } }
 
-    fun addHealthRecord(record: HealthRecord) { viewModelScope.launch { repository.insertHealthRecord(record) } }
-    fun updateHealthRecord(record: HealthRecord) { viewModelScope.launch { repository.updateHealthRecord(record) } }
-    fun deleteHealthRecord(record: HealthRecord) { viewModelScope.launch { repository.deleteHealthRecord(record) } }
+    fun addHealthRecord(record: HealthRecord) { safeLaunch { repository.insertHealthRecord(record) } }
+    fun updateHealthRecord(record: HealthRecord) { safeLaunch { repository.updateHealthRecord(record) } }
+    fun deleteHealthRecord(record: HealthRecord) { safeLaunch { repository.deleteHealthRecord(record) } }
 
-    fun addBreedingRecord(record: BreedingRecord) { viewModelScope.launch { repository.insertBreedingRecord(record) } }
-    fun updateBreedingRecord(record: BreedingRecord) { viewModelScope.launch { repository.updateBreedingRecord(record) } }
-    fun deleteBreedingRecord(record: BreedingRecord) { viewModelScope.launch { repository.deleteBreedingRecord(record) } }
+    fun addBreedingRecord(record: BreedingRecord) { safeLaunch { repository.insertBreedingRecord(record) } }
+    fun updateBreedingRecord(record: BreedingRecord) { safeLaunch { repository.updateBreedingRecord(record) } }
+    fun deleteBreedingRecord(record: BreedingRecord) { safeLaunch { repository.deleteBreedingRecord(record) } }
 
-    fun addMilkLog(log: MilkLog) { viewModelScope.launch { repository.insertMilkLog(log) } }
-    fun updateMilkLog(log: MilkLog) { viewModelScope.launch { repository.updateMilkLog(log) } }
-    fun deleteMilkLog(log: MilkLog) { viewModelScope.launch { repository.deleteMilkLog(log) } }
+    fun addMilkLog(log: MilkLog) { safeLaunch { repository.insertMilkLog(log) } }
+    fun updateMilkLog(log: MilkLog) { safeLaunch { repository.updateMilkLog(log) } }
+    fun deleteMilkLog(log: MilkLog) { safeLaunch { repository.deleteMilkLog(log) } }
 
-    fun addFiberLog(log: FiberLog) { viewModelScope.launch { repository.insertFiberLog(log) } }
-    fun updateFiberLog(log: FiberLog) { viewModelScope.launch { repository.updateFiberLog(log) } }
-    fun deleteFiberLog(log: FiberLog) { viewModelScope.launch { repository.deleteFiberLog(log) } }
+    fun addFiberLog(log: FiberLog) { safeLaunch { repository.insertFiberLog(log) } }
+    fun updateFiberLog(log: FiberLog) { safeLaunch { repository.updateFiberLog(log) } }
+    fun deleteFiberLog(log: FiberLog) { safeLaunch { repository.deleteFiberLog(log) } }
 
-    fun addWeightLog(log: WeightLog) { viewModelScope.launch { repository.insertWeightLog(log) } }
-    fun updateWeightLog(log: WeightLog) { viewModelScope.launch { repository.updateWeightLog(log) } }
-    fun deleteWeightLog(log: WeightLog) { viewModelScope.launch { repository.deleteWeightLog(log) } }
+    fun addWeightLog(log: WeightLog) { safeLaunch { repository.insertWeightLog(log) } }
+    fun updateWeightLog(log: WeightLog) { safeLaunch { repository.updateWeightLog(log) } }
+    fun deleteWeightLog(log: WeightLog) { safeLaunch { repository.deleteWeightLog(log) } }
 
-    fun addFeedLog(log: FeedLog) { viewModelScope.launch { repository.insertFeedLog(log) } }
-    fun updateFeedLog(log: FeedLog) { viewModelScope.launch { repository.updateFeedLog(log) } }
-    fun deleteFeedLog(log: FeedLog) { viewModelScope.launch { repository.deleteFeedLog(log) } }
+    fun addFeedLog(log: FeedLog) { safeLaunch { repository.insertFeedLog(log) } }
+    fun updateFeedLog(log: FeedLog) { safeLaunch { repository.updateFeedLog(log) } }
+    fun deleteFeedLog(log: FeedLog) { safeLaunch { repository.deleteFeedLog(log) } }
 
-    fun addProcessingRecord(record: ProcessingRecord) { viewModelScope.launch { repository.insertProcessingRecord(record) } }
-    fun updateProcessingRecord(record: ProcessingRecord) { viewModelScope.launch { repository.updateProcessingRecord(record) } }
-    fun deleteProcessingRecord(record: ProcessingRecord) { viewModelScope.launch { repository.deleteProcessingRecord(record) } }
+    fun addProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.insertProcessingRecord(record) } }
+    fun updateProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.updateProcessingRecord(record) } }
+    fun deleteProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.deleteProcessingRecord(record) } }
 
-    fun addEggLog(eggLog: EggLog) { viewModelScope.launch { repository.insertEggLog(eggLog) } }
-    fun updateEggLog(eggLog: EggLog) { viewModelScope.launch { repository.updateEggLog(eggLog) } }
-    fun deleteEggLog(eggLog: EggLog) { viewModelScope.launch { repository.deleteEggLog(eggLog) } }
+    fun addEggLog(eggLog: EggLog) { safeLaunch { repository.insertEggLog(eggLog) } }
+    fun updateEggLog(eggLog: EggLog) { safeLaunch { repository.updateEggLog(eggLog) } }
+    fun deleteEggLog(eggLog: EggLog) { safeLaunch { repository.deleteEggLog(eggLog) } }
 
-    fun insertBreed(breed: AnimalBreedInfo) { viewModelScope.launch { repository.insertBreed(breed) } }
-    fun updateBreed(breed: AnimalBreedInfo) { viewModelScope.launch { repository.updateBreed(breed) } }
-    fun deleteBreed(breed: AnimalBreedInfo) { viewModelScope.launch { repository.deleteBreed(breed) } }
+    fun insertBreed(breed: AnimalBreedInfo) { safeLaunch { repository.insertBreed(breed) } }
+    fun updateBreed(breed: AnimalBreedInfo) { safeLaunch { repository.updateBreed(breed) } }
+    fun deleteBreed(breed: AnimalBreedInfo) { safeLaunch { repository.deleteBreed(breed) } }
 
     fun setSpeciesFilter(species: String?) { selectedSpecies.value = species }
 }

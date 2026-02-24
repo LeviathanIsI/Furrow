@@ -1,8 +1,8 @@
 package com.furrow.app.ui.settings
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.ZoneLookup
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.data.local.entity.UserModulePreference
 import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.ModulePreferenceRepository
@@ -12,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +19,7 @@ class SettingsViewModel @Inject constructor(
     private val repository: UserProfileRepository,
     private val notificationPreferences: NotificationPreferences,
     private val modulePreferenceRepository: ModulePreferenceRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     val profile: StateFlow<UserProfile?> = repository.getProfile()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
@@ -40,32 +39,32 @@ class SettingsViewModel @Inject constructor(
 
     fun updateZipCode(zipCode: String) {
         val newProfile = ZoneLookup.deriveProfile(zipCode) ?: return
-        viewModelScope.launch {
+        safeLaunch {
             repository.saveProfile(newProfile)
         }
     }
 
     fun setBeeReminders(enabled: Boolean) {
-        viewModelScope.launch { notificationPreferences.setBeeReminders(enabled) }
+        safeLaunch { notificationPreferences.setBeeReminders(enabled) }
     }
 
     fun setPoultryReminders(enabled: Boolean) {
-        viewModelScope.launch { notificationPreferences.setPoultryReminders(enabled) }
+        safeLaunch { notificationPreferences.setPoultryReminders(enabled) }
     }
 
     fun setGardenReminders(enabled: Boolean) {
-        viewModelScope.launch { notificationPreferences.setGardenReminders(enabled) }
+        safeLaunch { notificationPreferences.setGardenReminders(enabled) }
     }
 
     fun setModuleEnabled(moduleName: String, enabled: Boolean) {
-        viewModelScope.launch {
+        safeLaunch {
             modulePreferenceRepository.setEnabled(moduleName, enabled)
         }
     }
 
     fun updateTimezone(timezone: String) {
-        viewModelScope.launch {
-            val current = profile.value ?: return@launch
+        safeLaunch {
+            val current = profile.value ?: return@safeLaunch
             repository.saveProfile(current.copy(timezone = timezone))
         }
     }

@@ -27,6 +27,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.ScrollableTabRow
@@ -58,6 +59,7 @@ import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.InlineStat
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
@@ -133,7 +135,11 @@ fun OrchardPlantDetailScreen(
         "Plant"
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             AppTopBar(
                 title = plantTitle,

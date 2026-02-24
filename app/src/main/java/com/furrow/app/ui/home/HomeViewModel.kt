@@ -1,7 +1,7 @@
 package com.furrow.app.ui.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.PlantingWindow
@@ -47,7 +47,7 @@ class HomeViewModel @Inject constructor(
     landRepository: LandRepository,
     financeRepository: FinanceRepository,
     complianceRepository: ComplianceRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     internal val zone: ZoneId = runBlocking {
         userProfileRepository.getProfile().firstOrNull()

@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DropdownSelector
 import androidx.compose.material3.Scaffold
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.NumberStepper
 import com.furrow.app.ui.components.PrimaryButton
@@ -120,7 +122,11 @@ fun InspectionFormScreen(
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = BeeGlow, bordered = true)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     com.furrow.app.ui.components.AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             com.furrow.app.ui.components.AppTopBar(
                 title = if (isEditMode) "Edit inspection" else "Add inspection",

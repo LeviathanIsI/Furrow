@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -62,6 +63,7 @@ import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.GlowCard
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.theme.AppSpacing
@@ -96,7 +98,11 @@ fun HiveDetailScreen(
     var inspectionForAction by remember { mutableStateOf<Inspection?>(null) }
     var treatmentForAction by remember { mutableStateOf<Treatment?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     com.furrow.app.ui.components.AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             com.furrow.app.ui.components.AppTopBar(
                 title = hive?.name ?: "Hive",

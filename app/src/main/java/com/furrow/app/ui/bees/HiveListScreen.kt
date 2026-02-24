@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +41,7 @@ import com.furrow.app.data.local.entity.Hive
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.FurrowBottomSheet
@@ -67,7 +69,11 @@ fun HiveListScreen(
     val lastDates by viewModel.lastInspectionDates.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     com.furrow.app.ui.components.AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             com.furrow.app.ui.components.AppTopBar(
                 title = "Hives",

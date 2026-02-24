@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -63,6 +64,7 @@ import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.ExtraAction
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.ItemActionSheet
@@ -132,7 +134,11 @@ fun BedDetailScreen(
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
     AppScaffold(
+        snackbarHostState = snackbarHostState,
         topBar = {
             com.furrow.app.ui.components.AppTopBar(
                 title = bed?.name ?: "Bed detail",

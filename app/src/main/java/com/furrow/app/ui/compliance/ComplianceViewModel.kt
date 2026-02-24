@@ -1,6 +1,5 @@
 package com.furrow.app.ui.compliance
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.ComplianceDocument
 import com.furrow.app.data.local.entity.ComplianceInspection
@@ -8,11 +7,11 @@ import com.furrow.app.data.local.entity.LabelTemplate
 import com.furrow.app.data.local.entity.LicensePermit
 import com.furrow.app.data.local.entity.SalesTracker
 import com.furrow.app.data.repository.ComplianceRepository
+import com.furrow.app.ui.FurrowViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import javax.inject.Inject
@@ -20,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ComplianceViewModel @Inject constructor(
     private val repository: ComplianceRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     val licensePermits: StateFlow<List<LicensePermit>> = repository.getAllLicensePermits()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -51,23 +50,23 @@ class ComplianceViewModel @Inject constructor(
     fun getDocumentById(id: Long) = repository.getComplianceDocumentById(id)
 
     // -- Actions --
-    fun addLicensePermit(p: LicensePermit) { viewModelScope.launch { repository.insertLicensePermit(p) } }
-    fun updateLicensePermit(p: LicensePermit) { viewModelScope.launch { repository.updateLicensePermit(p) } }
-    fun deleteLicensePermit(p: LicensePermit) { viewModelScope.launch { repository.deleteLicensePermit(p) } }
+    fun addLicensePermit(p: LicensePermit) { safeLaunch { repository.insertLicensePermit(p) } }
+    fun updateLicensePermit(p: LicensePermit) { safeLaunch { repository.updateLicensePermit(p) } }
+    fun deleteLicensePermit(p: LicensePermit) { safeLaunch { repository.deleteLicensePermit(p) } }
 
-    fun addInspection(i: ComplianceInspection) { viewModelScope.launch { repository.insertComplianceInspection(i) } }
-    fun updateInspection(i: ComplianceInspection) { viewModelScope.launch { repository.updateComplianceInspection(i) } }
-    fun deleteInspection(i: ComplianceInspection) { viewModelScope.launch { repository.deleteComplianceInspection(i) } }
+    fun addInspection(i: ComplianceInspection) { safeLaunch { repository.insertComplianceInspection(i) } }
+    fun updateInspection(i: ComplianceInspection) { safeLaunch { repository.updateComplianceInspection(i) } }
+    fun deleteInspection(i: ComplianceInspection) { safeLaunch { repository.deleteComplianceInspection(i) } }
 
-    fun addSalesTracker(s: SalesTracker) { viewModelScope.launch { repository.insertSalesTracker(s) } }
-    fun updateSalesTracker(s: SalesTracker) { viewModelScope.launch { repository.updateSalesTracker(s) } }
-    fun deleteSalesTracker(s: SalesTracker) { viewModelScope.launch { repository.deleteSalesTracker(s) } }
+    fun addSalesTracker(s: SalesTracker) { safeLaunch { repository.insertSalesTracker(s) } }
+    fun updateSalesTracker(s: SalesTracker) { safeLaunch { repository.updateSalesTracker(s) } }
+    fun deleteSalesTracker(s: SalesTracker) { safeLaunch { repository.deleteSalesTracker(s) } }
 
-    fun addLabelTemplate(l: LabelTemplate) { viewModelScope.launch { repository.insertLabelTemplate(l) } }
-    fun updateLabelTemplate(l: LabelTemplate) { viewModelScope.launch { repository.updateLabelTemplate(l) } }
-    fun deleteLabelTemplate(l: LabelTemplate) { viewModelScope.launch { repository.deleteLabelTemplate(l) } }
+    fun addLabelTemplate(l: LabelTemplate) { safeLaunch { repository.insertLabelTemplate(l) } }
+    fun updateLabelTemplate(l: LabelTemplate) { safeLaunch { repository.updateLabelTemplate(l) } }
+    fun deleteLabelTemplate(l: LabelTemplate) { safeLaunch { repository.deleteLabelTemplate(l) } }
 
-    fun addDocument(d: ComplianceDocument) { viewModelScope.launch { repository.insertComplianceDocument(d) } }
-    fun updateDocument(d: ComplianceDocument) { viewModelScope.launch { repository.updateComplianceDocument(d) } }
-    fun deleteDocument(d: ComplianceDocument) { viewModelScope.launch { repository.deleteComplianceDocument(d) } }
+    fun addDocument(d: ComplianceDocument) { safeLaunch { repository.insertComplianceDocument(d) } }
+    fun updateDocument(d: ComplianceDocument) { safeLaunch { repository.updateComplianceDocument(d) } }
+    fun deleteDocument(d: ComplianceDocument) { safeLaunch { repository.deleteComplianceDocument(d) } }
 }

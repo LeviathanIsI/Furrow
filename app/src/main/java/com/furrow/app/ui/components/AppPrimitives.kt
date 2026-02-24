@@ -38,6 +38,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -82,6 +84,7 @@ data class AppNavItem(
 @Composable
 fun AppScaffold(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
@@ -90,6 +93,7 @@ fun AppScaffold(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = Void,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = topBar,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,

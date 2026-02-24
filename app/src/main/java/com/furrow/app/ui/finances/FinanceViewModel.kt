@@ -1,6 +1,5 @@
 package com.furrow.app.ui.finances
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.BarterTrade
 import com.furrow.app.data.local.entity.Expense
@@ -9,6 +8,7 @@ import com.furrow.app.data.local.entity.MileageLog
 import com.furrow.app.data.local.entity.Revenue
 import com.furrow.app.data.repository.FinanceRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.ZoneId
@@ -27,7 +26,7 @@ import javax.inject.Inject
 class FinanceViewModel @Inject constructor(
     private val repository: FinanceRepository,
     userProfileRepository: UserProfileRepository,
-) : ViewModel() {
+) : FurrowViewModel() {
 
     private val zone: ZoneId = runBlocking {
         userProfileRepository.getProfile().firstOrNull()
@@ -73,23 +72,23 @@ class FinanceViewModel @Inject constructor(
     fun getGrantRecordById(id: Long) = repository.getGrantRecordById(id)
 
     // -- Actions --
-    fun addExpense(e: Expense) { viewModelScope.launch { repository.insertExpense(e) } }
-    fun updateExpense(e: Expense) { viewModelScope.launch { repository.updateExpense(e) } }
-    fun deleteExpense(e: Expense) { viewModelScope.launch { repository.deleteExpense(e) } }
+    fun addExpense(e: Expense) { safeLaunch { repository.insertExpense(e) } }
+    fun updateExpense(e: Expense) { safeLaunch { repository.updateExpense(e) } }
+    fun deleteExpense(e: Expense) { safeLaunch { repository.deleteExpense(e) } }
 
-    fun addRevenue(r: Revenue) { viewModelScope.launch { repository.insertRevenue(r) } }
-    fun updateRevenue(r: Revenue) { viewModelScope.launch { repository.updateRevenue(r) } }
-    fun deleteRevenue(r: Revenue) { viewModelScope.launch { repository.deleteRevenue(r) } }
+    fun addRevenue(r: Revenue) { safeLaunch { repository.insertRevenue(r) } }
+    fun updateRevenue(r: Revenue) { safeLaunch { repository.updateRevenue(r) } }
+    fun deleteRevenue(r: Revenue) { safeLaunch { repository.deleteRevenue(r) } }
 
-    fun addMileageLog(m: MileageLog) { viewModelScope.launch { repository.insertMileageLog(m) } }
-    fun updateMileageLog(m: MileageLog) { viewModelScope.launch { repository.updateMileageLog(m) } }
-    fun deleteMileageLog(m: MileageLog) { viewModelScope.launch { repository.deleteMileageLog(m) } }
+    fun addMileageLog(m: MileageLog) { safeLaunch { repository.insertMileageLog(m) } }
+    fun updateMileageLog(m: MileageLog) { safeLaunch { repository.updateMileageLog(m) } }
+    fun deleteMileageLog(m: MileageLog) { safeLaunch { repository.deleteMileageLog(m) } }
 
-    fun addBarterTrade(b: BarterTrade) { viewModelScope.launch { repository.insertBarterTrade(b) } }
-    fun updateBarterTrade(b: BarterTrade) { viewModelScope.launch { repository.updateBarterTrade(b) } }
-    fun deleteBarterTrade(b: BarterTrade) { viewModelScope.launch { repository.deleteBarterTrade(b) } }
+    fun addBarterTrade(b: BarterTrade) { safeLaunch { repository.insertBarterTrade(b) } }
+    fun updateBarterTrade(b: BarterTrade) { safeLaunch { repository.updateBarterTrade(b) } }
+    fun deleteBarterTrade(b: BarterTrade) { safeLaunch { repository.deleteBarterTrade(b) } }
 
-    fun addGrantRecord(g: GrantRecord) { viewModelScope.launch { repository.insertGrantRecord(g) } }
-    fun updateGrantRecord(g: GrantRecord) { viewModelScope.launch { repository.updateGrantRecord(g) } }
-    fun deleteGrantRecord(g: GrantRecord) { viewModelScope.launch { repository.deleteGrantRecord(g) } }
+    fun addGrantRecord(g: GrantRecord) { safeLaunch { repository.insertGrantRecord(g) } }
+    fun updateGrantRecord(g: GrantRecord) { safeLaunch { repository.updateGrantRecord(g) } }
+    fun deleteGrantRecord(g: GrantRecord) { safeLaunch { repository.deleteGrantRecord(g) } }
 }

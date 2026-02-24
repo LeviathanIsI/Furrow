@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DatePicker
@@ -42,6 +43,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +72,7 @@ import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -523,6 +526,21 @@ fun DateFieldWithToggle(
             },
         ) {
             DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@Composable
+fun ErrorSnackbarEffect(
+    errorMessage: StateFlow<String?>,
+    clearError: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+) {
+    val error by errorMessage.collectAsState()
+    LaunchedEffect(error) {
+        error?.let {
+            snackbarHostState.showSnackbar(it)
+            clearError()
         }
     }
 }
