@@ -23,4 +23,7 @@ interface FertilizerLogDao {
 
     @Query("SELECT * FROM fertilizer_logs WHERE bedId = :bedId ORDER BY date DESC")
     fun getForBed(bedId: Long): Flow<List<FertilizerLog>>
+
+    @Query("SELECT * FROM fertilizer_logs WHERE date >= :startMillis AND date <= :endMillis ORDER BY date ASC")
+    fun getForDateRange(startMillis: Long, endMillis: Long): Flow<List<FertilizerLog>>
 }

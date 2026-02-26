@@ -22,6 +22,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -122,6 +123,12 @@ fun OnboardingScreen(
                     enabled = zipCode.length == 5,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                TextButton(
+                    onClick = { viewModel.skipOnboarding() },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Skip for now", color = TextSecondary)
+                }
             }
         }
 
@@ -161,7 +168,7 @@ fun OnboardingScreen(
                             leadingIcon = {
                                 Icon(
                                     imageVector = if (selected) module.selectedIcon else module.unselectedIcon,
-                                    contentDescription = null,
+                                    contentDescription = module.displayName,
                                     modifier = Modifier.size(18.dp),
                                 )
                             },

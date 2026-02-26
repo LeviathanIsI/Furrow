@@ -101,8 +101,21 @@ class GardenRepository @Inject constructor(
 
     fun getActivePlantings(): Flow<List<Planting>> = plantingDao.getActivePlantings()
 
+    fun getPlannedPlantings(): Flow<List<Planting>> = plantingDao.getPlannedPlantings()
+
+    fun getRecentPlantingsForBed(bedId: Long, sinceMillis: Long): Flow<List<Planting>> =
+        plantingDao.getRecentPlantingsForBed(bedId, sinceMillis)
+
+    suspend fun insertPlantings(plantings: List<Planting>): List<Long> =
+        plantingDao.insertPlantings(plantings)
+
     fun getHarvestsForDateRange(startMillis: Long, endMillis: Long): Flow<List<HarvestLog>> =
         plantingDao.getHarvestsForDateRange(startMillis, endMillis)
+
+    fun getYieldByPlant(startMillis: Long, endMillis: Long) =
+        plantingDao.getYieldByPlant(startMillis, endMillis)
+
+    fun getPlantingsForExport() = plantingDao.getPlantingsForExport()
 
     // --- Watering Logs ---
 
@@ -110,6 +123,9 @@ class GardenRepository @Inject constructor(
         wateringLogDao.getForBed(bedId)
 
     fun getLastWateredPerBed() = wateringLogDao.getLastWateredPerBed()
+
+    fun getWateringLogsForDateRange(startMillis: Long, endMillis: Long): Flow<List<WateringLog>> =
+        wateringLogDao.getForDateRange(startMillis, endMillis)
 
     suspend fun insertWateringLog(log: WateringLog): Long =
         wateringLogDao.insert(log)
@@ -133,6 +149,9 @@ class GardenRepository @Inject constructor(
 
     suspend fun deleteFertilizerLog(log: FertilizerLog) =
         fertilizerLogDao.delete(log)
+
+    fun getFertilizerLogsForDateRange(startMillis: Long, endMillis: Long): Flow<List<FertilizerLog>> =
+        fertilizerLogDao.getForDateRange(startMillis, endMillis)
 
     // --- Pest & Disease Logs ---
 

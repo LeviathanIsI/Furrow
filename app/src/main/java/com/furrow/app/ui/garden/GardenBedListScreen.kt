@@ -1,6 +1,7 @@
 package com.furrow.app.ui.garden
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Assessment
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.automirrored.outlined.EventNote
 import androidx.compose.material.icons.outlined.Grass
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.GardenBed
+import com.furrow.app.data.local.entity.Planting
+import com.furrow.app.util.DateUtil
 import com.furrow.app.util.displayFormat
+import com.furrow.app.util.filterDecimal
+import com.furrow.app.util.filterInteger
 import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTextField
@@ -44,6 +52,7 @@ import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.components.Tag
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.theme.AppSpacing
@@ -56,15 +65,19 @@ import com.furrow.app.ui.theme.TextTertiary
 fun GardenBedListScreen(
     onBedClick: (Long) -> Unit,
     onReportsClick: () -> Unit,
+    onCalendarClick: () -> Unit = {},
+    onSeasonPlannerClick: () -> Unit = {},
     viewModel: GardenViewModel = hiltViewModel(),
 ) {
     val beds by viewModel.activeBeds.collectAsState()
     val plantingCounts by viewModel.activePlantingCounts.collectAsState()
+    val plannedPlantings by viewModel.plannedPlantings.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
     var bedToDelete by remember { mutableStateOf<GardenBed?>(null) }
     var bedForAction by remember { mutableStateOf<GardenBed?>(null) }
     var bedToEdit by remember { mutableStateOf<GardenBed?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
@@ -76,6 +89,20 @@ fun GardenBedListScreen(
                 title = "Garden",
                 subtitle = "Beds and current workload",
                 actions = {
+                    IconButton(onClick = onSeasonPlannerClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.EventNote,
+                            contentDescription = "Season Planner",
+                            tint = TextSecondary,
+                        )
+                    }
+                    IconButton(onClick = onCalendarClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.CalendarMonth,
+                            contentDescription = "Calendar",
+                            tint = TextSecondary,
+                        )
+                    }
                     IconButton(onClick = onReportsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Assessment,
@@ -87,7 +114,18 @@ fun GardenBedListScreen(
             )
         },
     ) { padding ->
-        if (beds.isEmpty()) {
+        if (beds == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+        val bedList = beds!!
+        val filteredBeds = remember(bedList, searchQuery) {
+            if (searchQuery.isBlank()) bedList
+            else bedList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        }
+        if (bedList.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -126,52 +164,104 @@ fun GardenBedListScreen(
                     }
                 }
 
-                item(key = "beds_panel") {
-                    Panel(contentPadding = PaddingValues(0.dp)) {
-                        beds.forEachIndexed { index, bed ->
-                            ListRow(
-                                title = bed.name,
-                                subtitle = buildString {
-                                    append(bed.type.displayFormat())
-                                    bed.sunExposure?.let {
-                                        append(" • ")
-                                        append(it.displayFormat())
-                                    }
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Grass,
-                                        contentDescription = null,
-                                        tint = TextSecondary,
-                                    )
-                                },
-                                trailing = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
-                                    ) {
-                                        Text(
-                                            text = "${plantingCounts[bed.id] ?: 0}",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = TextTertiary,
+                if (bedList.size > 5) {
+                    item(key = "search") {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            accentColor = GardenGlow,
+                        )
+                    }
+                }
+
+                if (filteredBeds.isEmpty()) {
+                    item(key = "empty_search") {
+                        EmptyState(
+                            title = "No beds match \"$searchQuery\"",
+                            subtitle = "Try a different search term.",
+                        )
+                    }
+                } else {
+                    item(key = "beds_panel") {
+                        Panel(contentPadding = PaddingValues(0.dp)) {
+                            filteredBeds.forEachIndexed { index, bed ->
+                                ListRow(
+                                    title = bed.name,
+                                    subtitle = buildString {
+                                        append(bed.type.displayFormat())
+                                        bed.sunExposure?.let {
+                                            append(" • ")
+                                            append(it.displayFormat())
+                                        }
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Grass,
+                                            contentDescription = "Garden bed",
+                                            tint = TextSecondary,
                                         )
-                                        IconButton(onClick = { bedForAction = bed }) {
+                                    },
+                                    trailing = {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
+                                        ) {
+                                            Text(
+                                                text = "${plantingCounts[bed.id] ?: 0}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = TextTertiary,
+                                            )
+                                            IconButton(onClick = { bedForAction = bed }) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.MoreVert,
+                                                    contentDescription = "Manage",
+                                                    tint = TextTertiary,
+                                                )
+                                            }
                                             Icon(
-                                                imageVector = Icons.Filled.MoreVert,
-                                                contentDescription = "Manage",
+                                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                                contentDescription = "View details",
                                                 tint = TextTertiary,
                                             )
                                         }
-                                        Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                            contentDescription = null,
-                                            tint = TextTertiary,
+                                    },
+                                    onClick = { onBedClick(bed.id) },
+                                    showDivider = index != filteredBeds.lastIndex,
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (plannedPlantings.isNotEmpty() && searchQuery.isBlank()) {
+                    item(key = "planned_header") {
+                        Text(
+                            text = "Planned (${plannedPlantings.size})",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = GardenGlow,
+                        )
+                    }
+
+                    item(key = "planned_panel") {
+                        val bedMap = bedList.associateBy { it.id }
+                        Panel(contentPadding = PaddingValues(0.dp)) {
+                            plannedPlantings.forEachIndexed { index, planting ->
+                                val bedName = bedMap[planting.bedId]?.name ?: "Bed"
+                                val targetStr = planting.targetPlantDate?.let {
+                                    DateUtil.formatDate(it, viewModel.zone)
+                                } ?: ""
+                                ListRow(
+                                    title = planting.plantName,
+                                    subtitle = "$bedName · $targetStr",
+                                    trailing = {
+                                        PrimaryButton(
+                                            text = "Plant",
+                                            onClick = { viewModel.plantNow(planting) },
                                         )
-                                    }
-                                },
-                                onClick = { onBedClick(bed.id) },
-                                showDivider = index != beds.lastIndex,
-                            )
+                                    },
+                                    showDivider = index != plannedPlantings.lastIndex,
+                                )
+                            }
                         }
                     }
                 }
@@ -270,7 +360,7 @@ private fun AddBedSheet(
             if (type == "Grow Bag" || type == "Container") {
                 AppTextField(
                     value = sizeGallons,
-                    onValueChange = { sizeGallons = it.filter { c -> c.isDigit() } },
+                    onValueChange = { sizeGallons = it.filterInteger() },
                     label = { Text("Size (gallons)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -280,7 +370,7 @@ private fun AddBedSheet(
                 Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
                     AppTextField(
                         value = lengthFt,
-                        onValueChange = { lengthFt = it.filter { c -> c.isDigit() || c == '.' } },
+                        onValueChange = { lengthFt = it.filterDecimal() },
                         label = { Text("Length (ft)") },
                         modifier = Modifier.weight(1f),
                         singleLine = true,
@@ -288,7 +378,7 @@ private fun AddBedSheet(
                     )
                     AppTextField(
                         value = widthFt,
-                        onValueChange = { widthFt = it.filter { c -> c.isDigit() || c == '.' } },
+                        onValueChange = { widthFt = it.filterDecimal() },
                         label = { Text("Width (ft)") },
                         modifier = Modifier.weight(1f),
                         singleLine = true,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -35,12 +39,15 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -249,6 +256,57 @@ fun DeleteConfirmationDialog(
             }
         },
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDeleteItem(
+    itemName: String,
+    onDelete: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    var showConfirmation by remember { mutableStateOf(false) }
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                showConfirmation = true
+            }
+            false
+        },
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(StatusBad),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    tint = Void,
+                    modifier = Modifier.padding(end = 16.dp),
+                )
+            }
+        },
+    ) {
+        content()
+    }
+
+    if (showConfirmation) {
+        DeleteConfirmationDialog(
+            itemName = itemName,
+            onConfirm = {
+                onDelete()
+                showConfirmation = false
+            },
+            onDismiss = { showConfirmation = false },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -542,5 +600,74 @@ fun ErrorSnackbarEffect(
             snackbarHostState.showSnackbar(it)
             clearError()
         }
+    }
+}
+
+@Composable
+fun SuccessSnackbarEffect(
+    message: StateFlow<String?>,
+    onClear: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    onDismissed: (() -> Unit)? = null,
+) {
+    val msg by message.collectAsState()
+    LaunchedEffect(msg) {
+        msg?.let {
+            snackbarHostState.showSnackbar(it, duration = SnackbarDuration.Short)
+            onClear()
+            onDismissed?.invoke()
+        }
+    }
+}
+
+@Composable
+fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    accentColor: Color = GardenGlow,
+) {
+    AppTextField(
+        value = query,
+        onValueChange = onQueryChange,
+        placeholder = { Text("Search") },
+        leadingIcon = {
+            Icon(Icons.Outlined.Search, contentDescription = "Search", tint = TextSecondary)
+        },
+        trailingIcon = {
+            if (query.isNotBlank()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Outlined.Close, contentDescription = "Clear", tint = TextSecondary)
+                }
+            }
+        },
+        singleLine = true,
+        modifier = modifier.fillMaxWidth(),
+        colors = AppTextFieldDefaults.colors(accentColor = accentColor),
+    )
+}
+
+@Composable
+fun DiscardChangesDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onDiscard: () -> Unit,
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Discard Changes?") },
+            text = { Text("You have unsaved changes. Are you sure you want to go back?") },
+            confirmButton = {
+                TextButton(onClick = onDiscard) {
+                    Text("Discard")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Keep Editing")
+                }
+            },
+        )
     }
 }

@@ -2,14 +2,19 @@ package com.furrow.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.furrow.app.ui.splash.SplashScreen
+import com.furrow.app.ui.transition.FurrowTransition
+import com.furrow.app.ui.transition.LocalTransitionController
+import com.furrow.app.ui.transition.TransitionController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -42,16 +50,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val deepLinkAction = intent?.data?.host
         setContent {
             FurrowTheme {
-                FurrowApp(mainViewModel = mainViewModel)
+                FurrowApp(mainViewModel = mainViewModel, deepLinkAction = deepLinkAction)
             }
         }
     }
 }
 
 @Composable
-fun FurrowApp(mainViewModel: MainViewModel) {
+fun FurrowApp(mainViewModel: MainViewModel, deepLinkAction: String? = null) {
     var splashFinished by remember { mutableStateOf(false) }
 
     if (!splashFinished) {
@@ -91,7 +100,7 @@ fun FurrowApp(mainViewModel: MainViewModel) {
                         onSkipClick = { mainViewModel.onNotificationPromptDone() },
                     )
                 } else {
-                    MainContent(mainViewModel = mainViewModel)
+                    MainContent(mainViewModel = mainViewModel, deepLinkAction = deepLinkAction)
                 }
             }
         }
@@ -99,8 +108,9 @@ fun FurrowApp(mainViewModel: MainViewModel) {
 }
 
 @Composable
-private fun MainContent(mainViewModel: MainViewModel) {
+private fun MainContent(mainViewModel: MainViewModel, deepLinkAction: String? = null) {
     val navController = rememberNavController()
+    val transitionController = remember { TransitionController() }
     val enabledModulesOrdered by mainViewModel.enabledModulesOrdered.collectAsState()
     val enabledModuleKeys by mainViewModel.enabledModuleKeys.collectAsState()
 
@@ -108,13 +118,38 @@ private fun MainContent(mainViewModel: MainViewModel) {
         buildBottomNavScreens(enabledModulesOrdered)
     }
 
-    androidx.compose.material3.Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val hasBackStack = currentRoute != null && currentRoute != Screen.Home.route
+
+    // Intercept system back to go through transition
+    BackHandler(enabled = hasBackStack) {
+        if (!transitionController.isTransitioning) {
+            transitionController.navigateWithTransition {
+                navController.popBackStack()
+            }
+        }
+    }
+
+    CompositionLocalProvider(LocalTransitionController provides transitionController) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 1. NavHost — ALWAYS fills the full screen, never changes size
+            FurrowNavGraph(
+                navController = navController,
+                modifier = Modifier.fillMaxSize(),
+                enabledModules = enabledModuleKeys,
+                deepLinkAction = deepLinkAction,
+            )
+
+            // 2. Bottom nav — overlay on top, fades in/out
             val showBottomNav = currentRoute in Screen.bottomNavRoutes
-            if (showBottomNav) {
+
+            AnimatedVisibility(
+                visible = showBottomNav,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = fadeIn(animationSpec = tween(150)),
+                exit = fadeOut(animationSpec = tween(150)),
+            ) {
                 val items = bottomNavScreens.map {
                     AppNavItem(
                         route = it.route,
@@ -127,22 +162,21 @@ private fun MainContent(mainViewModel: MainViewModel) {
                     items = items,
                     currentRoute = currentRoute,
                     onItemSelected = { item ->
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                        transitionController.navigateWithTransition {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     },
                 )
             }
-        },
-    ) { innerPadding ->
-        FurrowNavGraph(
-            navController = navController,
-            modifier = Modifier.padding(innerPadding),
-            enabledModules = enabledModuleKeys,
-        )
+
+            // 3. Transition interstitial — on top of EVERYTHING
+            FurrowTransition(controller = transitionController)
+        }
     }
 }

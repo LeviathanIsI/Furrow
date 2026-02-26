@@ -35,4 +35,5 @@ data class PestDiseaseLog(
     val resolved: Boolean = false,
     val resolvedDate: Long? = null,
     val notes: String? = null,
+    val photoUri: String? = null,
 )

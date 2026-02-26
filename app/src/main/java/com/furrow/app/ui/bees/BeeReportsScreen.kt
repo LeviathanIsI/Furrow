@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,10 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.BeeCalendar
+import com.furrow.app.data.local.dao.InspectionExport
 import com.furrow.app.data.local.entity.Hive
+import com.furrow.app.util.CsvExporter
+import com.furrow.app.util.DateUtil
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.InlineStat
@@ -41,6 +46,8 @@ fun BeeReportsScreen(
     val activeHives by viewModel.activeHives.collectAsState()
     val lastInspectionDates by viewModel.lastInspectionDates.collectAsState()
     val activeTreatmentsPerHive by viewModel.activeTreatmentsPerHive.collectAsState()
+    val inspectionsForExport by viewModel.inspectionsForExport.collectAsState()
+    val context = LocalContext.current
 
     AppScaffold(
         topBar = {
@@ -49,6 +56,19 @@ fun BeeReportsScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        val csv = buildString {
+                            appendLine("Hive Name,Date,Queen Seen,Temperament,Brood Pattern,Honey Stores,Notes")
+                            inspectionsForExport.forEach { i ->
+                                appendLine("${CsvExporter.escapeCsv(i.hiveName)},${DateUtil.formatDate(i.date, viewModel.zone)},${i.queenSeen},${CsvExporter.escapeCsv(i.temperament)},${CsvExporter.escapeCsv(i.broodPattern)},${CsvExporter.escapeCsv(i.honeyStores)},${CsvExporter.escapeCsv(i.notes)}")
+                            }
+                        }
+                        CsvExporter.share(context, "furrow_inspections", csv)
+                    }) {
+                        Icon(Icons.Outlined.FileDownload, contentDescription = "Export CSV", tint = TextPrimary)
                     }
                 },
             )
@@ -66,7 +86,7 @@ fun BeeReportsScreen(
             }
             item {
                 InspectionOverviewPanel(
-                    activeHives = activeHives,
+                    activeHives = activeHives ?: emptyList(),
                     lastInspectionDates = lastInspectionDates,
                 )
             }

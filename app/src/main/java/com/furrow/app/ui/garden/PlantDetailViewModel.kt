@@ -10,17 +10,14 @@ import com.furrow.app.data.local.entity.PlantingWindow
 import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.UserProfileRepository
-import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -35,9 +32,7 @@ class PlantDetailViewModel @Inject constructor(
 
     private val plantingId: Long = checkNotNull(savedStateHandle.get<Long>("plantingId"))
 
-    val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    val zone: ZoneId = ZoneId.systemDefault()
 
     val planting: StateFlow<Planting?> = gardenRepository.getPlantingById(plantingId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)

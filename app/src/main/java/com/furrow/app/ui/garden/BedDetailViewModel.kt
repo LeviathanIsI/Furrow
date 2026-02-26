@@ -16,18 +16,18 @@ import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.WidgetRefreshUtil
+import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -37,6 +37,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class BedDetailViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: GardenRepository,
     private val plantRepository: PlantRepository,
     private val userProfileRepository: UserProfileRepository,
@@ -45,9 +46,7 @@ class BedDetailViewModel @Inject constructor(
 
     private val bedId: Long = checkNotNull(savedStateHandle.get<Long>("bedId"))
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
 
     // -- Bed data --
@@ -152,35 +151,65 @@ class BedDetailViewModel @Inject constructor(
     // -- Planting actions --
 
     fun addPlanting(planting: Planting) {
-        safeLaunch { repository.insertPlanting(planting) }
+        safeLaunchWithSuccess("Planting saved") {
+            repository.insertPlanting(planting)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun updatePlanting(planting: Planting) {
-        safeLaunch { repository.updatePlanting(planting) }
+        safeLaunchWithSuccess("Planting updated") {
+            repository.updatePlanting(planting)
+            WidgetRefreshUtil.refresh(context)
+        }
+    }
+
+    fun plantNow(planting: Planting) = safeLaunchWithSuccess("Planting started") {
+        val todayMillis = java.time.LocalDate.now(zone).atStartOfDay(zone).toInstant().toEpochMilli()
+        repository.updatePlanting(
+            planting.copy(
+                datePlanted = todayMillis,
+                status = "Growing",
+                targetPlantDate = null,
+            ),
+        )
+        WidgetRefreshUtil.refresh(context)
     }
 
     fun deletePlanting(planting: Planting) {
-        safeLaunch { repository.deletePlanting(planting) }
+        safeLaunch {
+            repository.deletePlanting(planting)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     // -- Harvest actions --
 
     fun addHarvest(harvest: HarvestLog) {
-        safeLaunch { repository.insertHarvest(harvest) }
+        safeLaunchWithSuccess("Harvest saved") {
+            repository.insertHarvest(harvest)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun updateHarvest(harvest: HarvestLog) {
-        safeLaunch { repository.updateHarvest(harvest) }
+        safeLaunchWithSuccess("Harvest updated") {
+            repository.updateHarvest(harvest)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun deleteHarvest(harvest: HarvestLog) {
-        safeLaunch { repository.deleteHarvest(harvest) }
+        safeLaunch {
+            repository.deleteHarvest(harvest)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     // -- Watering actions --
 
     fun addWateringLog(log: WateringLog) {
-        safeLaunch { repository.insertWateringLog(log) }
+        safeLaunchWithSuccess("Watering logged") { repository.insertWateringLog(log) }
     }
 
     fun deleteWateringLog(log: WateringLog) {
@@ -190,7 +219,7 @@ class BedDetailViewModel @Inject constructor(
     // -- Fertilizer actions --
 
     fun addFertilizerLog(log: FertilizerLog) {
-        safeLaunch { repository.insertFertilizerLog(log) }
+        safeLaunchWithSuccess("Fertilizer logged") { repository.insertFertilizerLog(log) }
     }
 
     fun deleteFertilizerLog(log: FertilizerLog) {
@@ -200,11 +229,11 @@ class BedDetailViewModel @Inject constructor(
     // -- Pest/Disease actions --
 
     fun addPestLog(log: PestDiseaseLog) {
-        safeLaunch { repository.insertPestLog(log) }
+        safeLaunchWithSuccess("Pest report saved") { repository.insertPestLog(log) }
     }
 
     fun updatePestLog(log: PestDiseaseLog) {
-        safeLaunch { repository.updatePestLog(log) }
+        safeLaunchWithSuccess("Pest report updated") { repository.updatePestLog(log) }
     }
 
     fun deletePestLog(log: PestDiseaseLog) {

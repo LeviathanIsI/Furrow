@@ -23,4 +23,5 @@ data class SoilTest(
     val texture: String? = null,
     val recommendations: String? = null,
     @ColumnInfo(name = "report_url") val reportUrl: String? = null,
+    val photoUri: String? = null,
 )

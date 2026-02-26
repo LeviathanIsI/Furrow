@@ -60,6 +60,7 @@ import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.StatusPill
+import com.furrow.app.ui.components.SwipeToDeleteItem
 import com.furrow.app.ui.theme.AnimalsGlow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
@@ -217,6 +218,7 @@ fun AnimalDetailScreen(
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                         healthForAction = record
                     },
+                    onDelete = { viewModel.deleteHealthRecord(it) },
                 )
                 AnimalTab.BREEDING -> BreedingTab(
                     records = breedingRecords,
@@ -226,6 +228,7 @@ fun AnimalDetailScreen(
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                         breedingForAction = record
                     },
+                    onDelete = { viewModel.deleteBreedingRecord(it) },
                 )
                 AnimalTab.WEIGHT -> WeightTab(
                     logs = weightLogs,
@@ -235,6 +238,7 @@ fun AnimalDetailScreen(
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                         weightForAction = log
                     },
+                    onDelete = { viewModel.deleteWeightLog(it) },
                 )
                 AnimalTab.FEED -> FeedTab(
                     logs = feedLogs,
@@ -244,6 +248,7 @@ fun AnimalDetailScreen(
                         view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                         feedForAction = log
                     },
+                    onDelete = { viewModel.deleteFeedLog(it) },
                 )
             }
         }
@@ -347,6 +352,7 @@ private fun HealthTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (HealthRecord) -> Unit,
+    onDelete: (HealthRecord) -> Unit,
 ) {
     if (records.isEmpty()) {
         Box(modifier = modifier) {
@@ -356,7 +362,7 @@ private fun HealthTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Healing,
-                        contentDescription = null,
+                        contentDescription = "Health records",
                         modifier = Modifier.size(28.dp),
                         tint = AnimalsGlow,
                     )
@@ -387,25 +393,30 @@ private fun HealthTab(
 
                         val isWithdrawal = record.withdrawalEndDate != null && record.withdrawalEndDate > now
 
-                        ListRow(
-                            modifier = Modifier.pointerInput(record) {
-                                detectTapGestures(onLongPress = { onLongPress(record) })
-                            },
-                            title = record.type.displayFormat(),
-                            subtitle = subtitle,
-                            metadata = DateUtil.formatDate(record.date, zone),
-                            trailing = if (isWithdrawal) {
-                                {
-                                    StatusPill(
-                                        text = "Withdrawal",
-                                        error = true,
-                                    )
-                                }
-                            } else {
-                                null
-                            },
-                            showDivider = index != records.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "${record.type} record",
+                            onDelete = { onDelete(record) },
+                        ) {
+                            ListRow(
+                                modifier = Modifier.pointerInput(record) {
+                                    detectTapGestures(onLongPress = { onLongPress(record) })
+                                },
+                                title = record.type.displayFormat(),
+                                subtitle = subtitle,
+                                metadata = DateUtil.formatDate(record.date, zone),
+                                trailing = if (isWithdrawal) {
+                                    {
+                                        StatusPill(
+                                            text = "Withdrawal",
+                                            error = true,
+                                        )
+                                    }
+                                } else {
+                                    null
+                                },
+                                showDivider = index != records.lastIndex,
+                            )
+                        }
                     }
                 }
             }
@@ -421,6 +432,7 @@ private fun BreedingTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (BreedingRecord) -> Unit,
+    onDelete: (BreedingRecord) -> Unit,
 ) {
     if (records.isEmpty()) {
         Box(modifier = modifier) {
@@ -430,7 +442,7 @@ private fun BreedingTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Pets,
-                        contentDescription = null,
+                        contentDescription = "Breeding records",
                         modifier = Modifier.size(28.dp),
                         tint = AnimalsGlow,
                     )
@@ -459,15 +471,20 @@ private fun BreedingTab(
                             }
                         }.ifEmpty { null }
 
-                        ListRow(
-                            modifier = Modifier.pointerInput(record) {
-                                detectTapGestures(onLongPress = { onLongPress(record) })
-                            },
-                            title = "Breeding ${DateUtil.formatDate(record.breedingDate, zone)}",
-                            subtitle = subtitle,
-                            metadata = record.dueDate?.let { "Due ${DateUtil.formatDate(it, zone)}" },
-                            showDivider = index != records.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "breeding record",
+                            onDelete = { onDelete(record) },
+                        ) {
+                            ListRow(
+                                modifier = Modifier.pointerInput(record) {
+                                    detectTapGestures(onLongPress = { onLongPress(record) })
+                                },
+                                title = "Breeding ${DateUtil.formatDate(record.breedingDate, zone)}",
+                                subtitle = subtitle,
+                                metadata = record.dueDate?.let { "Due ${DateUtil.formatDate(it, zone)}" },
+                                showDivider = index != records.lastIndex,
+                            )
+                        }
                     }
                 }
             }
@@ -483,6 +500,7 @@ private fun WeightTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (WeightLog) -> Unit,
+    onDelete: (WeightLog) -> Unit,
 ) {
     if (logs.isEmpty()) {
         Box(modifier = modifier) {
@@ -492,7 +510,7 @@ private fun WeightTab(
                 icon = {
                     Icon(
                         Icons.Outlined.FitnessCenter,
-                        contentDescription = null,
+                        contentDescription = "Weight logs",
                         modifier = Modifier.size(28.dp),
                         tint = AnimalsGlow,
                     )
@@ -517,15 +535,20 @@ private fun WeightTab(
                             "ADG: ${"%.2f".format(it)} lbs/day"
                         }
 
-                        ListRow(
-                            modifier = Modifier.pointerInput(log) {
-                                detectTapGestures(onLongPress = { onLongPress(log) })
-                            },
-                            title = "${"%.1f".format(log.weight)} lbs",
-                            subtitle = subtitle,
-                            metadata = DateUtil.formatDate(log.date, zone),
-                            showDivider = index != logs.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "weight log",
+                            onDelete = { onDelete(log) },
+                        ) {
+                            ListRow(
+                                modifier = Modifier.pointerInput(log) {
+                                    detectTapGestures(onLongPress = { onLongPress(log) })
+                                },
+                                title = "${"%.1f".format(log.weight)} lbs",
+                                subtitle = subtitle,
+                                metadata = DateUtil.formatDate(log.date, zone),
+                                showDivider = index != logs.lastIndex,
+                            )
+                        }
                     }
                 }
             }
@@ -541,6 +564,7 @@ private fun FeedTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (FeedLog) -> Unit,
+    onDelete: (FeedLog) -> Unit,
 ) {
     if (logs.isEmpty()) {
         Box(modifier = modifier) {
@@ -550,7 +574,7 @@ private fun FeedTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Restaurant,
-                        contentDescription = null,
+                        contentDescription = "Feed logs",
                         modifier = Modifier.size(28.dp),
                         tint = AnimalsGlow,
                     )
@@ -579,15 +603,20 @@ private fun FeedTab(
                             }
                         }.ifEmpty { null }
 
-                        ListRow(
-                            modifier = Modifier.pointerInput(log) {
-                                detectTapGestures(onLongPress = { onLongPress(log) })
-                            },
-                            title = log.feedType.displayFormat(),
-                            subtitle = subtitle,
-                            metadata = DateUtil.formatDate(log.date, zone),
-                            showDivider = index != logs.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "feed log",
+                            onDelete = { onDelete(log) },
+                        ) {
+                            ListRow(
+                                modifier = Modifier.pointerInput(log) {
+                                    detectTapGestures(onLongPress = { onLongPress(log) })
+                                },
+                                title = log.feedType.displayFormat(),
+                                subtitle = subtitle,
+                                metadata = DateUtil.formatDate(log.date, zone),
+                                showDivider = index != logs.lastIndex,
+                            )
+                        }
                     }
                 }
             }

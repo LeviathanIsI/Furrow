@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Kitchen
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.FloatingActionButton
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +56,7 @@ import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.components.StatusPill
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
@@ -63,6 +66,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.Void
 import com.furrow.app.util.DateUtil
+import com.furrow.app.util.TimerUtil
 import com.furrow.app.util.displayFormat
 
 private enum class PreservationTab(val label: String, val type: String) {
@@ -89,6 +93,35 @@ fun PreservationListScreen(
 
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = PreservationTab.entries
+    var searchQuery by remember { mutableStateOf("") }
+
+    val totalItemCount = canningBatches.orEmpty().size + dehydratingBatches.size +
+        fermentingBatches.size + freezingBatches.size + smokingBatches.size
+
+    val filteredCanning = remember(canningBatches, searchQuery) {
+        val list = canningBatches.orEmpty()
+        if (searchQuery.isBlank()) list
+        else list.filter { it.recipeName.contains(searchQuery, ignoreCase = true) }
+    }
+    val filteredDehydrating = remember(dehydratingBatches, searchQuery) {
+        if (searchQuery.isBlank()) dehydratingBatches
+        else dehydratingBatches.filter { it.product.contains(searchQuery, ignoreCase = true) }
+    }
+    val filteredFermenting = remember(fermentingBatches, searchQuery) {
+        if (searchQuery.isBlank()) fermentingBatches
+        else fermentingBatches.filter { it.product.contains(searchQuery, ignoreCase = true) }
+    }
+    val filteredFreezing = remember(freezingBatches, searchQuery) {
+        if (searchQuery.isBlank()) freezingBatches
+        else freezingBatches.filter { it.item.contains(searchQuery, ignoreCase = true) }
+    }
+    val filteredSmoking = remember(smokingBatches, searchQuery) {
+        if (searchQuery.isBlank()) smokingBatches
+        else smokingBatches.filter {
+            it.meatType.contains(searchQuery, ignoreCase = true) ||
+                (it.cut ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     // Canning action sheet state
     var canningForAction by remember { mutableStateOf<CanningBatch?>(null) }
@@ -139,6 +172,13 @@ fun PreservationListScreen(
             }
         },
     ) { padding ->
+        if (canningBatches == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -179,19 +219,28 @@ fun PreservationListScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(AppSpacing.sm))
+            if (totalItemCount > 5) {
+                SearchField(
+                    query = searchQuery,
+                    onQueryChange = { searchQuery = it },
+                    accentColor = PreservationGlow,
+                    modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
+                )
+            } else {
+                Spacer(modifier = Modifier.height(AppSpacing.sm))
+            }
 
             when (tabs[selectedTab]) {
                 PreservationTab.CANNING -> {
-                    if (canningBatches.isEmpty()) {
+                    if (filteredCanning.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No canning batches",
-                                subtitle = "Add your first canning batch to start tracking.",
+                                title = if (searchQuery.isNotBlank()) "No canning batches match \"$searchQuery\"" else "No canning batches",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Add your first canning batch to start tracking.",
                                 icon = {
                                     Icon(
                                         Icons.Outlined.Kitchen,
-                                        contentDescription = null,
+                                        contentDescription = "Preservation",
                                         modifier = Modifier.size(28.dp),
                                         tint = PreservationGlow,
                                     )
@@ -210,7 +259,7 @@ fun PreservationListScreen(
                         ) {
                             item(key = "canning_panel") {
                                 Panel(contentPadding = PaddingValues(0.dp)) {
-                                    canningBatches.forEachIndexed { index, batch ->
+                                    filteredCanning.forEachIndexed { index, batch ->
                                         val subtitle = listOfNotNull(
                                             batch.method?.displayFormat(),
                                             batch.jarSize,
@@ -224,7 +273,7 @@ fun PreservationListScreen(
                                                 onClick = { onEditBatch("canning", batch.id) },
                                                 onLongClick = { canningForAction = batch },
                                             ),
-                                            showDivider = index != canningBatches.lastIndex,
+                                            showDivider = index != filteredCanning.lastIndex,
                                         )
                                     }
                                 }
@@ -234,15 +283,15 @@ fun PreservationListScreen(
                 }
 
                 PreservationTab.DEHYDRATING -> {
-                    if (dehydratingBatches.isEmpty()) {
+                    if (filteredDehydrating.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No dehydrating batches",
-                                subtitle = "Add your first dehydrating batch to start tracking.",
+                                title = if (searchQuery.isNotBlank()) "No dehydrating batches match \"$searchQuery\"" else "No dehydrating batches",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Add your first dehydrating batch to start tracking.",
                                 icon = {
                                     Icon(
                                         Icons.Outlined.Kitchen,
-                                        contentDescription = null,
+                                        contentDescription = "Preservation",
                                         modifier = Modifier.size(28.dp),
                                         tint = PreservationGlow,
                                     )
@@ -261,10 +310,11 @@ fun PreservationListScreen(
                         ) {
                             item(key = "dehydrating_panel") {
                                 Panel(contentPadding = PaddingValues(0.dp)) {
-                                    dehydratingBatches.forEachIndexed { index, batch ->
+                                    filteredDehydrating.forEachIndexed { index, batch ->
                                         val beforeStr = batch.weightBeforeLbs?.let { "%.1f".format(it) } ?: "?"
                                         val afterStr = batch.weightAfterLbs?.let { "%.1f".format(it) } ?: "?"
-                                        val subtitle = "${beforeStr}\u2192${afterStr} lbs"
+                                        val timerText = TimerUtil.dehydrateHoursLabel(batch.date)
+                                        val subtitle = "${beforeStr}\u2192${afterStr} lbs \u2022 $timerText"
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle,
@@ -273,7 +323,7 @@ fun PreservationListScreen(
                                                 onClick = { onEditBatch("dehydrating", batch.id) },
                                                 onLongClick = { dehydratingForAction = batch },
                                             ),
-                                            showDivider = index != dehydratingBatches.lastIndex,
+                                            showDivider = index != filteredDehydrating.lastIndex,
                                         )
                                     }
                                 }
@@ -283,15 +333,15 @@ fun PreservationListScreen(
                 }
 
                 PreservationTab.FERMENTING -> {
-                    if (fermentingBatches.isEmpty()) {
+                    if (filteredFermenting.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No fermenting batches",
-                                subtitle = "Add your first fermenting batch to start tracking.",
+                                title = if (searchQuery.isNotBlank()) "No fermenting batches match \"$searchQuery\"" else "No fermenting batches",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Add your first fermenting batch to start tracking.",
                                 icon = {
                                     Icon(
                                         Icons.Outlined.Kitchen,
-                                        contentDescription = null,
+                                        contentDescription = "Preservation",
                                         modifier = Modifier.size(28.dp),
                                         tint = PreservationGlow,
                                     )
@@ -310,11 +360,15 @@ fun PreservationListScreen(
                         ) {
                             item(key = "fermenting_panel") {
                                 Panel(contentPadding = PaddingValues(0.dp)) {
-                                    fermentingBatches.forEachIndexed { index, batch ->
-                                        val subtitle = listOfNotNull(
+                                    filteredFermenting.forEachIndexed { index, batch ->
+                                        val parts = listOfNotNull(
                                             batch.method?.displayFormat(),
                                             batch.vesselType?.displayFormat(),
-                                        ).joinToString(" \u2022 ")
+                                        )
+                                        val timerText = if (batch.endDate == null) {
+                                            TimerUtil.fermentDayLabel(batch.startDate, viewModel.zone)
+                                        } else null
+                                        val subtitle = (parts + listOfNotNull(timerText)).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.product,
                                             subtitle = subtitle.ifEmpty { null },
@@ -330,7 +384,7 @@ fun PreservationListScreen(
                                                 onClick = { onEditBatch("fermenting", batch.id) },
                                                 onLongClick = { fermentingForAction = batch },
                                             ),
-                                            showDivider = index != fermentingBatches.lastIndex,
+                                            showDivider = index != filteredFermenting.lastIndex,
                                         )
                                     }
                                 }
@@ -340,15 +394,15 @@ fun PreservationListScreen(
                 }
 
                 PreservationTab.FREEZING -> {
-                    if (freezingBatches.isEmpty()) {
+                    if (filteredFreezing.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No freezing batches",
-                                subtitle = "Add your first freezing batch to start tracking.",
+                                title = if (searchQuery.isNotBlank()) "No freezing batches match \"$searchQuery\"" else "No freezing batches",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Add your first freezing batch to start tracking.",
                                 icon = {
                                     Icon(
                                         Icons.Outlined.Kitchen,
-                                        contentDescription = null,
+                                        contentDescription = "Preservation",
                                         modifier = Modifier.size(28.dp),
                                         tint = PreservationGlow,
                                     )
@@ -367,7 +421,7 @@ fun PreservationListScreen(
                         ) {
                             item(key = "freezing_panel") {
                                 Panel(contentPadding = PaddingValues(0.dp)) {
-                                    freezingBatches.forEachIndexed { index, batch ->
+                                    filteredFreezing.forEachIndexed { index, batch ->
                                         val qtyStr = batch.quantityLbs?.let { "%.1f lbs".format(it) }
                                         val subtitle = listOfNotNull(
                                             qtyStr,
@@ -381,7 +435,7 @@ fun PreservationListScreen(
                                                 onClick = { onEditBatch("freezing", batch.id) },
                                                 onLongClick = { freezingForAction = batch },
                                             ),
-                                            showDivider = index != freezingBatches.lastIndex,
+                                            showDivider = index != filteredFreezing.lastIndex,
                                         )
                                     }
                                 }
@@ -391,15 +445,15 @@ fun PreservationListScreen(
                 }
 
                 PreservationTab.SMOKING -> {
-                    if (smokingBatches.isEmpty()) {
+                    if (filteredSmoking.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No smoking batches",
-                                subtitle = "Add your first smoking/curing batch to start tracking.",
+                                title = if (searchQuery.isNotBlank()) "No smoking batches match \"$searchQuery\"" else "No smoking batches",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Add your first smoking/curing batch to start tracking.",
                                 icon = {
                                     Icon(
                                         Icons.Outlined.Kitchen,
-                                        contentDescription = null,
+                                        contentDescription = "Preservation",
                                         modifier = Modifier.size(28.dp),
                                         tint = PreservationGlow,
                                     )
@@ -418,11 +472,15 @@ fun PreservationListScreen(
                         ) {
                             item(key = "smoking_panel") {
                                 Panel(contentPadding = PaddingValues(0.dp)) {
-                                    smokingBatches.forEachIndexed { index, batch ->
-                                        val subtitle = listOfNotNull(
+                                    filteredSmoking.forEachIndexed { index, batch ->
+                                        val parts = listOfNotNull(
                                             batch.cut?.displayFormat(),
                                             batch.cureType?.displayFormat(),
-                                        ).joinToString(" \u2022 ")
+                                        )
+                                        val timerText = if (batch.cureEnd == null) {
+                                            TimerUtil.cureDayLabel(batch.cureStart, batch.cureType, viewModel.zone)
+                                        } else null
+                                        val subtitle = (parts + listOfNotNull(timerText)).joinToString(" \u2022 ")
                                         ListRow(
                                             title = batch.meatType,
                                             subtitle = subtitle.ifEmpty { null },
@@ -431,7 +489,7 @@ fun PreservationListScreen(
                                                 onClick = { onEditBatch("smoking", batch.id) },
                                                 onLongClick = { smokingForAction = batch },
                                             ),
-                                            showDivider = index != smokingBatches.lastIndex,
+                                            showDivider = index != filteredSmoking.lastIndex,
                                         )
                                     }
                                 }

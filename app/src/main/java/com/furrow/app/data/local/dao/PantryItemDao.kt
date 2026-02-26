@@ -35,4 +35,7 @@ interface PantryItemDao {
 
     @Query("SELECT * FROM pantry_items WHERE LOWER(status) = 'in_stock' AND expiration_date < :beforeDate ORDER BY expiration_date ASC")
     fun getExpiringSoon(beforeDate: Long): Flow<List<PantryItem>>
+
+    @Query("SELECT * FROM pantry_items WHERE LOWER(status) = 'in_stock' AND expiration_date IS NOT NULL AND expiration_date < :now")
+    fun getExpiredItems(now: Long): Flow<List<PantryItem>>
 }

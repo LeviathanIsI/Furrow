@@ -1,62 +1,70 @@
 package com.furrow.app.ui.home
 
 import androidx.lifecycle.viewModelScope
+import com.furrow.app.data.FurrowModule
 import com.furrow.app.ui.FurrowViewModel
-import com.furrow.app.data.local.entity.PlantInfo
-import com.furrow.app.data.local.entity.PlantVariety
-import com.furrow.app.data.local.entity.PlantingWindow
+import com.furrow.app.data.local.entity.EggLog
+import com.furrow.app.data.local.entity.GardenBed
+import com.furrow.app.data.local.entity.HarvestLog
+import com.furrow.app.data.local.entity.Hive
+import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.UserProfile
+import com.furrow.app.data.local.entity.WateringLog
 import com.furrow.app.data.repository.AnimalRepository
 import com.furrow.app.data.repository.BeeRepository
 import com.furrow.app.data.repository.ComplianceRepository
 import com.furrow.app.data.repository.FinanceRepository
 import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.LandRepository
+import com.furrow.app.data.repository.ModulePreferenceRepository
 import com.furrow.app.data.repository.OrchardRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.PreservationRepository
 import com.furrow.app.data.repository.UserProfileRepository
+import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import com.furrow.app.util.DateUtil
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import com.furrow.app.util.WidgetRefreshUtil
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    beeRepository: BeeRepository,
-    gardenRepository: GardenRepository,
+    @ApplicationContext private val context: Context,
+    private val beeRepository: BeeRepository,
+    private val gardenRepository: GardenRepository,
     private val plantRepository: PlantRepository,
     userProfileRepository: UserProfileRepository,
-    animalRepository: AnimalRepository,
+    private val animalRepository: AnimalRepository,
     orchardRepository: OrchardRepository,
     preservationRepository: PreservationRepository,
     landRepository: LandRepository,
     financeRepository: FinanceRepository,
     complianceRepository: ComplianceRepository,
+    modulePreferenceRepository: ModulePreferenceRepository,
 ) : FurrowViewModel() {
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
     private val currentMonth = today.monthValue
     private val todayStartMillis = today.atStartOfDay(zone).toInstant().toEpochMilli()
     private val todayEndMillis = today.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1
     private val weekStart = today.minusDays(6).atStartOfDay(zone).toInstant().toEpochMilli()
+    private val sevenDaysFromNow = today.plusDays(7).atStartOfDay(zone).toInstant().toEpochMilli()
+    private val threeDaysFromNow = today.plusDays(3).atStartOfDay(zone).toInstant().toEpochMilli()
 
     // ── User Profile ──
 
@@ -90,6 +98,13 @@ class HomeViewModel @Inject constructor(
         val method: String,
     )
 
+    // ── Active planting window count (for season planner card) ──
+
+    val activeWindowCount: StateFlow<Int> = userProfile.flatMapLatest { profile ->
+        if (profile != null) plantRepository.getActiveWindowsForMonth(profile.zoneGroup, currentMonth).map { it.size }
+        else flowOf(0)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     // ── Seasonal Tip ──
 
     val seasonalTip: StateFlow<String?> = userProfile.map { profile ->
@@ -106,7 +121,7 @@ class HomeViewModel @Inject constructor(
         val hivesNeedingInspection: Int,
     )
 
-    val beeInsights: StateFlow<BeeInsights> = combine(
+    val beeInsights: StateFlow<BeeInsights?> = combine(
         beeRepository.getActiveHives(),
         beeRepository.getLastInspectionDatePerHive()
             .map { list -> list.associate { it.hiveId to it.date } },
@@ -133,7 +148,7 @@ class HomeViewModel @Inject constructor(
             daysSinceLastInspection = daysSince,
             hivesNeedingInspection = hivesOverdue,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BeeInsights(0, null, null, 0))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     // ── Garden ──
 
@@ -343,6 +358,399 @@ class HomeViewModel @Inject constructor(
             expiringSoon = expiring.size,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ComplianceInsights(0, 0))
+
+    // ══════════════════════════════════════════════════════════════
+    //  TODAY TASKS
+    // ══════════════════════════════════════════════════════════════
+
+    data class TodayTask(
+        val id: String,
+        val module: FurrowModule,
+        val title: String,
+        val subtitle: String?,
+        val priority: Int,
+        val actionLabel: String,
+        val route: String,
+    )
+
+    val enabledModules: StateFlow<Set<String>> = modulePreferenceRepository.getEnabled()
+        .map { prefs -> prefs.map { it.moduleName }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    // ── Per-module task flows ──
+
+    private val gardenTasks = combine(
+        gardenRepository.getActivePlantings(),
+        gardenRepository.getActiveBeds(),
+        gardenRepository.getLastWateredPerBed(),
+        plantRepository.getAllPlants(),
+        plantRepository.getAllVarieties(),
+    ) { plantings, beds, lastWatered, plants, varieties ->
+        val tasks = mutableListOf<TodayTask>()
+        val plantMap = plants.associateBy { it.name }
+        val varietyMap = varieties.associateBy { it.id }
+        val waterMap = lastWatered.associate { it.bedId to it.lastWatered }
+        val bedMap = beds.associateBy { it.id }
+
+        plantings.forEach { planting ->
+            if (planting.status.lowercase() !in listOf("growing", "producing")) return@forEach
+            val info = plantMap[planting.plantName] ?: return@forEach
+            val variety = planting.varietyId?.let { varietyMap[it] }
+            val daysMin = variety?.daysToHarvestMin ?: info.daysToHarvestMin
+            val plantedDate = Instant.ofEpochMilli(planting.datePlanted).atZone(zone).toLocalDate()
+            val earliest = plantedDate.plusDays(daysMin.toLong())
+            val daysUntilHarvest = ChronoUnit.DAYS.between(today, earliest)
+            val bedName = bedMap[planting.bedId]?.name ?: "Bed"
+
+            when {
+                daysUntilHarvest <= 0 -> tasks.add(
+                    TodayTask(
+                        id = "garden_harvest_${planting.id}",
+                        module = FurrowModule.GARDEN,
+                        title = "${planting.plantName} ready to harvest",
+                        subtitle = bedName,
+                        priority = 0,
+                        actionLabel = "View",
+                        route = "garden/${planting.bedId}",
+                    ),
+                )
+                daysUntilHarvest <= 7 -> tasks.add(
+                    TodayTask(
+                        id = "garden_approaching_${planting.id}",
+                        module = FurrowModule.GARDEN,
+                        title = "${planting.plantName} harvest in ${daysUntilHarvest}d",
+                        subtitle = bedName,
+                        priority = 2,
+                        actionLabel = "View",
+                        route = "garden/${planting.bedId}",
+                    ),
+                )
+            }
+        }
+
+        val threeDaysAgo = today.minusDays(3).atStartOfDay(zone).toInstant().toEpochMilli()
+        beds.forEach { bed ->
+            val lastWateredDate = waterMap[bed.id]
+            if (lastWateredDate == null || lastWateredDate < threeDaysAgo) {
+                tasks.add(
+                    TodayTask(
+                        id = "garden_water_${bed.id}",
+                        module = FurrowModule.GARDEN,
+                        title = "${bed.name} needs water",
+                        subtitle = if (lastWateredDate != null) {
+                            val days = ChronoUnit.DAYS.between(
+                                Instant.ofEpochMilli(lastWateredDate).atZone(zone).toLocalDate(),
+                                today,
+                            )
+                            "${days}d since last watering"
+                        } else "Never watered",
+                        priority = 1,
+                        actionLabel = "View",
+                        route = "garden/${bed.id}",
+                    ),
+                )
+            }
+        }
+
+        tasks
+    }
+
+    private val beeTasks = combine(
+        beeRepository.getActiveHives(),
+        beeRepository.getLastInspectionDatePerHive()
+            .map { list -> list.associate { it.hiveId to it.date } },
+        beeRepository.getAllActiveTreatmentsFull(nowMillis),
+    ) { hives, lastDates, treatments ->
+        val tasks = mutableListOf<TodayTask>()
+
+        hives.forEach { hive ->
+            val lastDate = lastDates[hive.id]
+            val daysSince = if (lastDate != null) {
+                ChronoUnit.DAYS.between(
+                    Instant.ofEpochMilli(lastDate).atZone(zone).toLocalDate(),
+                    today,
+                )
+            } else Long.MAX_VALUE
+
+            when {
+                daysSince >= 14 -> tasks.add(
+                    TodayTask(
+                        id = "bee_inspect_overdue_${hive.id}",
+                        module = FurrowModule.BEES,
+                        title = "${hive.name} inspection overdue",
+                        subtitle = if (daysSince == Long.MAX_VALUE) "Never inspected" else "${daysSince}d since last inspection",
+                        priority = 0,
+                        actionLabel = "Inspect",
+                        route = "bees/${hive.id}",
+                    ),
+                )
+                daysSince >= 7 -> tasks.add(
+                    TodayTask(
+                        id = "bee_inspect_due_${hive.id}",
+                        module = FurrowModule.BEES,
+                        title = "${hive.name} inspection due",
+                        subtitle = "${daysSince}d since last inspection",
+                        priority = 1,
+                        actionLabel = "Inspect",
+                        route = "bees/${hive.id}",
+                    ),
+                )
+            }
+        }
+
+        treatments.forEach { treatment ->
+            val endDate = treatment.endDate ?: return@forEach
+            if (endDate <= threeDaysFromNow) {
+                val hiveName = hives.firstOrNull { it.id == treatment.hiveId }?.name ?: "Hive"
+                val daysLeft = ChronoUnit.DAYS.between(today,
+                    Instant.ofEpochMilli(endDate).atZone(zone).toLocalDate())
+                tasks.add(
+                    TodayTask(
+                        id = "bee_treatment_${treatment.id}",
+                        module = FurrowModule.BEES,
+                        title = "${treatment.type} ending on $hiveName",
+                        subtitle = if (daysLeft <= 0) "Ended" else "${daysLeft}d remaining",
+                        priority = 1,
+                        actionLabel = "View",
+                        route = "bees/${treatment.hiveId}",
+                    ),
+                )
+            }
+        }
+
+        tasks
+    }
+
+    private val animalTasks = combine(
+        animalRepository.getActiveChickens(),
+        animalRepository.getEggCountForDateRange(todayStartMillis, todayEndMillis),
+    ) { chickens, todayEggs ->
+        if (chickens.isNotEmpty() && todayEggs == 0) {
+            listOf(
+                TodayTask(
+                    id = "animal_eggs",
+                    module = FurrowModule.ANIMALS,
+                    title = "Log today's eggs",
+                    subtitle = "${chickens.size} chickens",
+                    priority = 1,
+                    actionLabel = "Log",
+                    route = "animals/egg-log",
+                ),
+            )
+        } else emptyList()
+    }
+
+    private val preservationTasks = combine(
+        preservationRepository.getExpiredPantryItems(todayStartMillis),
+        preservationRepository.getExpiringSoonPantryItems(sevenDaysFromNow),
+    ) { expired, expiring ->
+        val tasks = mutableListOf<TodayTask>()
+        if (expired.isNotEmpty()) {
+            tasks.add(
+                TodayTask(
+                    id = "preservation_expired",
+                    module = FurrowModule.PRESERVATION,
+                    title = "${expired.size} pantry items expired",
+                    subtitle = null,
+                    priority = 0,
+                    actionLabel = "View",
+                    route = "preservation/pantry",
+                ),
+            )
+        }
+        if (expiring.isNotEmpty()) {
+            tasks.add(
+                TodayTask(
+                    id = "preservation_expiring",
+                    module = FurrowModule.PRESERVATION,
+                    title = "${expiring.size} items expiring soon",
+                    subtitle = "Within 7 days",
+                    priority = 1,
+                    actionLabel = "View",
+                    route = "preservation/pantry",
+                ),
+            )
+        }
+        tasks
+    }
+
+    private val complianceTasks = complianceRepository.getLicensePermitsExpiringSoon(
+        today.plusDays(30).atStartOfDay(zone).toInstant().toEpochMilli(),
+    ).map { expiring ->
+        if (expiring.isNotEmpty()) {
+            listOf(
+                TodayTask(
+                    id = "compliance_expiring",
+                    module = FurrowModule.COMPLIANCE,
+                    title = "${expiring.size} licenses expiring",
+                    subtitle = "Within 30 days",
+                    priority = 1,
+                    actionLabel = "View",
+                    route = "compliance",
+                ),
+            )
+        } else emptyList()
+    }
+
+    private val landTasks = combine(
+        landRepository.getActiveCompostBins(),
+        landRepository.getLastCompostInputDatePerBin(),
+    ) { bins, lastInputs ->
+        val inputMap = lastInputs.associate { it.binId to it.lastDate }
+        val sevenDaysAgo = today.minusDays(7).atStartOfDay(zone).toInstant().toEpochMilli()
+        val tasks = mutableListOf<TodayTask>()
+        bins.forEach { bin ->
+            val lastInput = inputMap[bin.id]
+            if (lastInput == null || lastInput < sevenDaysAgo) {
+                tasks.add(
+                    TodayTask(
+                        id = "land_compost_${bin.id}",
+                        module = FurrowModule.LAND,
+                        title = "Turn compost: ${bin.type}",
+                        subtitle = if (lastInput != null) {
+                            val days = ChronoUnit.DAYS.between(
+                                Instant.ofEpochMilli(lastInput).atZone(zone).toLocalDate(),
+                                today,
+                            )
+                            "${days}d since last input"
+                        } else "No inputs recorded",
+                        priority = 2,
+                        actionLabel = "View",
+                        route = "land",
+                    ),
+                )
+            }
+        }
+        tasks
+    }
+
+    val todayTasks: StateFlow<List<TodayTask>> = combine(
+        enabledModules,
+        gardenTasks,
+        beeTasks,
+        animalTasks,
+        combine(preservationTasks, complianceTasks, landTasks) { p, c, l -> p + c + l },
+    ) { enabled, garden, bee, animal, other ->
+        val allTasks = mutableListOf<TodayTask>()
+        if ("garden" in enabled) allTasks.addAll(garden)
+        if ("bees" in enabled) allTasks.addAll(bee)
+        if ("animals" in enabled) allTasks.addAll(animal)
+        if ("preservation" in enabled) allTasks.addAll(other.filter { it.module == FurrowModule.PRESERVATION })
+        if ("compliance" in enabled) allTasks.addAll(other.filter { it.module == FurrowModule.COMPLIANCE })
+        if ("land" in enabled) allTasks.addAll(other.filter { it.module == FurrowModule.LAND })
+        allTasks.sortedWith(compareBy({ it.priority }, { it.module.displayOrder }))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // ── Quick Log data ──
+
+    val activeBeds: StateFlow<List<GardenBed>> = gardenRepository.getActiveBeds()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val activeHives: StateFlow<List<Hive>> = beeRepository.getActiveHives()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val activePlantingsForLog: StateFlow<List<Planting>> = gardenRepository.getActivePlantings()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // ── Quick Log write methods ──
+
+    fun logEggs(count: Int, dateMillis: Long) = safeLaunch {
+        animalRepository.insertEggLog(EggLog(date = dateMillis, count = count))
+        WidgetRefreshUtil.refresh(context)
+    }
+
+    fun logWatering(bedId: Long, dateMillis: Long) = safeLaunch {
+        gardenRepository.insertWateringLog(WateringLog(bedId = bedId, date = dateMillis))
+        WidgetRefreshUtil.refresh(context)
+    }
+
+    fun logHarvest(plantingId: Long, amountOz: Double, dateMillis: Long) = safeLaunch {
+        gardenRepository.insertHarvest(
+            HarvestLog(plantingId = plantingId, date = dateMillis, amountOz = amountOz),
+        )
+        WidgetRefreshUtil.refresh(context)
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  CROSS-MODULE INSIGHTS
+    // ══════════════════════════════════════════════════════════════
+
+    data class CrossModuleInsight(
+        val id: String,
+        val title: String,
+        val body: String,
+        val modules: Set<String>,
+    )
+
+    private val monthlyExpenses = financeRepository.getExpensesForDateRange(monthStartMillis, monthEndMillis)
+    private val monthlyHarvests = gardenRepository.getHarvestsForDateRange(monthStartMillis, monthEndMillis)
+    private val monthlyEggCount = animalRepository.getEggCountForDateRange(monthStartMillis, monthEndMillis)
+
+    val crossModuleInsights: StateFlow<List<CrossModuleInsight>> = combine(
+        enabledModules,
+        combine(monthlyExpenses, monthlyEggCount, monthlyHarvests) { e, eggs, h -> Triple(e, eggs, h) },
+        combine(animalInsights, gardenInsights, preservationInsights) { a, g, p -> Triple(a, g, p) },
+        beeInsights,
+    ) { enabled, (expenses, monthEggs, harvests), (_, garden, preservation), bees ->
+        val insights = mutableListOf<CrossModuleInsight>()
+
+        // Cost per egg (Finances × Animals)
+        if ("finances" in enabled && "animals" in enabled && monthEggs > 0) {
+            val feedCost = expenses.filter { it.category?.lowercase() == "feed" }.sumOf { it.amount }
+            if (feedCost > 0) {
+                val perEgg = feedCost / monthEggs
+                insights.add(CrossModuleInsight(
+                    id = "cost_per_egg",
+                    title = "Cost per egg this month",
+                    body = "${"$%.2f".format(perEgg)}/egg — ${"$%.0f".format(feedCost)} feed, $monthEggs eggs",
+                    modules = setOf("finances", "animals"),
+                ))
+            }
+        }
+
+        // Garden cost efficiency (Finances × Garden)
+        if ("finances" in enabled && "garden" in enabled) {
+            val gardenCost = expenses.filter {
+                it.category?.lowercase()?.let { c ->
+                    c == "seeds & plants" || c == "fertilizer & lime"
+                } == true
+            }.sumOf { it.amount }
+            val totalOz = harvests.sumOf { it.amountOz ?: 0.0 }
+            if (gardenCost > 0 && totalOz > 0) {
+                val perLb = gardenCost / (totalOz / 16.0)
+                insights.add(CrossModuleInsight(
+                    id = "cost_per_harvest",
+                    title = "Garden cost this month",
+                    body = "${"$%.2f".format(perLb)}/lb — ${"%.1f".format(totalOz / 16.0)} lbs harvested, ${"$%.0f".format(gardenCost)} spent",
+                    modules = setOf("finances", "garden"),
+                ))
+            }
+        }
+
+        // Preserve your harvest (Preservation × Garden)
+        if ("preservation" in enabled && "garden" in enabled
+            && garden.readyToHarvestCount > 0 && preservation.expiringSoon > 0) {
+            insights.add(CrossModuleInsight(
+                id = "pantry_gap",
+                title = "Preserve your harvest",
+                body = "${garden.readyToHarvestCount} crops ready to pick, ${preservation.expiringSoon} pantry items expiring — time to preserve!",
+                modules = setOf("preservation", "garden"),
+            ))
+        }
+
+        // Pollination benefit (Bees × Garden)
+        if ("bees" in enabled && "garden" in enabled
+            && (bees?.hiveCount ?: 0) > 0 && garden.activePlantings > 0) {
+            insights.add(CrossModuleInsight(
+                id = "pollination",
+                title = "Pollination at work",
+                body = "${bees!!.hiveCount} hives supporting ${garden.activePlantings} active plantings",
+                modules = setOf("bees", "garden"),
+            ))
+        }
+
+        insights.take(3)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }
 
 private const val INSPECTION_CYCLE_DAYS = 7L

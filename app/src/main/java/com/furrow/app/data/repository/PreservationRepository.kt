@@ -101,6 +101,9 @@ class PreservationRepository @Inject constructor(
     fun getExpiringSoonPantryItems(beforeDate: Long): Flow<List<PantryItem>> =
         pantryItemDao.getExpiringSoon(beforeDate)
 
+    fun getExpiredPantryItems(now: Long): Flow<List<PantryItem>> =
+        pantryItemDao.getExpiredItems(now)
+
     suspend fun insertPantryItem(item: PantryItem): Long = pantryItemDao.insert(item)
 
     suspend fun updatePantryItem(item: PantryItem) = pantryItemDao.update(item)

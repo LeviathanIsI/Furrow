@@ -4,6 +4,7 @@ import com.furrow.app.data.FurrowModule
 import com.furrow.app.ui.FurrowViewModel
 import com.furrow.app.data.ZoneLookup
 import com.furrow.app.data.local.entity.UserModulePreference
+import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.ModulePreferenceRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,29 @@ class OnboardingViewModel @Inject constructor(
                 UserModulePreference(
                     moduleName = module.key,
                     enabled = module.key in selectedModuleKeys,
+                    displayOrder = module.displayOrder,
+                )
+            }
+            modulePreferenceRepository.insertAll(prefs)
+        }
+    }
+
+    fun skipOnboarding() {
+        safeLaunch {
+            val defaultProfile = UserProfile(
+                zipCode = "",
+                hardinessZone = "7a",
+                zoneGroup = "7",
+                state = "",
+                climateCategory = "Temperate",
+                lastFrostDate = "Apr 15",
+                firstFrostDate = "Oct 15",
+            )
+            repository.saveProfile(defaultProfile)
+            val prefs = FurrowModule.entries.map { module ->
+                UserModulePreference(
+                    moduleName = module.key,
+                    enabled = module.enabledByDefault,
                     displayOrder = module.displayOrder,
                 )
             }

@@ -104,6 +104,8 @@ class BeeRepository @Inject constructor(
 
     fun getLastInspectionDatePerHive() = inspectionDao.getLastInspectionDatePerHive()
 
+    fun getAllInspectionsForExport() = inspectionDao.getAllInspectionsForExport()
+
     fun getActiveTreatments(now: Long): Flow<List<HiveActiveTreatment>> =
         inspectionDao.getActiveTreatments(now)
 
@@ -112,6 +114,9 @@ class BeeRepository @Inject constructor(
 
     fun getLatestInspectionPerHive(): Flow<List<Inspection>> =
         inspectionDao.getLatestInspectionPerHive()
+
+    fun getAllActiveTreatmentsFull(now: Long): Flow<List<Treatment>> =
+        inspectionDao.getAllActiveTreatmentsFull(now)
 
     // --- Apiaries ---
 

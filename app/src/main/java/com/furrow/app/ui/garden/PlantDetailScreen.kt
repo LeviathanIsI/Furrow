@@ -228,7 +228,7 @@ private fun PanelTitle(icon: ImageVector, title: String) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs),
     ) {
-        Icon(icon, contentDescription = null, tint = GardenGlow, modifier = Modifier.size(18.dp))
+        Icon(icon, contentDescription = "Info", tint = GardenGlow, modifier = Modifier.size(18.dp))
         Text(title, style = MaterialTheme.typography.titleSmall, color = TextPrimary)
     }
 }
@@ -332,7 +332,7 @@ private fun QuickStatCard(icon: ImageVector, value: String, label: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(AppSpacing.xxs),
         ) {
-            Icon(icon, contentDescription = null, tint = GardenGlow, modifier = Modifier.size(20.dp))
+            Icon(icon, contentDescription = "Info", tint = GardenGlow, modifier = Modifier.size(20.dp))
             Text(value, style = MaterialTheme.typography.titleSmall, color = TextPrimary)
             Text(label, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
         }

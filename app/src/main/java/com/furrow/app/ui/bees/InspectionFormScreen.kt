@@ -1,5 +1,6 @@
 package com.furrow.app.ui.bees
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -53,9 +54,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.DiscardChangesDialog
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.NumberStepper
+import com.furrow.app.ui.components.PhotoAttachment
 import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.BeeGlow
@@ -89,6 +93,10 @@ fun InspectionFormScreen(
     var notes by remember { mutableStateOf("") }
     var weatherTemp by remember { mutableIntStateOf(70) }
     var weatherCondition by remember { mutableStateOf("Sunny") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    BackHandler { showDiscardDialog = true }
+    DiscardChangesDialog(showDialog = showDiscardDialog, onDismiss = { showDiscardDialog = false }, onDiscard = { showDiscardDialog = false; onBack() })
 
     if (isEditMode) {
         val existingInspection by viewModel.getInspectionById(editId).collectAsState(initial = null)
@@ -111,6 +119,7 @@ fun InspectionFormScreen(
                 notes = it.notes ?: ""
                 weatherTemp = it.weatherTemp ?: 70
                 weatherCondition = it.weatherCondition ?: "Sunny"
+                photoUri = it.photoUri
             }
         }
     }
@@ -124,6 +133,12 @@ fun InspectionFormScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+        onDismissed = { onBack() },
+    )
 
     com.furrow.app.ui.components.AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -131,7 +146,7 @@ fun InspectionFormScreen(
             com.furrow.app.ui.components.AppTopBar(
                 title = if (isEditMode) "Edit inspection" else "Add inspection",
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { showDiscardDialog = true }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -288,6 +303,12 @@ fun InspectionFormScreen(
                 )
             }
 
+            // ── Photo ──
+            PhotoAttachment(
+                photoUri = photoUri,
+                onPhotoChanged = { photoUri = it },
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // ── Save Button ──
@@ -314,9 +335,9 @@ fun InspectionFormScreen(
                         notes = notes.ifBlank { null },
                         weatherTemp = weatherTemp,
                         weatherCondition = weatherCondition,
+                        photoUri = photoUri,
                     )
                     if (isEditMode) viewModel.updateInspection(inspection) else viewModel.addInspection(inspection)
-                    onBack()
                 },
                 modifier = Modifier
                     .fillMaxWidth(),

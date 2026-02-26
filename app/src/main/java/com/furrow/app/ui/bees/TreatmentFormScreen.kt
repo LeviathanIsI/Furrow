@@ -1,5 +1,6 @@
 package com.furrow.app.ui.bees
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.ui.components.DateFieldWithToggle
+import com.furrow.app.ui.components.DiscardChangesDialog
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.theme.BeeGlow
@@ -68,6 +71,9 @@ fun TreatmentFormScreen(
     var method by remember { mutableStateOf("Dribble") }
     var dose by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    BackHandler { showDiscardDialog = true }
+    DiscardChangesDialog(showDialog = showDiscardDialog, onDismiss = { showDiscardDialog = false }, onDiscard = { showDiscardDialog = false; onBack() })
 
     if (isEditMode) {
         val existingTreatment by viewModel.getTreatmentById(editId).collectAsState(initial = null)
@@ -86,6 +92,12 @@ fun TreatmentFormScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+        onDismissed = { onBack() },
+    )
 
     com.furrow.app.ui.components.AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -93,7 +105,7 @@ fun TreatmentFormScreen(
             com.furrow.app.ui.components.AppTopBar(
                 title = if (isEditMode) "Edit treatment" else "Add treatment",
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { showDiscardDialog = true }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -186,7 +198,6 @@ fun TreatmentFormScreen(
                         notes = notes.ifBlank { null },
                     )
                     if (isEditMode) viewModel.updateTreatment(treatment) else viewModel.addTreatment(treatment)
-                    onBack()
                 },
                 modifier = Modifier
                     .fillMaxWidth(),

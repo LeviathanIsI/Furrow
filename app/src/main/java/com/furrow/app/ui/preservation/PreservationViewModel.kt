@@ -10,14 +10,12 @@ import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.repository.PreservationRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
-import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.Instant
 import java.time.ZoneId
 import javax.inject.Inject
@@ -28,13 +26,11 @@ class PreservationViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
 
     // -- Canning --
-    val canningBatches: StateFlow<List<CanningBatch>> = repository.getAllCanningBatches()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val canningBatches: StateFlow<List<CanningBatch>?> = repository.getAllCanningBatches()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     // -- Dehydrating --
     val dehydratingBatches: StateFlow<List<DehydratingBatch>> = repository.getAllDehydratingBatches()
@@ -71,7 +67,7 @@ class PreservationViewModel @Inject constructor(
     // -- Total batch count --
     val totalBatches: StateFlow<Int> = kotlinx.coroutines.flow.combine(
         canningBatches, dehydratingBatches, fermentingBatches, freezingBatches, smokingCuringBatches,
-    ) { c, d, f, fr, s -> c.size + d.size + f.size + fr.size + s.size }
+    ) { c, d, f, fr, s -> c.orEmpty().size + d.size + f.size + fr.size + s.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     // -- Lookups for edit mode --
@@ -83,27 +79,27 @@ class PreservationViewModel @Inject constructor(
     fun getPantryItemById(id: Long) = repository.getPantryItemById(id)
 
     // -- Actions --
-    fun addCanningBatch(batch: CanningBatch) { safeLaunch { repository.insertCanningBatch(batch) } }
-    fun updateCanningBatch(batch: CanningBatch) { safeLaunch { repository.updateCanningBatch(batch) } }
+    fun addCanningBatch(batch: CanningBatch) { safeLaunchWithSuccess("Batch saved") { repository.insertCanningBatch(batch) } }
+    fun updateCanningBatch(batch: CanningBatch) { safeLaunchWithSuccess("Batch updated") { repository.updateCanningBatch(batch) } }
     fun deleteCanningBatch(batch: CanningBatch) { safeLaunch { repository.deleteCanningBatch(batch) } }
 
-    fun addDehydratingBatch(batch: DehydratingBatch) { safeLaunch { repository.insertDehydratingBatch(batch) } }
-    fun updateDehydratingBatch(batch: DehydratingBatch) { safeLaunch { repository.updateDehydratingBatch(batch) } }
+    fun addDehydratingBatch(batch: DehydratingBatch) { safeLaunchWithSuccess("Batch saved") { repository.insertDehydratingBatch(batch) } }
+    fun updateDehydratingBatch(batch: DehydratingBatch) { safeLaunchWithSuccess("Batch updated") { repository.updateDehydratingBatch(batch) } }
     fun deleteDehydratingBatch(batch: DehydratingBatch) { safeLaunch { repository.deleteDehydratingBatch(batch) } }
 
-    fun addFermentingBatch(batch: FermentingBatch) { safeLaunch { repository.insertFermentingBatch(batch) } }
-    fun updateFermentingBatch(batch: FermentingBatch) { safeLaunch { repository.updateFermentingBatch(batch) } }
+    fun addFermentingBatch(batch: FermentingBatch) { safeLaunchWithSuccess("Batch saved") { repository.insertFermentingBatch(batch) } }
+    fun updateFermentingBatch(batch: FermentingBatch) { safeLaunchWithSuccess("Batch updated") { repository.updateFermentingBatch(batch) } }
     fun deleteFermentingBatch(batch: FermentingBatch) { safeLaunch { repository.deleteFermentingBatch(batch) } }
 
-    fun addFreezingBatch(batch: FreezingBatch) { safeLaunch { repository.insertFreezingBatch(batch) } }
-    fun updateFreezingBatch(batch: FreezingBatch) { safeLaunch { repository.updateFreezingBatch(batch) } }
+    fun addFreezingBatch(batch: FreezingBatch) { safeLaunchWithSuccess("Batch saved") { repository.insertFreezingBatch(batch) } }
+    fun updateFreezingBatch(batch: FreezingBatch) { safeLaunchWithSuccess("Batch updated") { repository.updateFreezingBatch(batch) } }
     fun deleteFreezingBatch(batch: FreezingBatch) { safeLaunch { repository.deleteFreezingBatch(batch) } }
 
-    fun addSmokingCuringBatch(batch: SmokingCuringBatch) { safeLaunch { repository.insertSmokingCuringBatch(batch) } }
-    fun updateSmokingCuringBatch(batch: SmokingCuringBatch) { safeLaunch { repository.updateSmokingCuringBatch(batch) } }
+    fun addSmokingCuringBatch(batch: SmokingCuringBatch) { safeLaunchWithSuccess("Batch saved") { repository.insertSmokingCuringBatch(batch) } }
+    fun updateSmokingCuringBatch(batch: SmokingCuringBatch) { safeLaunchWithSuccess("Batch updated") { repository.updateSmokingCuringBatch(batch) } }
     fun deleteSmokingCuringBatch(batch: SmokingCuringBatch) { safeLaunch { repository.deleteSmokingCuringBatch(batch) } }
 
-    fun addPantryItem(item: PantryItem) { safeLaunch { repository.insertPantryItem(item) } }
-    fun updatePantryItem(item: PantryItem) { safeLaunch { repository.updatePantryItem(item) } }
+    fun addPantryItem(item: PantryItem) { safeLaunchWithSuccess("Item saved") { repository.insertPantryItem(item) } }
+    fun updatePantryItem(item: PantryItem) { safeLaunchWithSuccess("Item updated") { repository.updatePantryItem(item) } }
     fun deletePantryItem(item: PantryItem) { safeLaunch { repository.deletePantryItem(item) } }
 }

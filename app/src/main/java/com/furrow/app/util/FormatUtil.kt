@@ -40,3 +40,24 @@ fun String.formatFertilizer(): String {
  */
 fun monthName(month: Int): String =
     Month.of(month).getDisplayName(TextStyle.FULL, Locale.getDefault())
+
+/**
+ * Filters a string to allow only valid decimal number input.
+ * Permits at most one decimal point and only digits around it.
+ */
+fun String.filterDecimal(): String {
+    var hasDecimal = false
+    return buildString {
+        for (c in this@filterDecimal) {
+            when {
+                c.isDigit() -> append(c)
+                c == '.' && !hasDecimal -> { append(c); hasDecimal = true }
+            }
+        }
+    }
+}
+
+/**
+ * Filters a string to allow only integer input (digits only).
+ */
+fun String.filterInteger(): String = filter { it.isDigit() }

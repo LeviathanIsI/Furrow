@@ -24,6 +24,9 @@ interface WateringLogDao {
     @Query("SELECT * FROM watering_logs WHERE bedId = :bedId ORDER BY date DESC")
     fun getForBed(bedId: Long): Flow<List<WateringLog>>
 
+    @Query("SELECT * FROM watering_logs WHERE date >= :startMillis AND date <= :endMillis ORDER BY date ASC")
+    fun getForDateRange(startMillis: Long, endMillis: Long): Flow<List<WateringLog>>
+
     @Query("""
         SELECT bedId, MAX(date) as lastWatered
         FROM watering_logs

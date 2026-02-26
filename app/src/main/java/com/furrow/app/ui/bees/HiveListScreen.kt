@@ -1,6 +1,7 @@
 package com.furrow.app.ui.bees
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.outlined.Assessment
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,13 +47,14 @@ import com.furrow.app.ui.components.ErrorSnackbarEffect
 import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.FurrowBottomSheet
-import com.furrow.app.ui.components.SearchableSelector
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BeeGlow
 import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.util.DateUtil
+import com.furrow.app.util.filterInteger
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -68,6 +71,7 @@ fun HiveListScreen(
     val hives by viewModel.activeHives.collectAsState()
     val lastDates by viewModel.lastInspectionDates.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
@@ -86,7 +90,22 @@ fun HiveListScreen(
             )
         },
     ) { padding ->
-        if (hives.isEmpty()) {
+        if (hives == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+        val hiveList = hives!!
+        val filteredHives = remember(hiveList, searchQuery) {
+            if (searchQuery.isBlank()) hiveList
+            else hiveList.filter { hive ->
+                hive.name.contains(searchQuery, ignoreCase = true) ||
+                    (hive.beeRace ?: "").contains(searchQuery, ignoreCase = true)
+            }
+        }
+
+        if (hiveList.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -96,7 +115,7 @@ fun HiveListScreen(
                     icon = {
                         Icon(
                             Icons.Filled.BugReport,
-                            contentDescription = null,
+                            contentDescription = "Hive health",
                             modifier = Modifier.size(40.dp),
                             tint = BeeGlow,
                         )
@@ -104,7 +123,6 @@ fun HiveListScreen(
                     title = "No hives tracked",
                     subtitle = "Add your first hive to start inspection logs.",
                     actionLabel = "Add Hive",
-                    glowColor = BeeGlow,
                     onAction = { showAddDialog = true },
                 )
             }
@@ -130,16 +148,35 @@ fun HiveListScreen(
                     }
                 }
 
-                item(key = "hive_panel") {
-                    com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
-                        hives.forEachIndexed { index, hive ->
-                            HiveCard(
-                                hive = hive,
-                                lastInspectionDate = lastDates[hive.id],
-                                onClick = { onHiveClick(hive.id) },
-                                showDivider = index != hives.lastIndex,
-                                zone = viewModel.zone,
-                            )
+                if (hiveList.size > 5) {
+                    item(key = "search") {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            accentColor = BeeGlow,
+                        )
+                    }
+                }
+
+                if (filteredHives.isEmpty()) {
+                    item(key = "empty_search") {
+                        EmptyState(
+                            title = "No hives match \"$searchQuery\"",
+                            subtitle = "Try a different search term.",
+                        )
+                    }
+                } else {
+                    item(key = "hive_panel") {
+                        com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
+                            filteredHives.forEachIndexed { index, hive ->
+                                HiveCard(
+                                    hive = hive,
+                                    lastInspectionDate = lastDates[hive.id],
+                                    onClick = { onHiveClick(hive.id) },
+                                    showDivider = index != filteredHives.lastIndex,
+                                    zone = viewModel.zone,
+                                )
+                            }
                         }
                     }
                 }
@@ -198,7 +235,7 @@ private fun HiveCard(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.BugReport,
-                contentDescription = null,
+                contentDescription = "Hive",
                 tint = TextSecondary,
             )
         },
@@ -206,7 +243,7 @@ private fun HiveCard(
         trailing = {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
+                contentDescription = "View details",
                 tint = TextTertiary,
             )
         },
@@ -291,46 +328,15 @@ private fun AddHiveSheet(
                 colors = fieldColors,
                 shape = RoundedCornerShape(8.dp),
             )
-            SearchableSelector(
-                query = raceQuery,
-                onQueryChange = {
-                    raceQuery = it
-                    selectedRace = it.ifBlank { null }
-                },
-                items = filteredRaces,
-                onItemSelected = { race ->
-                    selectedRace = race.name
-                    raceQuery = race.name
-                },
+            DropdownSelector(
                 label = "Bee Race (optional)",
+                options = filteredRaces.map { it.name },
+                selected = raceQuery,
+                onSelect = {
+                    selectedRace = it.ifBlank { null }
+                    raceQuery = it
+                },
                 accentColor = BeeGlow,
-                nameSelector = { it.name },
-                isCustom = { it.isCustom },
-                onAddCustom = { customName ->
-                    customRaceInitialName = customName
-                    showAddCustomRace = true
-                },
-                onEditCustom = { race -> raceToEdit = race },
-                onDeleteCustom = { race -> raceToDelete = race },
-                itemContent = { race ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(race.name, style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                race.temperament,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextTertiary,
-                            )
-                        }
-                        if (zoneGroup != null) {
-                            ClimateBadgePill(climateBadgeFor(race, zoneGroup))
-                        }
-                    }
-                },
             )
             DateFieldWithToggle(
                 label = "Install Date:",
@@ -461,7 +467,7 @@ private fun AddCustomRaceSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = honeyProduction,
-                    onValueChange = { honeyProduction = it.filter { c -> c.isDigit() } },
+                    onValueChange = { honeyProduction = it.filterInteger() },
                     label = { Text("Honey (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -470,7 +476,7 @@ private fun AddCustomRaceSheet(
                 )
                 OutlinedTextField(
                     value = miteResistance,
-                    onValueChange = { miteResistance = it.filter { c -> c.isDigit() } },
+                    onValueChange = { miteResistance = it.filterInteger() },
                     label = { Text("Mites (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -481,7 +487,7 @@ private fun AddCustomRaceSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = swarmingTendency,
-                    onValueChange = { swarmingTendency = it.filter { c -> c.isDigit() } },
+                    onValueChange = { swarmingTendency = it.filterInteger() },
                     label = { Text("Swarm (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -490,7 +496,7 @@ private fun AddCustomRaceSheet(
                 )
                 OutlinedTextField(
                     value = overwintering,
-                    onValueChange = { overwintering = it.filter { c -> c.isDigit() } },
+                    onValueChange = { overwintering = it.filterInteger() },
                     label = { Text("Winter (1-5)") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,

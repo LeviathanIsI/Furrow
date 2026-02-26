@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import com.furrow.app.ui.components.InputField
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SecondaryButton
 import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.GardenGlow
@@ -92,8 +94,25 @@ fun SettingsScreen(
         permissionGranted = granted
     }
 
+    val backupResult by viewModel.backupResult.collectAsState()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/octet-stream"),
+    ) { uri -> uri?.let { viewModel.exportBackup(it) } }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri -> uri?.let { viewModel.importBackup(it) } }
+
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
+    LaunchedEffect(backupResult) {
+        backupResult?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearBackupResult()
+        }
+    }
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -225,7 +244,7 @@ fun SettingsScreen(
                         title = "Grant notification permission",
                         subtitle = "Required for reminders",
                         leadingIcon = {
-                            Icon(Icons.Outlined.Notifications, contentDescription = null, tint = TextSecondary)
+                            Icon(Icons.Outlined.Notifications, contentDescription = "Notifications", tint = TextSecondary)
                         },
                         onClick = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -235,6 +254,25 @@ fun SettingsScreen(
                         showDivider = false,
                     )
                 }
+            }
+
+            Panel {
+                Text("Data", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Export a full backup of your database, or restore from a previous backup.",
+                    color = TextSecondary,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                PrimaryButton(
+                    text = "Export backup",
+                    onClick = { exportLauncher.launch("furrow-backup.db") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                SecondaryButton(
+                    text = "Import backup",
+                    onClick = { importLauncher.launch(arrayOf("application/octet-stream", "*/*")) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             Panel {

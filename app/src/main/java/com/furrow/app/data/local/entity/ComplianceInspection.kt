@@ -13,4 +13,5 @@ data class ComplianceInspection(
     val outcome: String? = null,
     @ColumnInfo(name = "follow_up_items") val followUpItems: String? = null,
     val notes: String? = null,
+    val photoUri: String? = null,
 )

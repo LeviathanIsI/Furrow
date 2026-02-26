@@ -1,5 +1,6 @@
 package com.furrow.app.ui.compliance
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,16 +36,21 @@ import com.furrow.app.data.local.entity.LabelTemplate
 import com.furrow.app.data.local.entity.LicensePermit
 import com.furrow.app.data.local.entity.SalesTracker
 import com.furrow.app.data.ModuleCatalogData
+import com.furrow.app.ui.components.DiscardChangesDialog
 import com.furrow.app.ui.components.DropdownSelector
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
+import com.furrow.app.ui.components.PhotoAttachment
 import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.ComplianceGlow
 import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.util.filterDecimal
+import com.furrow.app.util.filterInteger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +73,16 @@ fun ComplianceFormScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+        onDismissed = { onBack() },
+    )
+
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    BackHandler { showDiscardDialog = true }
+    DiscardChangesDialog(showDialog = showDiscardDialog, onDismiss = { showDiscardDialog = false }, onDiscard = { showDiscardDialog = false; onBack() })
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -74,7 +90,7 @@ fun ComplianceFormScreen(
             AppTopBar(
                 title = titleText,
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { showDiscardDialog = true }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -231,7 +247,6 @@ private fun PermitForm(
                 )
                 if (isEditMode) viewModel.updateLicensePermit(permit)
                 else viewModel.addLicensePermit(permit)
-                onBack()
             },
             enabled = permitType.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
@@ -257,6 +272,7 @@ private fun InspectionForm(
     var outcome by remember { mutableStateOf("Pending") }
     var followUpItems by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
 
     if (isEditMode) {
         val existing by viewModel.getInspectionById(editId).collectAsState(initial = null)
@@ -268,6 +284,7 @@ private fun InspectionForm(
                 outcome = it.outcome ?: "Pending"
                 followUpItems = it.followUpItems ?: ""
                 notes = it.notes ?: ""
+                photoUri = it.photoUri
             }
         }
     }
@@ -330,6 +347,11 @@ private fun InspectionForm(
             accentColor = ComplianceGlow,
         )
 
+        PhotoAttachment(
+            photoUri = photoUri,
+            onPhotoChanged = { photoUri = it },
+        )
+
         Spacer(modifier = Modifier.height(AppSpacing.xs))
 
         PrimaryButton(
@@ -343,10 +365,10 @@ private fun InspectionForm(
                     outcome = outcome,
                     followUpItems = followUpItems.ifBlank { null },
                     notes = notes.ifBlank { null },
+                    photoUri = photoUri,
                 )
                 if (isEditMode) viewModel.updateInspection(inspection)
                 else viewModel.addInspection(inspection)
-                onBack()
             },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -405,7 +427,7 @@ private fun SaleForm(
 
         InputField(
             value = year,
-            onValueChange = { year = it.filter { c -> c.isDigit() } },
+            onValueChange = { year = it.filterInteger() },
             label = { Text("Year") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -414,7 +436,7 @@ private fun SaleForm(
 
         InputField(
             value = runningTotal,
-            onValueChange = { runningTotal = it.filter { c -> c.isDigit() || c == '.' } },
+            onValueChange = { runningTotal = it.filterDecimal() },
             label = { Text("Running Total ($)") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -423,7 +445,7 @@ private fun SaleForm(
 
         InputField(
             value = annualCap,
-            onValueChange = { annualCap = it.filter { c -> c.isDigit() || c == '.' } },
+            onValueChange = { annualCap = it.filterDecimal() },
             label = { Text("Annual Cap ($)") },
             placeholder = { Text("Optional") },
             singleLine = true,
@@ -433,7 +455,7 @@ private fun SaleForm(
 
         InputField(
             value = thresholdAlertPct,
-            onValueChange = { thresholdAlertPct = it.filter { c -> c.isDigit() } },
+            onValueChange = { thresholdAlertPct = it.filterInteger() },
             label = { Text("Threshold Alert (%)") },
             placeholder = { Text("Optional") },
             singleLine = true,
@@ -465,7 +487,6 @@ private fun SaleForm(
                 )
                 if (isEditMode) viewModel.updateSalesTracker(sale)
                 else viewModel.addSalesTracker(sale)
-                onBack()
             },
             enabled = productType.isNotBlank() && year.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
@@ -558,7 +579,6 @@ private fun LabelForm(
                 )
                 if (isEditMode) viewModel.updateLabelTemplate(label)
                 else viewModel.addLabelTemplate(label)
-                onBack()
             },
             enabled = productName.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),
@@ -675,7 +695,6 @@ private fun DocumentForm(
                 )
                 if (isEditMode) viewModel.updateDocument(document)
                 else viewModel.addDocument(document)
-                onBack()
             },
             enabled = docType.isNotBlank() && name.isNotBlank(),
             modifier = Modifier.fillMaxWidth(),

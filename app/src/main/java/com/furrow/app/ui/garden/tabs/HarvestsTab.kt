@@ -4,10 +4,9 @@ import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Inventory2
@@ -15,13 +14,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import com.furrow.app.data.local.entity.HarvestLog
+import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SwipeToDeleteItem
+import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.util.DateUtil
@@ -43,18 +44,29 @@ internal fun HarvestsTab(
     plantingNames: Map<Long, String>,
     harvestTotals: Map<Long, HarvestTotal>,
     onLongPress: (HarvestLog) -> Unit,
+    onDelete: (HarvestLog) -> Unit = {},
+    onLogHarvest: () -> Unit = {},
     zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
 
     if (harvests.isEmpty()) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("No harvest logs yet", style = MaterialTheme.typography.titleMedium)
-                Text("Use Add to log harvested yield", color = TextSecondary)
-            }
-        }
+        EmptyState(
+            title = "No harvest logs yet",
+            subtitle = "Log your first harvest to start tracking yield from this bed",
+            modifier = modifier,
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Inventory2,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = GardenGlow,
+                )
+            },
+            actionLabel = "Log Harvest",
+            onAction = onLogHarvest,
+        )
         return
     }
 
@@ -95,31 +107,36 @@ internal fun HarvestsTab(
                 Panel(contentPadding = PaddingValues(0.dp)) {
                     logs.forEachIndexed { index, harvest ->
                         val harvestDateStr = DateUtil.formatDate(harvest.date, zone)
-                        ListRow(
-                            modifier = Modifier.pointerInput(harvest) {
-                                detectTapGestures(onLongPress = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(harvest)
-                                })
-                            },
-                            title = harvestDateStr,
-                            subtitle = harvest.notes,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Inventory2,
-                                    contentDescription = null,
-                                    tint = TextSecondary,
-                                )
-                            },
-                            trailingText = buildString {
-                                harvest.amountOz?.let { append("${it}oz") }
-                                harvest.count?.let {
-                                    if (isNotBlank()) append(" • ")
-                                    append("$it")
-                                }
-                            },
-                            showDivider = index != logs.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "harvest",
+                            onDelete = { onDelete(harvest) },
+                        ) {
+                            ListRow(
+                                modifier = Modifier.pointerInput(harvest) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(harvest)
+                                    })
+                                },
+                                title = harvestDateStr,
+                                subtitle = harvest.notes,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Inventory2,
+                                        contentDescription = "Harvest",
+                                        tint = TextSecondary,
+                                    )
+                                },
+                                trailingText = buildString {
+                                    harvest.amountOz?.let { append("${it}oz") }
+                                    harvest.count?.let {
+                                        if (isNotBlank()) append(" • ")
+                                        append("$it")
+                                    }
+                                },
+                                showDivider = index != logs.lastIndex,
+                            )
+                        }
                     }
                 }
             }

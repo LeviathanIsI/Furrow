@@ -4,19 +4,16 @@ import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Opacity
 import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
@@ -25,8 +22,11 @@ import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.WateringLog
+import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SwipeToDeleteItem
+import com.furrow.app.ui.theme.GardenGlow
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.StatusWarn
 import com.furrow.app.ui.theme.TextSecondary
@@ -42,6 +42,9 @@ internal fun CareLogTab(
     plantInfoMap: Map<String, PlantInfo>,
     onWateringLongPress: (WateringLog) -> Unit,
     onFertilizerLongPress: (FertilizerLog) -> Unit,
+    onDeleteWatering: (WateringLog) -> Unit = {},
+    onDeleteFertilizer: (FertilizerLog) -> Unit = {},
+    onLogCare: () -> Unit = {},
     zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
@@ -59,12 +62,21 @@ internal fun CareLogTab(
         .sortedByDescending { it.date }
 
     if (events.isEmpty()) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("No care logs yet", style = MaterialTheme.typography.titleMedium)
-                Text("Use Add to track watering and feeding", color = TextSecondary)
-            }
-        }
+        EmptyState(
+            title = "No care logs yet",
+            subtitle = "Log watering and fertilizer to track care for this bed",
+            modifier = modifier,
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Opacity,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = GardenGlow,
+                )
+            },
+            actionLabel = "Log Care",
+            onAction = onLogCare,
+        )
         return
     }
 
@@ -95,28 +107,39 @@ internal fun CareLogTab(
                         ).joinToString(" \u2022 ")
                     }
 
-                    ListRow(
-                        modifier = Modifier.pointerInput(event) {
-                            detectTapGestures(onLongPress = {
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                if (event.type == "water") {
-                                    event.watering?.let(onWateringLongPress)
-                                } else {
-                                    event.fertilizer?.let(onFertilizerLongPress)
-                                }
-                            })
+                    SwipeToDeleteItem(
+                        itemName = if (event.type == "water") "watering log" else "fertilizer log",
+                        onDelete = {
+                            if (event.type == "water") {
+                                event.watering?.let(onDeleteWatering)
+                            } else {
+                                event.fertilizer?.let(onDeleteFertilizer)
+                            }
                         },
-                        title = if (event.type == "water") "Watered" else "Fertilized",
-                        subtitle = "${eventDateStr}${if (subtitle.isNotBlank()) " • $subtitle" else ""}",
-                        leadingIcon = {
-                            Icon(
-                                imageVector = if (event.type == "water") Icons.Outlined.Opacity else Icons.Outlined.Science,
-                                contentDescription = null,
-                                tint = if (event.type == "water") TextSecondary else StatusWarn,
-                            )
-                        },
-                        showDivider = index != events.lastIndex,
-                    )
+                    ) {
+                        ListRow(
+                            modifier = Modifier.pointerInput(event) {
+                                detectTapGestures(onLongPress = {
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    if (event.type == "water") {
+                                        event.watering?.let(onWateringLongPress)
+                                    } else {
+                                        event.fertilizer?.let(onFertilizerLongPress)
+                                    }
+                                })
+                            },
+                            title = if (event.type == "water") "Watered" else "Fertilized",
+                            subtitle = "${eventDateStr}${if (subtitle.isNotBlank()) " • $subtitle" else ""}",
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = if (event.type == "water") Icons.Outlined.Opacity else Icons.Outlined.Science,
+                                    contentDescription = "Care event",
+                                    tint = if (event.type == "water") TextSecondary else StatusWarn,
+                                )
+                            },
+                            showDivider = index != events.lastIndex,
+                        )
+                    }
                 }
             }
         }

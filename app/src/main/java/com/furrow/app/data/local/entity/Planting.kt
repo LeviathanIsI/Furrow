@@ -39,4 +39,5 @@ data class Planting(
     val expectedGerminationDate: Long? = null,
     val seedsPlanted: Int? = null,
     val seedsSprouted: Int? = null,
+    val targetPlantDate: Long? = null,
 )

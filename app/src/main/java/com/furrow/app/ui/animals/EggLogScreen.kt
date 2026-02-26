@@ -44,6 +44,7 @@ import androidx.compose.foundation.layout.Box
 import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.InputField
@@ -96,6 +97,12 @@ fun EggLogScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+        onDismissed = { onBack() },
+    )
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -239,7 +246,6 @@ fun EggLogScreen(
                         notes = notes.ifBlank { null },
                     )
                     if (isEditMode) viewModel.updateEggLog(eggLog) else viewModel.addEggLog(eggLog)
-                    onBack()
                 },
                 enabled = count > 0,
                 modifier = Modifier

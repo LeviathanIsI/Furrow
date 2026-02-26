@@ -104,7 +104,7 @@ fun PantryScreen(
                     icon = {
                         Icon(
                             Icons.Outlined.Kitchen,
-                            contentDescription = null,
+                            contentDescription = "Pantry item",
                             modifier = Modifier.size(28.dp),
                             tint = PreservationGlow,
                         )

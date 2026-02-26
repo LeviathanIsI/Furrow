@@ -24,4 +24,5 @@ data class HarvestLog(
     val amountOz: Double? = null,
     val count: Int? = null,
     val notes: String? = null,
+    val photoUri: String? = null,
 )

@@ -15,18 +15,19 @@ import com.furrow.app.data.local.entity.WeightLog
 import com.furrow.app.data.repository.AnimalRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
-import com.furrow.app.util.DateUtil
+import com.furrow.app.util.WidgetRefreshUtil
+import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -43,6 +44,7 @@ data class DailyEggCount(
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class AnimalViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: AnimalRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
@@ -50,9 +52,7 @@ class AnimalViewModel @Inject constructor(
 
     private val animalId: Long? = savedStateHandle.get<Long>("animalId")
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
     private val weekStart = today.minusDays(6)
 
@@ -67,12 +67,12 @@ class AnimalViewModel @Inject constructor(
     val activeAnimals: StateFlow<List<Animal>> = repository.getActiveAnimals()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val filteredAnimals: StateFlow<List<Animal>> = combine(
+    val filteredAnimals: StateFlow<List<Animal>?> = combine(
         activeAnimals,
         selectedSpecies,
     ) { animals, species ->
         if (species == null) animals else animals.filter { it.species == species }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val speciesList: StateFlow<List<String>> = activeAnimals.map { animals ->
         animals.map { it.species }.distinct().sorted()
@@ -208,44 +208,61 @@ class AnimalViewModel @Inject constructor(
 
     // -- Actions --
 
-    fun addAnimal(animal: Animal) { safeLaunch { repository.insertAnimal(animal) } }
-    fun updateAnimal(animal: Animal) { safeLaunch { repository.updateAnimal(animal) } }
+    fun addAnimal(animal: Animal) { safeLaunchWithSuccess("Animal saved") { repository.insertAnimal(animal) } }
+    fun updateAnimal(animal: Animal) { safeLaunchWithSuccess("Animal updated") { repository.updateAnimal(animal) } }
     fun deleteAnimal(animal: Animal) { safeLaunch { repository.deleteAnimal(animal) } }
 
-    fun addHealthRecord(record: HealthRecord) { safeLaunch { repository.insertHealthRecord(record) } }
-    fun updateHealthRecord(record: HealthRecord) { safeLaunch { repository.updateHealthRecord(record) } }
+    fun addHealthRecord(record: HealthRecord) { safeLaunchWithSuccess("Health record saved") { repository.insertHealthRecord(record) } }
+    fun updateHealthRecord(record: HealthRecord) { safeLaunchWithSuccess("Health record updated") { repository.updateHealthRecord(record) } }
     fun deleteHealthRecord(record: HealthRecord) { safeLaunch { repository.deleteHealthRecord(record) } }
 
-    fun addBreedingRecord(record: BreedingRecord) { safeLaunch { repository.insertBreedingRecord(record) } }
-    fun updateBreedingRecord(record: BreedingRecord) { safeLaunch { repository.updateBreedingRecord(record) } }
+    fun addBreedingRecord(record: BreedingRecord) { safeLaunchWithSuccess("Breeding record saved") { repository.insertBreedingRecord(record) } }
+    fun updateBreedingRecord(record: BreedingRecord) { safeLaunchWithSuccess("Breeding record updated") { repository.updateBreedingRecord(record) } }
     fun deleteBreedingRecord(record: BreedingRecord) { safeLaunch { repository.deleteBreedingRecord(record) } }
 
-    fun addMilkLog(log: MilkLog) { safeLaunch { repository.insertMilkLog(log) } }
-    fun updateMilkLog(log: MilkLog) { safeLaunch { repository.updateMilkLog(log) } }
+    fun addMilkLog(log: MilkLog) { safeLaunchWithSuccess("Milk log saved") { repository.insertMilkLog(log) } }
+    fun updateMilkLog(log: MilkLog) { safeLaunchWithSuccess("Milk log updated") { repository.updateMilkLog(log) } }
     fun deleteMilkLog(log: MilkLog) { safeLaunch { repository.deleteMilkLog(log) } }
 
-    fun addFiberLog(log: FiberLog) { safeLaunch { repository.insertFiberLog(log) } }
-    fun updateFiberLog(log: FiberLog) { safeLaunch { repository.updateFiberLog(log) } }
+    fun addFiberLog(log: FiberLog) { safeLaunchWithSuccess("Fiber log saved") { repository.insertFiberLog(log) } }
+    fun updateFiberLog(log: FiberLog) { safeLaunchWithSuccess("Fiber log updated") { repository.updateFiberLog(log) } }
     fun deleteFiberLog(log: FiberLog) { safeLaunch { repository.deleteFiberLog(log) } }
 
-    fun addWeightLog(log: WeightLog) { safeLaunch { repository.insertWeightLog(log) } }
-    fun updateWeightLog(log: WeightLog) { safeLaunch { repository.updateWeightLog(log) } }
+    fun addWeightLog(log: WeightLog) { safeLaunchWithSuccess("Weight recorded") { repository.insertWeightLog(log) } }
+    fun updateWeightLog(log: WeightLog) { safeLaunchWithSuccess("Weight updated") { repository.updateWeightLog(log) } }
     fun deleteWeightLog(log: WeightLog) { safeLaunch { repository.deleteWeightLog(log) } }
 
-    fun addFeedLog(log: FeedLog) { safeLaunch { repository.insertFeedLog(log) } }
-    fun updateFeedLog(log: FeedLog) { safeLaunch { repository.updateFeedLog(log) } }
+    fun addFeedLog(log: FeedLog) { safeLaunchWithSuccess("Feed log saved") { repository.insertFeedLog(log) } }
+    fun updateFeedLog(log: FeedLog) { safeLaunchWithSuccess("Feed log updated") { repository.updateFeedLog(log) } }
     fun deleteFeedLog(log: FeedLog) { safeLaunch { repository.deleteFeedLog(log) } }
 
-    fun addProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.insertProcessingRecord(record) } }
-    fun updateProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.updateProcessingRecord(record) } }
+    fun addProcessingRecord(record: ProcessingRecord) { safeLaunchWithSuccess("Processing record saved") { repository.insertProcessingRecord(record) } }
+    fun updateProcessingRecord(record: ProcessingRecord) { safeLaunchWithSuccess("Processing record updated") { repository.updateProcessingRecord(record) } }
     fun deleteProcessingRecord(record: ProcessingRecord) { safeLaunch { repository.deleteProcessingRecord(record) } }
 
-    fun addEggLog(eggLog: EggLog) { safeLaunch { repository.insertEggLog(eggLog) } }
-    fun updateEggLog(eggLog: EggLog) { safeLaunch { repository.updateEggLog(eggLog) } }
-    fun deleteEggLog(eggLog: EggLog) { safeLaunch { repository.deleteEggLog(eggLog) } }
+    fun addEggLog(eggLog: EggLog) {
+        safeLaunchWithSuccess("Egg log saved") {
+            repository.insertEggLog(eggLog)
+            WidgetRefreshUtil.refresh(context)
+        }
+    }
 
-    fun insertBreed(breed: AnimalBreedInfo) { safeLaunch { repository.insertBreed(breed) } }
-    fun updateBreed(breed: AnimalBreedInfo) { safeLaunch { repository.updateBreed(breed) } }
+    fun updateEggLog(eggLog: EggLog) {
+        safeLaunchWithSuccess("Egg log updated") {
+            repository.updateEggLog(eggLog)
+            WidgetRefreshUtil.refresh(context)
+        }
+    }
+
+    fun deleteEggLog(eggLog: EggLog) {
+        safeLaunch {
+            repository.deleteEggLog(eggLog)
+            WidgetRefreshUtil.refresh(context)
+        }
+    }
+
+    fun insertBreed(breed: AnimalBreedInfo) { safeLaunchWithSuccess("Breed saved") { repository.insertBreed(breed) } }
+    fun updateBreed(breed: AnimalBreedInfo) { safeLaunchWithSuccess("Breed updated") { repository.updateBreed(breed) } }
     fun deleteBreed(breed: AnimalBreedInfo) { safeLaunch { repository.deleteBreed(breed) } }
 
     fun setSpeciesFilter(species: String?) { selectedSpecies.value = species }

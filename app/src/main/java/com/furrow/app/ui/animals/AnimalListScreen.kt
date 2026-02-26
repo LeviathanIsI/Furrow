@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Assessment
 import androidx.compose.material.icons.outlined.EggAlt
 import androidx.compose.material.icons.outlined.Pets
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -60,6 +63,7 @@ import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.components.PrimaryButton
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.components.Tag
 import com.furrow.app.ui.theme.AnimalsGlow
 import com.furrow.app.ui.theme.AppSpacing
@@ -95,6 +99,7 @@ fun AnimalListScreen(
     var animalToDelete by remember { mutableStateOf<Animal?>(null) }
     var eggLogForAction by remember { mutableStateOf<EggLog?>(null) }
     var eggLogToDelete by remember { mutableStateOf<EggLog?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val hasChickens = chickenCount > 0
 
@@ -132,7 +137,26 @@ fun AnimalListScreen(
             }
         },
     ) { padding ->
-        if (animals.isEmpty() && selectedSpecies == null) {
+        if (animals == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+        val animalList = animals!!
+        val searchedAnimals = remember(animalList, searchQuery) {
+            if (searchQuery.isBlank()) animalList
+            else animalList.filter { animal ->
+                val name = animal.name ?: ""
+                name.contains(searchQuery, ignoreCase = true) ||
+                    animal.breed.contains(searchQuery, ignoreCase = true) ||
+                    (animal.tagId ?: "").contains(searchQuery, ignoreCase = true) ||
+                    animal.species.contains(searchQuery, ignoreCase = true) ||
+                    (animal.colorMarkings ?: "").contains(searchQuery, ignoreCase = true)
+            }
+        }
+
+        if (animalList.isEmpty() && selectedSpecies == null && searchQuery.isBlank()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -144,7 +168,7 @@ fun AnimalListScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Outlined.Pets,
-                            contentDescription = null,
+                            contentDescription = "Animal",
                             modifier = Modifier.size(28.dp),
                             tint = AnimalsGlow,
                         )
@@ -187,6 +211,16 @@ fun AnimalListScreen(
                                 accentColor = AnimalsGlow,
                             )
                         }
+                    }
+                }
+
+                if (allActive.size > 5) {
+                    item(key = "search") {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            accentColor = AnimalsGlow,
+                        )
                     }
                 }
 
@@ -273,11 +307,11 @@ fun AnimalListScreen(
                     }
                 }
 
-                if (animals.isNotEmpty()) {
+                if (searchedAnimals.isNotEmpty()) {
                     item(key = "animals_panel") {
                         val view = LocalView.current
                         Panel(contentPadding = PaddingValues(0.dp)) {
-                            animals.forEachIndexed { index, animal ->
+                            searchedAnimals.forEachIndexed { index, animal ->
                                 val displayName = animal.name
                                     ?: "Unnamed ${animal.species.displayFormat()}"
                                 val subtitle = buildString {
@@ -291,7 +325,7 @@ fun AnimalListScreen(
                                     subtitle = subtitle,
                                     metadata = animal.status.displayFormat(),
                                     onClick = { onAnimalClick(animal.id) },
-                                    showDivider = index != animals.lastIndex,
+                                    showDivider = index != searchedAnimals.lastIndex,
                                     modifier = Modifier.pointerInput(animal) {
                                         detectTapGestures(onLongPress = {
                                             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
@@ -305,12 +339,12 @@ fun AnimalListScreen(
                 } else {
                     item(key = "empty_filtered") {
                         EmptyState(
-                            title = "No animals found",
-                            subtitle = "No animals match the selected filter.",
+                            title = if (searchQuery.isNotBlank()) "No animals match \"$searchQuery\"" else "No animals found",
+                            subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "No animals match the selected filter.",
                             icon = {
                                 Icon(
                                     imageVector = Icons.Outlined.Pets,
-                                    contentDescription = null,
+                                    contentDescription = "Animal",
                                     modifier = Modifier.size(28.dp),
                                     tint = TextSecondary,
                                 )

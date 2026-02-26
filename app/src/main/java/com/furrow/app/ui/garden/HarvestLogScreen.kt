@@ -24,8 +24,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -53,7 +57,9 @@ import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.NumberStepper
+import com.furrow.app.ui.components.PhotoAttachment
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
@@ -62,6 +68,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
+import com.furrow.app.util.filterDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +76,7 @@ fun HarvestLogScreen(
     bedId: Long,
     editId: Long = 0L,
     onBack: () -> Unit,
+    onNavigateToPreservation: ((type: String, itemName: String) -> Unit)? = null,
     viewModel: BedDetailViewModel = hiltViewModel(),
 ) {
     val isEditMode = editId > 0L
@@ -79,6 +87,7 @@ fun HarvestLogScreen(
     var amountOz by remember { mutableStateOf("") }
     var count by remember { mutableIntStateOf(0) }
     var notes by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
 
     if (isEditMode) {
         val existingHarvest by viewModel.getHarvestById(editId).collectAsState(initial = null)
@@ -88,6 +97,7 @@ fun HarvestLogScreen(
                 amountOz = harvest.amountOz?.toString() ?: ""
                 count = harvest.count ?: 0
                 notes = harvest.notes ?: ""
+                photoUri = harvest.photoUri
                 if (selectedPlanting == null) {
                     selectedPlanting = plantings.firstOrNull { it.id == harvest.plantingId }
                 }
@@ -97,8 +107,34 @@ fun HarvestLogScreen(
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
+    var showMethodPicker by remember { mutableStateOf(false) }
+    var preserveItemName by remember { mutableStateOf("") }
+
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+
+    val successMsg by viewModel.successMessage.collectAsState()
+    LaunchedEffect(successMsg) {
+        successMsg?.let { msg ->
+            if (onNavigateToPreservation != null && !isEditMode) {
+                val result = snackbarHostState.showSnackbar(
+                    message = msg,
+                    actionLabel = "Preserve",
+                    duration = SnackbarDuration.Short,
+                )
+                viewModel.clearSuccess()
+                if (result == SnackbarResult.ActionPerformed) {
+                    showMethodPicker = true
+                } else {
+                    onBack()
+                }
+            } else {
+                snackbarHostState.showSnackbar(msg, duration = SnackbarDuration.Short)
+                viewModel.clearSuccess()
+                onBack()
+            }
+        }
+    }
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -149,7 +185,7 @@ fun HarvestLogScreen(
 
             AppTextField(
                 value = amountOz,
-                onValueChange = { amountOz = it.filter { c -> c.isDigit() || c == '.' } },
+                onValueChange = { amountOz = it.filterDecimal() },
                 label = { Text("Weight (oz)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
@@ -175,6 +211,11 @@ fun HarvestLogScreen(
                 colors = fieldColors,
             )
 
+            PhotoAttachment(
+                photoUri = photoUri,
+                onPhotoChanged = { photoUri = it },
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // ── Save Button ──
@@ -182,6 +223,7 @@ fun HarvestLogScreen(
                 text = "Save Harvest",
                 onClick = {
                     selectedPlanting?.let { planting ->
+                        preserveItemName = planting.plantName
                         val harvest = HarvestLog(
                             id = if (isEditMode) editId else 0,
                             plantingId = planting.id,
@@ -189,9 +231,9 @@ fun HarvestLogScreen(
                             amountOz = amountOz.toDoubleOrNull(),
                             count = if (count > 0) count else null,
                             notes = notes.ifBlank { null },
+                            photoUri = photoUri,
                         )
                         if (isEditMode) viewModel.updateHarvest(harvest) else viewModel.addHarvest(harvest)
-                        onBack()
                     }
                 },
                 enabled = selectedPlanting != null && (amountOz.isNotBlank() || count > 0),
@@ -201,6 +243,42 @@ fun HarvestLogScreen(
             )
 
             Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+
+    if (showMethodPicker) {
+        ModalBottomSheet(
+            onDismissRequest = { showMethodPicker = false; onBack() },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            containerColor = Charcoal,
+        ) {
+            Text(
+                "Preserve your harvest",
+                style = MaterialTheme.typography.titleMedium,
+                color = TextPrimary,
+                modifier = Modifier.padding(horizontal = AppSpacing.lg, vertical = AppSpacing.sm),
+            )
+            ListRow(
+                title = "Can it",
+                onClick = { onNavigateToPreservation?.invoke("canning", preserveItemName) },
+                showDivider = true,
+            )
+            ListRow(
+                title = "Freeze it",
+                onClick = { onNavigateToPreservation?.invoke("freezing", preserveItemName) },
+                showDivider = true,
+            )
+            ListRow(
+                title = "Dehydrate it",
+                onClick = { onNavigateToPreservation?.invoke("dehydrating", preserveItemName) },
+                showDivider = true,
+            )
+            ListRow(
+                title = "Ferment it",
+                onClick = { onNavigateToPreservation?.invoke("fermenting", preserveItemName) },
+                showDivider = false,
+            )
+            Spacer(modifier = Modifier.height(AppSpacing.xl))
         }
     }
 }

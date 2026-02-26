@@ -1,5 +1,6 @@
 package com.furrow.app.ui.garden
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,9 +53,11 @@ import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
+import com.furrow.app.ui.components.DiscardChangesDialog
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.FurrowBottomSheet
-import com.furrow.app.ui.components.SearchableSelector
 import com.furrow.app.ui.components.StatusPill
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
@@ -66,6 +71,7 @@ import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
 import com.furrow.app.util.DateUtil
+import com.furrow.app.util.filterInteger
 import java.time.Instant
 import java.time.ZoneId
 
@@ -102,6 +108,9 @@ fun PlantingFormScreen(
     var customPlantInitialName by remember { mutableStateOf("") }
     var plantToEdit by remember { mutableStateOf<PlantInfo?>(null) }
     var plantToDelete by remember { mutableStateOf<PlantInfo?>(null) }
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    BackHandler { showDiscardDialog = true }
+    DiscardChangesDialog(showDialog = showDiscardDialog, onDismiss = { showDiscardDialog = false }, onDiscard = { showDiscardDialog = false; onBack() })
 
     if (isEditMode) {
         val existingPlanting by viewModel.getPlantingById(editId).collectAsState(initial = null)
@@ -179,10 +188,35 @@ fun PlantingFormScreen(
         else plantVarieties.filter { it.name.lowercase().contains(query) }
     }
 
+    // -- Companion / Incompatible planting checks --
+    val existingPlantings by viewModel.plantings.collectAsState()
+    val selectedPlantInfo = remember(plantName, allPlants) {
+        allPlants.firstOrNull { it.name.equals(plantName, ignoreCase = true) }
+    }
+    val existingPlantNames = remember(existingPlantings) {
+        existingPlantings.map { it.plantName.lowercase() }.toSet()
+    }
+    val incompatibleInBed = remember(selectedPlantInfo, existingPlantNames) {
+        selectedPlantInfo?.incompatiblePlants
+            ?.split(",")?.map { it.trim().lowercase() }?.filter { it.isNotBlank() && it in existingPlantNames }
+            ?: emptyList()
+    }
+    val companionsInBed = remember(selectedPlantInfo, existingPlantNames) {
+        selectedPlantInfo?.companionPlants
+            ?.split(",")?.map { it.trim().lowercase() }?.filter { it.isNotBlank() && it in existingPlantNames }
+            ?: emptyList()
+    }
+
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+        onDismissed = { onBack() },
+    )
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -190,7 +224,7 @@ fun PlantingFormScreen(
             AppTopBar(
                 title = if (isEditMode) "Edit planting" else "Add planting",
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { showDiscardDialog = true }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -212,90 +246,75 @@ fun PlantingFormScreen(
             // ── Section: Plant Info ──
             GardenSectionHeader("Plant info")
 
-            SearchableSelector(
-                query = plantQuery,
-                onQueryChange = {
-                    plantQuery = it
-                    plantName = it
-                },
-                items = filteredPlants,
-                onItemSelected = { plant ->
-                    plantName = plant.name
-                    plantQuery = plant.name
-                    selectedPlantId = plant.id
+            DropdownSelector(
+                label = "Plant Name",
+                options = filteredPlants.map { it.name },
+                selected = plantQuery,
+                onSelect = { selectedName ->
+                    plantName = selectedName
+                    plantQuery = selectedName
+                    val plant = allPlants.firstOrNull { it.name == selectedName }
+                    selectedPlantId = plant?.id
                     variety = ""
                     varietyQuery = ""
                     varietyId = null
                 },
-                label = "Plant Name",
-                nameSelector = { it.name },
-                isCustom = { it.isCustom },
-                onAddCustom = { name ->
-                    customPlantInitialName = name
-                    showAddCustomPlant = true
-                },
-                onEditCustom = { plant ->
-                    plantToEdit = plant
-                },
-                onDeleteCustom = { plant ->
-                    plantToDelete = plant
-                },
-                itemContent = { plant ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            plant.name,
-                            modifier = Modifier.weight(1f),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TextPrimary,
-                        )
-                        PlantRecommendationBadge(badgeFor(plant))
-                    }
-                },
+                accentColor = GardenGlow,
             )
 
+            if (incompatibleInBed.isNotEmpty()) {
+                Panel {
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
+                    ) {
+                        Icon(
+                            Icons.Outlined.Warning,
+                            contentDescription = null,
+                            tint = StatusBad,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Text(
+                            text = "Incompatible with ${incompatibleInBed.joinToString(", ") { it.replaceFirstChar { c -> c.uppercase() } }} already in this bed",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = StatusBad,
+                        )
+                    }
+                }
+            }
+
+            if (companionsInBed.isNotEmpty()) {
+                Panel {
+                    Row(
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
+                    ) {
+                        Icon(
+                            Icons.Outlined.CheckCircle,
+                            contentDescription = null,
+                            tint = GardenGlow,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Text(
+                            text = "Good companion with ${companionsInBed.joinToString(", ") { it.replaceFirstChar { c -> c.uppercase() } }} in this bed",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = GardenGlow,
+                        )
+                    }
+                }
+            }
+
             if (plantVarieties.isNotEmpty()) {
-                SearchableSelector(
-                    query = varietyQuery,
-                    onQueryChange = {
-                        varietyQuery = it
-                        variety = it
-                        varietyId = null
-                    },
-                    items = filteredVarieties,
-                    onItemSelected = { v ->
-                        variety = v.name
-                        varietyQuery = v.name
-                        varietyId = v.id
-                    },
+                DropdownSelector(
                     label = "Variety (optional)",
-                    nameSelector = { it.name },
-                    isCustom = { it.isCustom },
-                    onAddCustom = { name ->
-                        variety = name
-                        varietyQuery = name
-                        varietyId = null
+                    options = filteredVarieties.map { it.name },
+                    selected = varietyQuery,
+                    onSelect = { selectedName ->
+                        variety = selectedName
+                        varietyQuery = selectedName
+                        varietyId = plantVarieties.firstOrNull { it.name == selectedName }?.id
                     },
-                    itemContent = { v ->
-                        Column {
-                            Text(v.name, style = MaterialTheme.typography.bodyLarge, color = TextPrimary)
-                            if (v.daysToHarvestMin != null || v.daysToHarvestMax != null) {
-                                val dtm = listOfNotNull(
-                                    v.daysToHarvestMin,
-                                    v.daysToHarvestMax,
-                                ).joinToString("-")
-                                Text(
-                                    "${dtm}d" + (v.description?.let { " \u2022 $it" } ?: ""),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextSecondary,
-                                    maxLines = 1,
-                                )
-                            }
-                        }
-                    },
+                    accentColor = GardenGlow,
                 )
             } else {
                 AppTextField(
@@ -319,7 +338,7 @@ fun PlantingFormScreen(
             if (source == "Seed") {
                 AppTextField(
                     value = seedsPlanted,
-                    onValueChange = { seedsPlanted = it.filter { c -> c.isDigit() } },
+                    onValueChange = { seedsPlanted = it.filterInteger() },
                     label = { Text("Seeds Planted (optional)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -351,7 +370,7 @@ fun PlantingFormScreen(
 
                 AppTextField(
                     value = seedsSprouted,
-                    onValueChange = { seedsSprouted = it.filter { c -> c.isDigit() } },
+                    onValueChange = { seedsSprouted = it.filterInteger() },
                     label = { Text("Seeds Sprouted (optional)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -406,7 +425,6 @@ fun PlantingFormScreen(
                         expectedGerminationDate = expectedGermDate,
                     )
                     if (isEditMode) viewModel.updatePlanting(planting) else viewModel.addPlanting(planting)
-                    onBack()
                 },
                 enabled = plantName.isNotBlank(),
                 modifier = Modifier
@@ -546,7 +564,7 @@ private fun AddCustomPlantSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
                 AppTextField(
                     value = minZone,
-                    onValueChange = { minZone = it.filter { c -> c.isDigit() } },
+                    onValueChange = { minZone = it.filterInteger() },
                     label = { Text("Min Zone") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -554,7 +572,7 @@ private fun AddCustomPlantSheet(
                 )
                 AppTextField(
                     value = maxZone,
-                    onValueChange = { maxZone = it.filter { c -> c.isDigit() } },
+                    onValueChange = { maxZone = it.filterInteger() },
                     label = { Text("Max Zone") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -564,7 +582,7 @@ private fun AddCustomPlantSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)) {
                 AppTextField(
                     value = daysMin,
-                    onValueChange = { daysMin = it.filter { c -> c.isDigit() } },
+                    onValueChange = { daysMin = it.filterInteger() },
                     label = { Text("Days Min") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,
@@ -572,7 +590,7 @@ private fun AddCustomPlantSheet(
                 )
                 AppTextField(
                     value = daysMax,
-                    onValueChange = { daysMax = it.filter { c -> c.isDigit() } },
+                    onValueChange = { daysMax = it.filterInteger() },
                     label = { Text("Days Max") },
                     modifier = Modifier.weight(1f),
                     singleLine = true,

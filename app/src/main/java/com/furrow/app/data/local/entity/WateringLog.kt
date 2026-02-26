@@ -24,4 +24,5 @@ data class WateringLog(
     val amountGallons: Float? = null,
     val method: String? = null,
     val notes: String? = null,
+    val photoUri: String? = null,
 )

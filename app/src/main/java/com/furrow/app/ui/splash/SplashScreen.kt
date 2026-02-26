@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
@@ -32,7 +31,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import com.furrow.app.R
+import com.furrow.app.ui.theme.SplashAnimals
+import com.furrow.app.ui.theme.SplashBees
+import com.furrow.app.ui.theme.SplashCompliance
+import com.furrow.app.ui.theme.SplashFinance
+import com.furrow.app.ui.theme.SplashGarden
+import com.furrow.app.ui.theme.SplashLand
+import com.furrow.app.ui.theme.SplashOrchard
+import com.furrow.app.ui.theme.SplashPreservation
+import com.furrow.app.ui.theme.TextMuted
+import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.ui.theme.TextTertiary
+import com.furrow.app.ui.theme.Void
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -51,14 +63,14 @@ private data class SplashModule(
 )
 
 private val modules = listOf(
-    SplashModule("BEES",       Color(0xFFFFB300), 185f, 2.5f,    0,  700,   30f,  1f),  // amber — CW
-    SplashModule("GARDEN",     Color(0xFF6ECF72), 163f, 2.5f,  850,  600,  170f, -1f),  // green — CCW
-    SplashModule("ANIMALS",    Color(0xFFCDA67A), 141f, 2.25f, 1600, 550,  290f,  1f),  // tan — CW
-    SplashModule("ORCHARD",    Color(0xFFE87CB0), 119f, 2.15f, 2300, 500,   75f, -1f),  // rose pink — CCW
-    SplashModule("PRESERVE",   Color(0xFFDA9570),  97f, 2.0f,  2950, 475,  210f,  1f),  // terracotta — CW
-    SplashModule("LAND",       Color(0xFF70C4D8),  75f, 1.9f,  3575, 450,  330f, -1f),  // sky blue — CCW
-    SplashModule("FINANCE",    Color(0xFFB89ADE),  53f, 1.8f,  4175, 425,  120f,  1f),  // lavender — CW
-    SplashModule("COMPLIANCE", Color(0xFF92AAC0),  31f, 1.75f, 4750, 400,  245f, -1f),  // steel blue — CCW
+    SplashModule("BEES",       SplashBees,         185f, 2.5f,    0,  700,   30f,  1f),  // amber — CW
+    SplashModule("GARDEN",     SplashGarden,       163f, 2.5f,  850,  600,  170f, -1f),  // green — CCW
+    SplashModule("ANIMALS",    SplashAnimals,      141f, 2.25f, 1600, 550,  290f,  1f),  // tan — CW
+    SplashModule("ORCHARD",    SplashOrchard,      119f, 2.15f, 2300, 500,   75f, -1f),  // rose pink — CCW
+    SplashModule("PRESERVE",   SplashPreservation,  97f, 2.0f,  2950, 475,  210f,  1f),  // terracotta — CW
+    SplashModule("LAND",       SplashLand,          75f, 1.9f,  3575, 450,  330f, -1f),  // sky blue — CCW
+    SplashModule("FINANCE",    SplashFinance,       53f, 1.8f,  4175, 425,  120f,  1f),  // lavender — CW
+    SplashModule("COMPLIANCE", SplashCompliance,    31f, 1.75f, 4750, 400,  245f, -1f),  // steel blue — CCW
 )
 
 private const val MODULE_COUNT = 8
@@ -283,12 +295,12 @@ fun SplashScreen(onFinished: () -> Unit) {
                 scaleY = canvasScale.value
             },
     ) {
-        val bg = Color(0xFF050505)
-        val gardenGlow = Color(0xFF6ECF72)
-        val beeGlow = Color(0xFFFFB300)
-        val textPrimary = Color(0xFFEAEAEA)
-        val textTertiary = Color(0xFF505050)
-        val textMuted = Color(0xFF333333)
+        val bg = Void
+        val gardenGlow = SplashGarden
+        val beeGlow = SplashBees
+        val textPrimary = TextPrimary
+        val textTertiary = TextTertiary
+        val textMuted = TextMuted
 
         val cx = size.width / 2f
         val cy = size.height / 2f

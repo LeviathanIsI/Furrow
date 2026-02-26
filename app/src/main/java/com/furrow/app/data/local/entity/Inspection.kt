@@ -37,4 +37,5 @@ data class Inspection(
     val notes: String? = null,
     val weatherTemp: Int? = null,
     val weatherCondition: String? = null,
+    val photoUri: String? = null,
 )

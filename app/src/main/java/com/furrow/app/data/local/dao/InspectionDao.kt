@@ -66,6 +66,18 @@ interface InspectionDao {
         ) latest ON i.hiveId = latest.hiveId AND i.date = latest.maxDate
     """)
     fun getLatestInspectionPerHive(): Flow<List<Inspection>>
+
+    @Query("""
+        SELECT h.name AS hiveName, i.date, i.queenSeen, i.temperament,
+               i.broodPattern, i.honeyStores, i.notes
+        FROM inspections i
+        INNER JOIN hives h ON i.hiveId = h.id
+        ORDER BY i.date DESC
+    """)
+    fun getAllInspectionsForExport(): Flow<List<InspectionExport>>
+
+    @Query("SELECT * FROM treatments WHERE endDate IS NULL OR endDate > :now ORDER BY endDate ASC")
+    fun getAllActiveTreatmentsFull(now: Long): Flow<List<Treatment>>
 }
 
 data class HiveLastInspection(
@@ -81,4 +93,14 @@ data class HiveActiveTreatment(
 data class HiveInspectionDate(
     val hiveId: Long,
     val date: Long,
+)
+
+data class InspectionExport(
+    val hiveName: String,
+    val date: Long,
+    val queenSeen: Boolean,
+    val temperament: String?,
+    val broodPattern: String?,
+    val honeyStores: String?,
+    val notes: String?,
 )

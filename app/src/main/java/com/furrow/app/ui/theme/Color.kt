@@ -37,3 +37,13 @@ val ComplianceGlow = Color(0xFF7A8B9E)
 val StatusGood = AccentMutedGreen
 val StatusWarn = Color(0xFFC19A57)
 val StatusBad = Color(0xFFCA6C67)
+
+// Splash ring colors
+val SplashBees = Color(0xFFFFB300)
+val SplashGarden = Color(0xFF6ECF72)
+val SplashAnimals = Color(0xFFCDA67A)
+val SplashOrchard = Color(0xFFE87CB0)
+val SplashPreservation = Color(0xFFDA9570)
+val SplashLand = Color(0xFF70C4D8)
+val SplashFinance = Color(0xFFB89ADE)
+val SplashCompliance = Color(0xFF92AAC0)

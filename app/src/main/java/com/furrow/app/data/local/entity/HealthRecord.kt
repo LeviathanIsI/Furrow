@@ -34,4 +34,5 @@ data class HealthRecord(
     @ColumnInfo(name = "famacha_score") val famachaScore: Int? = null,
     val cost: Double? = null,
     val notes: String? = null,
+    val photoUri: String? = null,
 )

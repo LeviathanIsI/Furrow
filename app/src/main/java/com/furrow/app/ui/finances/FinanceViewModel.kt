@@ -9,15 +9,13 @@ import com.furrow.app.data.local.entity.Revenue
 import com.furrow.app.data.repository.FinanceRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
-import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
@@ -28,15 +26,13 @@ class FinanceViewModel @Inject constructor(
     userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
     private val monthStart = today.withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli()
     private val monthEnd = today.plusMonths(1).withDayOfMonth(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1
 
-    val expenses: StateFlow<List<Expense>> = repository.getAllExpenses()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val expenses: StateFlow<List<Expense>?> = repository.getAllExpenses()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val revenues: StateFlow<List<Revenue>> = repository.getAllRevenues()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -71,23 +67,23 @@ class FinanceViewModel @Inject constructor(
     fun getGrantRecordById(id: Long) = repository.getGrantRecordById(id)
 
     // -- Actions --
-    fun addExpense(e: Expense) { safeLaunch { repository.insertExpense(e) } }
-    fun updateExpense(e: Expense) { safeLaunch { repository.updateExpense(e) } }
+    fun addExpense(e: Expense) { safeLaunchWithSuccess("Expense saved") { repository.insertExpense(e) } }
+    fun updateExpense(e: Expense) { safeLaunchWithSuccess("Expense updated") { repository.updateExpense(e) } }
     fun deleteExpense(e: Expense) { safeLaunch { repository.deleteExpense(e) } }
 
-    fun addRevenue(r: Revenue) { safeLaunch { repository.insertRevenue(r) } }
-    fun updateRevenue(r: Revenue) { safeLaunch { repository.updateRevenue(r) } }
+    fun addRevenue(r: Revenue) { safeLaunchWithSuccess("Revenue saved") { repository.insertRevenue(r) } }
+    fun updateRevenue(r: Revenue) { safeLaunchWithSuccess("Revenue updated") { repository.updateRevenue(r) } }
     fun deleteRevenue(r: Revenue) { safeLaunch { repository.deleteRevenue(r) } }
 
-    fun addMileageLog(m: MileageLog) { safeLaunch { repository.insertMileageLog(m) } }
-    fun updateMileageLog(m: MileageLog) { safeLaunch { repository.updateMileageLog(m) } }
+    fun addMileageLog(m: MileageLog) { safeLaunchWithSuccess("Mileage saved") { repository.insertMileageLog(m) } }
+    fun updateMileageLog(m: MileageLog) { safeLaunchWithSuccess("Mileage updated") { repository.updateMileageLog(m) } }
     fun deleteMileageLog(m: MileageLog) { safeLaunch { repository.deleteMileageLog(m) } }
 
-    fun addBarterTrade(b: BarterTrade) { safeLaunch { repository.insertBarterTrade(b) } }
-    fun updateBarterTrade(b: BarterTrade) { safeLaunch { repository.updateBarterTrade(b) } }
+    fun addBarterTrade(b: BarterTrade) { safeLaunchWithSuccess("Trade saved") { repository.insertBarterTrade(b) } }
+    fun updateBarterTrade(b: BarterTrade) { safeLaunchWithSuccess("Trade updated") { repository.updateBarterTrade(b) } }
     fun deleteBarterTrade(b: BarterTrade) { safeLaunch { repository.deleteBarterTrade(b) } }
 
-    fun addGrantRecord(g: GrantRecord) { safeLaunch { repository.insertGrantRecord(g) } }
-    fun updateGrantRecord(g: GrantRecord) { safeLaunch { repository.updateGrantRecord(g) } }
+    fun addGrantRecord(g: GrantRecord) { safeLaunchWithSuccess("Grant saved") { repository.insertGrantRecord(g) } }
+    fun updateGrantRecord(g: GrantRecord) { safeLaunchWithSuccess("Grant updated") { repository.updateGrantRecord(g) } }
     fun deleteGrantRecord(g: GrantRecord) { safeLaunch { repository.deleteGrantRecord(g) } }
 }

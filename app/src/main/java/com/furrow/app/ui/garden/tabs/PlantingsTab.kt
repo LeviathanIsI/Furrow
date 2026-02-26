@@ -5,8 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +18,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Spa
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,8 +28,10 @@ import com.furrow.app.util.DateUtil
 import com.furrow.app.util.displayFormat
 import com.furrow.app.data.local.entity.Planting
 import com.furrow.app.data.local.entity.PlantingWindow
+import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.PrimaryButton
 import com.furrow.app.ui.components.SecondaryButton
 import com.furrow.app.ui.components.Tag
 import com.furrow.app.ui.garden.HarvestPrediction
@@ -53,33 +52,37 @@ internal fun PlantingsTab(
     onLongPress: (Planting) -> Unit,
     onPlantingClick: (Planting) -> Unit,
     onMarkSprouted: (Planting) -> Unit = {},
+    onPlantNow: (Planting) -> Unit = {},
+    onAddPlanting: () -> Unit = {},
     zone: ZoneId,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
 
     if (plantings.isEmpty()) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "No plantings yet",
-                    style = MaterialTheme.typography.titleMedium,
+        EmptyState(
+            title = "No plantings yet",
+            subtitle = "Add your first planting to start tracking crops in this bed",
+            modifier = modifier,
+            icon = {
+                Icon(
+                    imageVector = Icons.Outlined.Spa,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = GardenGlow,
                 )
-                Text(
-                    text = "Use Add to start tracking crops",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary,
-                )
-            }
-        }
+            },
+            actionLabel = "Add Planting",
+            onAction = onAddPlanting,
+        )
         return
     }
 
     val today = LocalDate.now(zone)
     fun formatShort(date: LocalDate): String = DateUtil.formatShortDate(date, today)
+
+    val activePlantings = plantings.filter { !it.status.equals("planned", ignoreCase = true) }
+    val plannedPlantings = plantings.filter { it.status.equals("planned", ignoreCase = true) }
 
     LazyColumn(
         modifier = modifier,
@@ -91,9 +94,46 @@ internal fun PlantingsTab(
         ),
         verticalArrangement = Arrangement.spacedBy(AppSpacing.sm),
     ) {
+        if (plannedPlantings.isNotEmpty()) {
+            item(key = "planned_section") {
+                Panel(contentPadding = PaddingValues(0.dp)) {
+                    plannedPlantings.forEachIndexed { index, planting ->
+                        val targetStr = planting.targetPlantDate?.let {
+                            val targetDate = Instant.ofEpochMilli(it).atZone(zone).toLocalDate()
+                            "Target: ${formatShort(targetDate)}"
+                        } ?: "Planned"
+
+                        ListRow(
+                            title = buildString {
+                                append(planting.plantName)
+                                planting.variety?.let { append(" · $it") }
+                            },
+                            subtitle = "$targetStr · ${planting.source}",
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Spa,
+                                    contentDescription = "Planned",
+                                    modifier = Modifier.size(18.dp),
+                                    tint = GardenGlow.copy(alpha = 0.5f),
+                                )
+                            },
+                            trailing = {
+                                PrimaryButton(
+                                    text = "Plant Now",
+                                    onClick = { onPlantNow(planting) },
+                                )
+                            },
+                            showDivider = index != plannedPlantings.lastIndex,
+                        )
+                    }
+                }
+            }
+        }
+
+        if (activePlantings.isNotEmpty()) {
         item {
             Panel(contentPadding = PaddingValues(0.dp)) {
-                plantings.forEachIndexed { index, planting ->
+                activePlantings.forEachIndexed { index, planting ->
                     val plantedDate = Instant.ofEpochMilli(planting.datePlanted).atZone(zone).toLocalDate()
                     val prediction = harvestPredictions[planting.id]
                     val displayName = if (planting.variety != null) {
@@ -132,7 +172,7 @@ internal fun PlantingsTab(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.Spa,
-                                contentDescription = null,
+                                contentDescription = "Planting",
                                 modifier = Modifier.size(18.dp),
                                 tint = TextSecondary,
                             )
@@ -167,16 +207,17 @@ internal fun PlantingsTab(
                                 }
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null,
+                                    contentDescription = "View details",
                                     modifier = Modifier.size(20.dp),
                                     tint = TextSecondary,
                                 )
                             }
                         },
-                        showDivider = index != plantings.lastIndex,
+                        showDivider = index != activePlantings.lastIndex,
                     )
                 }
             }
+        }
         }
     }
 }

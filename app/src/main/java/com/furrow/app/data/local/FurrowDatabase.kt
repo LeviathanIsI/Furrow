@@ -1,6 +1,8 @@
 package com.furrow.app.data.local
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.furrow.app.data.local.dao.AnimalBreedInfoDao
 import com.furrow.app.data.local.dao.AnimalDao
@@ -232,10 +234,28 @@ import com.furrow.app.data.local.entity.WeightLog
         ComplianceDocument::class,
         UserModulePreference::class,
     ],
-    version = 17,
+    version = 19,
     exportSchema = false,
 )
 abstract class FurrowDatabase : RoomDatabase() {
+
+    companion object {
+        @Volatile private var INSTANCE: FurrowDatabase? = null
+
+        fun getInstance(context: Context): FurrowDatabase =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    FurrowDatabase::class.java,
+                    "furrow_database",
+                ).addMigrations(
+                    MIGRATION_3_7, MIGRATION_12_13, MIGRATION_16_17, MIGRATION_17_18, MIGRATION_18_19,
+                ).build().also { INSTANCE = it }
+            }
+
+        fun setInstance(db: FurrowDatabase) { INSTANCE = db }
+    }
+
     // Bees
     abstract fun hiveDao(): HiveDao
     abstract fun inspectionDao(): InspectionDao

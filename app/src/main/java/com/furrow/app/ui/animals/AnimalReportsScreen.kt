@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.furrow.app.data.local.entity.EggLog
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTopBar
 import com.furrow.app.ui.components.InlineStat
@@ -23,6 +26,8 @@ import com.furrow.app.ui.components.Panel
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.StatusBad
 import com.furrow.app.ui.theme.TextPrimary
+import com.furrow.app.util.CsvExporter
+import com.furrow.app.util.DateUtil
 import java.util.Locale
 
 @Composable
@@ -35,6 +40,8 @@ fun AnimalReportsScreen(
     val expectedWeeklyEggs by viewModel.expectedWeeklyEggs.collectAsState()
     val layRatePercent by viewModel.layRatePercent.collectAsState()
     val dailyAvg by viewModel.dailyAvg.collectAsState()
+    val eggLogs by viewModel.eggLogs.collectAsState()
+    val context = LocalContext.current
 
     AppScaffold(
         topBar = {
@@ -43,6 +50,19 @@ fun AnimalReportsScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        val csv = buildString {
+                            appendLine("Date,Count,Notes")
+                            eggLogs.forEach { log ->
+                                appendLine("${DateUtil.formatDate(log.date, viewModel.zone)},${log.count},${CsvExporter.escapeCsv(log.notes)}")
+                            }
+                        }
+                        CsvExporter.share(context, "furrow_egg_logs", csv)
+                    }) {
+                        Icon(Icons.Outlined.FileDownload, contentDescription = "Export CSV", tint = TextPrimary)
                     }
                 },
             )

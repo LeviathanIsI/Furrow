@@ -9,13 +9,11 @@ import com.furrow.app.data.local.entity.SalesTracker
 import com.furrow.app.data.repository.ComplianceRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
-import com.furrow.app.util.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.Instant
 import java.time.ZoneId
 import javax.inject.Inject
@@ -26,12 +24,10 @@ class ComplianceViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
 
-    val licensePermits: StateFlow<List<LicensePermit>> = repository.getAllLicensePermits()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val licensePermits: StateFlow<List<LicensePermit>?> = repository.getAllLicensePermits()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private val ninetyDaysFromNow = Instant.now().atZone(zone)
         .plusDays(90).toInstant().toEpochMilli()
@@ -59,23 +55,23 @@ class ComplianceViewModel @Inject constructor(
     fun getDocumentById(id: Long) = repository.getComplianceDocumentById(id)
 
     // -- Actions --
-    fun addLicensePermit(p: LicensePermit) { safeLaunch { repository.insertLicensePermit(p) } }
-    fun updateLicensePermit(p: LicensePermit) { safeLaunch { repository.updateLicensePermit(p) } }
+    fun addLicensePermit(p: LicensePermit) { safeLaunchWithSuccess("Permit saved") { repository.insertLicensePermit(p) } }
+    fun updateLicensePermit(p: LicensePermit) { safeLaunchWithSuccess("Permit updated") { repository.updateLicensePermit(p) } }
     fun deleteLicensePermit(p: LicensePermit) { safeLaunch { repository.deleteLicensePermit(p) } }
 
-    fun addInspection(i: ComplianceInspection) { safeLaunch { repository.insertComplianceInspection(i) } }
-    fun updateInspection(i: ComplianceInspection) { safeLaunch { repository.updateComplianceInspection(i) } }
+    fun addInspection(i: ComplianceInspection) { safeLaunchWithSuccess("Inspection saved") { repository.insertComplianceInspection(i) } }
+    fun updateInspection(i: ComplianceInspection) { safeLaunchWithSuccess("Inspection updated") { repository.updateComplianceInspection(i) } }
     fun deleteInspection(i: ComplianceInspection) { safeLaunch { repository.deleteComplianceInspection(i) } }
 
-    fun addSalesTracker(s: SalesTracker) { safeLaunch { repository.insertSalesTracker(s) } }
-    fun updateSalesTracker(s: SalesTracker) { safeLaunch { repository.updateSalesTracker(s) } }
+    fun addSalesTracker(s: SalesTracker) { safeLaunchWithSuccess("Sale saved") { repository.insertSalesTracker(s) } }
+    fun updateSalesTracker(s: SalesTracker) { safeLaunchWithSuccess("Sale updated") { repository.updateSalesTracker(s) } }
     fun deleteSalesTracker(s: SalesTracker) { safeLaunch { repository.deleteSalesTracker(s) } }
 
-    fun addLabelTemplate(l: LabelTemplate) { safeLaunch { repository.insertLabelTemplate(l) } }
-    fun updateLabelTemplate(l: LabelTemplate) { safeLaunch { repository.updateLabelTemplate(l) } }
+    fun addLabelTemplate(l: LabelTemplate) { safeLaunchWithSuccess("Label saved") { repository.insertLabelTemplate(l) } }
+    fun updateLabelTemplate(l: LabelTemplate) { safeLaunchWithSuccess("Label updated") { repository.updateLabelTemplate(l) } }
     fun deleteLabelTemplate(l: LabelTemplate) { safeLaunch { repository.deleteLabelTemplate(l) } }
 
-    fun addDocument(d: ComplianceDocument) { safeLaunch { repository.insertComplianceDocument(d) } }
-    fun updateDocument(d: ComplianceDocument) { safeLaunch { repository.updateComplianceDocument(d) } }
+    fun addDocument(d: ComplianceDocument) { safeLaunchWithSuccess("Document saved") { repository.insertComplianceDocument(d) } }
+    fun updateDocument(d: ComplianceDocument) { safeLaunchWithSuccess("Document updated") { repository.updateComplianceDocument(d) } }
     fun deleteDocument(d: ComplianceDocument) { safeLaunch { repository.deleteComplianceDocument(d) } }
 }

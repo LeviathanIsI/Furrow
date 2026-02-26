@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,7 @@ import java.time.Instant
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BorderSubtle
 import com.furrow.app.ui.theme.Charcoal
@@ -78,7 +81,8 @@ fun ComplianceListScreen(
     onEditItem: (String, Long) -> Unit,
     viewModel: ComplianceViewModel = hiltViewModel(),
 ) {
-    val permits by viewModel.licensePermits.collectAsState()
+    val permitsOrNull by viewModel.licensePermits.collectAsState()
+    val permits = permitsOrNull.orEmpty()
     val expiringSoon by viewModel.expiringSoonPermits.collectAsState()
     val inspections by viewModel.inspections.collectAsState()
     val sales by viewModel.salesTrackers.collectAsState()
@@ -86,6 +90,45 @@ fun ComplianceListScreen(
     val documents by viewModel.documents.collectAsState()
 
     var selectedTab by remember { mutableIntStateOf(0) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val totalItemCount = permits.size + inspections.size + sales.size +
+        labels.size + documents.size
+
+    val filteredPermits = remember(permits, searchQuery) {
+        if (searchQuery.isBlank()) permits
+        else permits.filter {
+            it.type.contains(searchQuery, ignoreCase = true) ||
+                (it.authority ?: "").contains(searchQuery, ignoreCase = true) ||
+                (it.number ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredInspections = remember(inspections, searchQuery) {
+        if (searchQuery.isBlank()) inspections
+        else inspections.filter {
+            (it.agency ?: "").contains(searchQuery, ignoreCase = true) ||
+                (it.inspector ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredSales = remember(sales, searchQuery) {
+        if (searchQuery.isBlank()) sales
+        else sales.filter {
+            it.productType.contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredLabels = remember(labels, searchQuery) {
+        if (searchQuery.isBlank()) labels
+        else labels.filter {
+            it.productName.contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredDocuments = remember(documents, searchQuery) {
+        if (searchQuery.isBlank()) documents
+        else documents.filter {
+            it.name.contains(searchQuery, ignoreCase = true) ||
+                (it.type ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     // Action sheet state
     var permitForAction by remember { mutableStateOf<LicensePermit?>(null) }
@@ -137,6 +180,18 @@ fun ComplianceListScreen(
             }
         },
     ) { padding ->
+        if (permitsOrNull == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -151,6 +206,15 @@ fun ComplianceListScreen(
             ) {
                 InlineStat(label = "Total Permits", value = "${permits.size}")
                 InlineStat(label = "Expiring Soon", value = "${expiringSoon.size}")
+            }
+
+            if (totalItemCount > 5) {
+                SearchField(
+                    query = searchQuery,
+                    onQueryChange = { searchQuery = it },
+                    accentColor = ComplianceGlow,
+                    modifier = Modifier.padding(horizontal = AppSpacing.md, vertical = AppSpacing.sm),
+                )
             }
 
             // Tab Row
@@ -192,34 +256,44 @@ fun ComplianceListScreen(
             // Tab content
             when (selectedTab) {
                 0 -> PermitsTab(
-                    permits = permits,
+                    permits = filteredPermits,
                     expiringSoonIds = expiringSoonIds,
                     zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { permitForAction = it },
+                    emptyTitle = if (searchQuery.isNotBlank()) "No permits match \"$searchQuery\"" else null,
+                    emptySubtitle = if (searchQuery.isNotBlank()) "Try a different search term." else null,
                 )
                 1 -> InspectionsTab(
-                    inspections = inspections,
+                    inspections = filteredInspections,
                     zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { inspectionForAction = it },
+                    emptyTitle = if (searchQuery.isNotBlank()) "No inspections match \"$searchQuery\"" else null,
+                    emptySubtitle = if (searchQuery.isNotBlank()) "Try a different search term." else null,
                 )
                 2 -> SalesTab(
-                    sales = sales,
+                    sales = filteredSales,
                     modifier = Modifier.weight(1f),
                     onLongPress = { saleForAction = it },
+                    emptyTitle = if (searchQuery.isNotBlank()) "No sales match \"$searchQuery\"" else null,
+                    emptySubtitle = if (searchQuery.isNotBlank()) "Try a different search term." else null,
                 )
                 3 -> LabelsTab(
-                    labels = labels,
+                    labels = filteredLabels,
                     modifier = Modifier.weight(1f),
                     onLongPress = { labelForAction = it },
+                    emptyTitle = if (searchQuery.isNotBlank()) "No labels match \"$searchQuery\"" else null,
+                    emptySubtitle = if (searchQuery.isNotBlank()) "Try a different search term." else null,
                 )
                 4 -> DocumentsTab(
-                    documents = documents,
+                    documents = filteredDocuments,
                     ninetyDaysFromNow = ninetyDaysFromNow,
                     zone = viewModel.zone,
                     modifier = Modifier.weight(1f),
                     onLongPress = { documentForAction = it },
+                    emptyTitle = if (searchQuery.isNotBlank()) "No documents match \"$searchQuery\"" else null,
+                    emptySubtitle = if (searchQuery.isNotBlank()) "Try a different search term." else null,
                 )
             }
         }
@@ -334,17 +408,19 @@ private fun PermitsTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (LicensePermit) -> Unit,
+    emptyTitle: String? = null,
+    emptySubtitle: String? = null,
 ) {
     val view = LocalView.current
     if (permits.isEmpty()) {
         Box(modifier = modifier) {
             EmptyState(
-                title = "No permits",
-                subtitle = "Add your first license or permit to track compliance.",
+                title = emptyTitle ?: "No permits",
+                subtitle = emptySubtitle ?: "Add your first license or permit to track compliance.",
                 icon = {
                     Icon(
                         Icons.Outlined.Balance,
-                        contentDescription = null,
+                        contentDescription = "Compliance",
                         modifier = Modifier.size(28.dp),
                         tint = ComplianceGlow,
                     )
@@ -409,17 +485,19 @@ private fun InspectionsTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (ComplianceInspection) -> Unit,
+    emptyTitle: String? = null,
+    emptySubtitle: String? = null,
 ) {
     val view = LocalView.current
     if (inspections.isEmpty()) {
         Box(modifier = modifier) {
             EmptyState(
-                title = "No inspections",
-                subtitle = "Record compliance inspections to keep track of results.",
+                title = emptyTitle ?: "No inspections",
+                subtitle = emptySubtitle ?: "Record compliance inspections to keep track of results.",
                 icon = {
                     Icon(
                         Icons.Outlined.Balance,
-                        contentDescription = null,
+                        contentDescription = "Compliance",
                         modifier = Modifier.size(28.dp),
                         tint = ComplianceGlow,
                     )
@@ -472,17 +550,19 @@ private fun SalesTab(
     sales: List<SalesTracker>,
     modifier: Modifier = Modifier,
     onLongPress: (SalesTracker) -> Unit,
+    emptyTitle: String? = null,
+    emptySubtitle: String? = null,
 ) {
     val view = LocalView.current
     if (sales.isEmpty()) {
         Box(modifier = modifier) {
             EmptyState(
-                title = "No sales tracked",
-                subtitle = "Track your sales to stay within annual caps.",
+                title = emptyTitle ?: "No sales tracked",
+                subtitle = emptySubtitle ?: "Track your sales to stay within annual caps.",
                 icon = {
                     Icon(
                         Icons.Outlined.Balance,
-                        contentDescription = null,
+                        contentDescription = "Compliance",
                         modifier = Modifier.size(28.dp),
                         tint = ComplianceGlow,
                     )
@@ -530,17 +610,19 @@ private fun LabelsTab(
     labels: List<LabelTemplate>,
     modifier: Modifier = Modifier,
     onLongPress: (LabelTemplate) -> Unit,
+    emptyTitle: String? = null,
+    emptySubtitle: String? = null,
 ) {
     val view = LocalView.current
     if (labels.isEmpty()) {
         Box(modifier = modifier) {
             EmptyState(
-                title = "No label templates",
-                subtitle = "Create label templates for your products.",
+                title = emptyTitle ?: "No label templates",
+                subtitle = emptySubtitle ?: "Create label templates for your products.",
                 icon = {
                     Icon(
                         Icons.Outlined.Balance,
-                        contentDescription = null,
+                        contentDescription = "Compliance",
                         modifier = Modifier.size(28.dp),
                         tint = ComplianceGlow,
                     )
@@ -593,18 +675,20 @@ private fun DocumentsTab(
     zone: ZoneId,
     modifier: Modifier = Modifier,
     onLongPress: (ComplianceDocument) -> Unit,
+    emptyTitle: String? = null,
+    emptySubtitle: String? = null,
 ) {
     val view = LocalView.current
     val now = remember { System.currentTimeMillis() }
     if (documents.isEmpty()) {
         Box(modifier = modifier) {
             EmptyState(
-                title = "No documents",
-                subtitle = "Upload and track compliance documents.",
+                title = emptyTitle ?: "No documents",
+                subtitle = emptySubtitle ?: "Upload and track compliance documents.",
                 icon = {
                     Icon(
                         Icons.Outlined.Balance,
-                        contentDescription = null,
+                        contentDescription = "Compliance",
                         modifier = Modifier.size(28.dp),
                         tint = ComplianceGlow,
                     )

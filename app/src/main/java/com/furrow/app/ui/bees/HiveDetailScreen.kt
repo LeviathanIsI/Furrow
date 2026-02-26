@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Vaccines
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,8 +65,8 @@ import com.furrow.app.data.local.entity.Treatment
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.EmptyState
 import com.furrow.app.ui.components.ErrorSnackbarEffect
-import com.furrow.app.ui.components.GlowCard
 import com.furrow.app.ui.components.ItemActionSheet
+import com.furrow.app.ui.components.SwipeToDeleteItem
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.BeeGlow
 import com.furrow.app.ui.theme.BorderSubtle
@@ -97,6 +98,7 @@ fun HiveDetailScreen(
     var treatmentToDelete by remember { mutableStateOf<Treatment?>(null) }
     var inspectionForAction by remember { mutableStateOf<Inspection?>(null) }
     var treatmentForAction by remember { mutableStateOf<Treatment?>(null) }
+    var showDeleteHiveDialog by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
@@ -114,6 +116,11 @@ fun HiveDetailScreen(
                             contentDescription = "Back",
                             tint = TextPrimary,
                         )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showDeleteHiveDialog = true }) {
+                        Icon(Icons.Outlined.Delete, contentDescription = "Delete hive", tint = StatusBad)
                     }
                 },
             )
@@ -191,12 +198,14 @@ fun HiveDetailScreen(
                     inspections = inspections,
                     modifier = Modifier.weight(1f),
                     onLongPress = { inspectionForAction = it },
+                    onDelete = { viewModel.deleteInspection(it) },
                     zone = viewModel.zone,
                 )
                 1 -> TreatmentList(
                     treatments = treatments,
                     modifier = Modifier.weight(1f),
                     onLongPress = { treatmentForAction = it },
+                    onDelete = { viewModel.deleteTreatment(it) },
                     zone = viewModel.zone,
                 )
             }
@@ -236,6 +245,20 @@ fun HiveDetailScreen(
             onDelete = { treatmentToDelete = treatment },
         )
     }
+
+    if (showDeleteHiveDialog) {
+        hive?.let { h ->
+            DeleteConfirmationDialog(
+                itemName = h.name,
+                onConfirm = {
+                    viewModel.deleteHive(h)
+                    showDeleteHiveDialog = false
+                    onBack()
+                },
+                onDismiss = { showDeleteHiveDialog = false },
+            )
+        }
+    }
 }
 
 // ── Inspection List ──
@@ -245,6 +268,7 @@ private fun InspectionList(
     inspections: List<Inspection>,
     modifier: Modifier = Modifier,
     onLongPress: (Inspection) -> Unit,
+    onDelete: (Inspection) -> Unit,
     zone: java.time.ZoneId,
 ) {
     val view = LocalView.current
@@ -254,7 +278,7 @@ private fun InspectionList(
                 icon = {
                     Icon(
                         Icons.Outlined.Search,
-                        contentDescription = null,
+                        contentDescription = "Inspections",
                         modifier = Modifier.size(40.dp),
                         tint = BeeGlow,
                     )
@@ -262,7 +286,6 @@ private fun InspectionList(
                 title = "No inspections yet",
                 subtitle = "Use Add Inspection to record your first check.",
                 actionLabel = "Add Inspection",
-                glowColor = BeeGlow,
                 onAction = {},
             )
         }
@@ -276,23 +299,28 @@ private fun InspectionList(
                 com.furrow.app.ui.components.Panel(contentPadding = PaddingValues(0.dp)) {
                     inspections.forEachIndexed { index, inspection ->
                         val findings = buildInspectionFindings(inspection)
-                        com.furrow.app.ui.components.ListRow(
-                            modifier = Modifier.pointerInput(inspection) {
-                                detectTapGestures(onLongPress = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(inspection)
-                                })
-                            },
-                            title = DateUtil.formatDate(inspection.date, zone),
-                            subtitle = listOfNotNull(
-                                findings.joinToString(" • ").takeIf { it.isNotBlank() },
-                                inspection.notes,
-                            ).joinToString(" • "),
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Search, contentDescription = null, tint = TextSecondary)
-                            },
-                            showDivider = index != inspections.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "inspection",
+                            onDelete = { onDelete(inspection) },
+                        ) {
+                            com.furrow.app.ui.components.ListRow(
+                                modifier = Modifier.pointerInput(inspection) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(inspection)
+                                    })
+                                },
+                                title = DateUtil.formatDate(inspection.date, zone),
+                                subtitle = listOfNotNull(
+                                    findings.joinToString(" • ").takeIf { it.isNotBlank() },
+                                    inspection.notes,
+                                ).joinToString(" • "),
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Search, contentDescription = "Inspection", tint = TextSecondary)
+                                },
+                                showDivider = index != inspections.lastIndex,
+                            )
+                        }
                     }
                 }
             }
@@ -307,6 +335,7 @@ private fun TreatmentList(
     treatments: List<Treatment>,
     modifier: Modifier = Modifier,
     onLongPress: (Treatment) -> Unit,
+    onDelete: (Treatment) -> Unit,
     zone: java.time.ZoneId,
 ) {
     val view = LocalView.current
@@ -316,7 +345,7 @@ private fun TreatmentList(
                 icon = {
                     Icon(
                         Icons.Outlined.Vaccines,
-                        contentDescription = null,
+                        contentDescription = "Treatments",
                         modifier = Modifier.size(40.dp),
                         tint = BeeGlow,
                     )
@@ -324,7 +353,6 @@ private fun TreatmentList(
                 title = "No treatments yet",
                 subtitle = "Use Add Treatment to record interventions.",
                 actionLabel = "Add Treatment",
-                glowColor = BeeGlow,
                 onAction = {},
             )
         }
@@ -344,20 +372,25 @@ private fun TreatmentList(
                             treatment.endDate?.let { append(" • Until ${DateUtil.formatDate(it, zone)}") }
                             treatment.notes?.let { append(" • $it") }
                         }
-                        com.furrow.app.ui.components.ListRow(
-                            modifier = Modifier.pointerInput(treatment) {
-                                detectTapGestures(onLongPress = {
-                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                    onLongPress(treatment)
-                                })
-                            },
-                            title = DateUtil.formatDate(treatment.date, zone),
-                            subtitle = details,
-                            leadingIcon = {
-                                Icon(Icons.Outlined.Vaccines, contentDescription = null, tint = TextSecondary)
-                            },
-                            showDivider = index != treatments.lastIndex,
-                        )
+                        SwipeToDeleteItem(
+                            itemName = "treatment",
+                            onDelete = { onDelete(treatment) },
+                        ) {
+                            com.furrow.app.ui.components.ListRow(
+                                modifier = Modifier.pointerInput(treatment) {
+                                    detectTapGestures(onLongPress = {
+                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                        onLongPress(treatment)
+                                    })
+                                },
+                                title = DateUtil.formatDate(treatment.date, zone),
+                                subtitle = details,
+                                leadingIcon = {
+                                    Icon(Icons.Outlined.Vaccines, contentDescription = "Treatment", tint = TextSecondary)
+                                },
+                                showDivider = index != treatments.lastIndex,
+                            )
+                        }
                     }
                 }
             }

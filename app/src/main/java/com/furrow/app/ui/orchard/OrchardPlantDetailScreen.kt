@@ -375,7 +375,7 @@ private fun HarvestsTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Inventory2,
-                        contentDescription = null,
+                        contentDescription = "Harvests",
                         tint = OrchardGlow,
                     )
                 },
@@ -432,7 +432,7 @@ private fun PruningTab(
                 icon = {
                     Icon(
                         Icons.Outlined.ContentCut,
-                        contentDescription = null,
+                        contentDescription = "Pruning logs",
                         tint = OrchardGlow,
                     )
                 },
@@ -489,7 +489,7 @@ private fun SpraysTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Spa,
-                        contentDescription = null,
+                        contentDescription = "Spray logs",
                         tint = OrchardGlow,
                     )
                 },
@@ -565,7 +565,7 @@ private fun BloomsTab(
                 icon = {
                     Icon(
                         Icons.Outlined.FilterVintage,
-                        contentDescription = null,
+                        contentDescription = "Bloom records",
                         tint = OrchardGlow,
                     )
                 },
@@ -621,7 +621,7 @@ private fun GraftsTab(
                 icon = {
                     Icon(
                         Icons.Outlined.Agriculture,
-                        contentDescription = null,
+                        contentDescription = "Grafting logs",
                         tint = OrchardGlow,
                     )
                 },

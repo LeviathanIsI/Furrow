@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.BeeCalendar
 import com.furrow.app.data.local.entity.BeeRaceInfo
+import com.furrow.app.data.local.dao.InspectionExport
 import com.furrow.app.data.local.entity.Hive
 import com.furrow.app.data.local.entity.Inspection
 import com.furrow.app.data.local.entity.Treatment
@@ -11,15 +12,16 @@ import com.furrow.app.data.local.entity.UserProfile
 import com.furrow.app.data.repository.BeeRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.WidgetRefreshUtil
+import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.furrow.app.util.DateUtil
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
+
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -27,6 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BeeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: BeeRepository,
     private val userProfileRepository: UserProfileRepository,
     savedStateHandle: SavedStateHandle,
@@ -34,9 +37,7 @@ class BeeViewModel @Inject constructor(
 
     private val hiveId: Long? = savedStateHandle.get<Long>("hiveId")
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
 
     // -- Bee race reference data --
 
@@ -60,8 +61,12 @@ class BeeViewModel @Inject constructor(
 
     // -- List screen --
 
-    val activeHives = repository.getActiveHives()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val activeHives: StateFlow<List<Hive>?> = repository.getActiveHives()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val inspectionsForExport: StateFlow<List<InspectionExport>> =
+        repository.getAllInspectionsForExport()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val lastInspectionDates: StateFlow<Map<Long, Long>> =
         repository.getLastInspectionDatePerHive()
@@ -123,35 +128,53 @@ class BeeViewModel @Inject constructor(
     // -- Actions --
 
     fun addHive(hive: Hive) {
-        safeLaunch { repository.insertHive(hive) }
+        safeLaunchWithSuccess("Hive saved") {
+            repository.insertHive(hive)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun updateHive(hive: Hive) {
-        safeLaunch { repository.updateHive(hive) }
+        safeLaunchWithSuccess("Hive updated") {
+            repository.updateHive(hive)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun deleteHive(hive: Hive) {
-        safeLaunch { repository.deleteHive(hive) }
+        safeLaunch {
+            repository.deleteHive(hive)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun addInspection(inspection: Inspection) {
-        safeLaunch { repository.insertInspection(inspection) }
+        safeLaunchWithSuccess("Inspection saved") {
+            repository.insertInspection(inspection)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun updateInspection(inspection: Inspection) {
-        safeLaunch { repository.updateInspection(inspection) }
+        safeLaunchWithSuccess("Inspection updated") {
+            repository.updateInspection(inspection)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun deleteInspection(inspection: Inspection) {
-        safeLaunch { repository.deleteInspection(inspection) }
+        safeLaunch {
+            repository.deleteInspection(inspection)
+            WidgetRefreshUtil.refresh(context)
+        }
     }
 
     fun addTreatment(treatment: Treatment) {
-        safeLaunch { repository.insertTreatment(treatment) }
+        safeLaunchWithSuccess("Treatment saved") { repository.insertTreatment(treatment) }
     }
 
     fun updateTreatment(treatment: Treatment) {
-        safeLaunch { repository.updateTreatment(treatment) }
+        safeLaunchWithSuccess("Treatment updated") { repository.updateTreatment(treatment) }
     }
 
     fun deleteTreatment(treatment: Treatment) {
@@ -159,11 +182,11 @@ class BeeViewModel @Inject constructor(
     }
 
     fun insertRace(race: BeeRaceInfo) {
-        safeLaunch { repository.insertRace(race) }
+        safeLaunchWithSuccess("Race saved") { repository.insertRace(race) }
     }
 
     fun updateRace(race: BeeRaceInfo) {
-        safeLaunch { repository.updateRace(race) }
+        safeLaunchWithSuccess("Race updated") { repository.updateRace(race) }
     }
 
     fun deleteRace(race: BeeRaceInfo) {

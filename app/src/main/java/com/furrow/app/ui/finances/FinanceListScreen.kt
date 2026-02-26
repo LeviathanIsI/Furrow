@@ -3,6 +3,7 @@ package com.furrow.app.ui.finances
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,9 +17,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.FileDownload
 import androidx.compose.material.icons.outlined.Payments
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
@@ -35,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +62,7 @@ import com.furrow.app.ui.components.InlineStat
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.Charcoal
 import com.furrow.app.ui.theme.FinanceGlow
@@ -64,6 +72,7 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
+import com.furrow.app.util.CsvExporter
 import com.furrow.app.util.DateUtil
 import com.furrow.app.util.displayFormat
 
@@ -82,7 +91,8 @@ fun FinanceListScreen(
     onEditItem: (String, Long) -> Unit,
     viewModel: FinanceViewModel = hiltViewModel(),
 ) {
-    val expenses by viewModel.expenses.collectAsState()
+    val expensesOrNull by viewModel.expenses.collectAsState()
+    val expenses = expensesOrNull.orEmpty()
     val revenues by viewModel.revenues.collectAsState()
     val mileageLogs by viewModel.mileageLogs.collectAsState()
     val barterTrades by viewModel.barterTrades.collectAsState()
@@ -94,6 +104,50 @@ fun FinanceListScreen(
 
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = FinanceTab.entries
+    var searchQuery by remember { mutableStateOf("") }
+
+    val totalItemCount = expenses.size + revenues.size + mileageLogs.size +
+        barterTrades.size + grantRecords.size
+
+    val filteredExpenses = remember(expenses, searchQuery) {
+        if (searchQuery.isBlank()) expenses
+        else expenses.filter { e ->
+            (e.category ?: "").contains(searchQuery, ignoreCase = true) ||
+                (e.vendor ?: "").contains(searchQuery, ignoreCase = true) ||
+                (e.notes ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredRevenues = remember(revenues, searchQuery) {
+        if (searchQuery.isBlank()) revenues
+        else revenues.filter { r ->
+            (r.product ?: "").contains(searchQuery, ignoreCase = true) ||
+                (r.buyer ?: "").contains(searchQuery, ignoreCase = true) ||
+                (r.salesChannel ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredMileage = remember(mileageLogs, searchQuery) {
+        if (searchQuery.isBlank()) mileageLogs
+        else mileageLogs.filter { m ->
+            (m.purpose ?: "").contains(searchQuery, ignoreCase = true) ||
+                (m.origin ?: "").contains(searchQuery, ignoreCase = true) ||
+                (m.destination ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredBarter = remember(barterTrades, searchQuery) {
+        if (searchQuery.isBlank()) barterTrades
+        else barterTrades.filter { t ->
+            (t.partner ?: "").contains(searchQuery, ignoreCase = true) ||
+                (t.givenItems ?: "").contains(searchQuery, ignoreCase = true) ||
+                (t.receivedItems ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredGrants = remember(grantRecords, searchQuery) {
+        if (searchQuery.isBlank()) grantRecords
+        else grantRecords.filter { g ->
+            (g.program ?: "").contains(searchQuery, ignoreCase = true) ||
+                (g.agency ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     var expenseForAction by remember { mutableStateOf<Expense?>(null) }
     var revenueForAction by remember { mutableStateOf<Revenue?>(null) }
@@ -107,13 +161,56 @@ fun FinanceListScreen(
     var barterToDelete by remember { mutableStateOf<BarterTrade?>(null) }
     var grantToDelete by remember { mutableStateOf<GrantRecord?>(null) }
 
+    var showExportMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
         topBar = {
-            AppTopBar(title = "Finances")
+            AppTopBar(
+                title = "Finances",
+                actions = {
+                    Box {
+                        IconButton(onClick = { showExportMenu = true }) {
+                            Icon(Icons.Outlined.FileDownload, contentDescription = "Export CSV", tint = TextPrimary)
+                        }
+                        DropdownMenu(
+                            expanded = showExportMenu,
+                            onDismissRequest = { showExportMenu = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Export expenses") },
+                                onClick = {
+                                    showExportMenu = false
+                                    val csv = buildString {
+                                        appendLine("Date,Vendor,Amount,Category,Subcategory,Tax Deductible,Schedule F Line,Notes")
+                                        expenses.forEach { e ->
+                                            appendLine("${DateUtil.formatDate(e.date, viewModel.zone)},${CsvExporter.escapeCsv(e.vendor)},${e.amount},${CsvExporter.escapeCsv(e.category)},${CsvExporter.escapeCsv(e.subcategory)},${e.taxDeductible},${CsvExporter.escapeCsv(e.scheduleFLine)},${CsvExporter.escapeCsv(e.notes)}")
+                                        }
+                                    }
+                                    CsvExporter.share(context, "furrow_expenses", csv)
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Export revenue") },
+                                onClick = {
+                                    showExportMenu = false
+                                    val csv = buildString {
+                                        appendLine("Date,Buyer,Product,Quantity,Unit,Unit Price,Total,Payment Method,Sales Channel,Notes")
+                                        revenues.forEach { r ->
+                                            appendLine("${DateUtil.formatDate(r.date, viewModel.zone)},${CsvExporter.escapeCsv(r.buyer)},${CsvExporter.escapeCsv(r.product)},${r.quantity ?: ""},${CsvExporter.escapeCsv(r.unit)},${r.unitPrice ?: ""},${r.total ?: ""},${CsvExporter.escapeCsv(r.paymentMethod)},${CsvExporter.escapeCsv(r.salesChannel)},${CsvExporter.escapeCsv(r.notes)}")
+                                        }
+                                    }
+                                    CsvExporter.share(context, "furrow_revenue", csv)
+                                },
+                            )
+                        }
+                    }
+                },
+            )
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -134,6 +231,18 @@ fun FinanceListScreen(
             )
         },
     ) { padding ->
+        if (expensesOrNull == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -207,18 +316,28 @@ fun FinanceListScreen(
                 }
             }
 
+            if (totalItemCount > 5) {
+                item(key = "search") {
+                    SearchField(
+                        query = searchQuery,
+                        onQueryChange = { searchQuery = it },
+                        accentColor = FinanceGlow,
+                    )
+                }
+            }
+
             // -- Tab Content --
             when (tabs[selectedTab]) {
                 FinanceTab.EXPENSES -> {
-                    if (expenses.isEmpty()) {
+                    if (filteredExpenses.isEmpty()) {
                         item(key = "empty_expenses") {
                             EmptyState(
-                                title = "No expenses yet",
-                                subtitle = "Track your farm expenses to stay on top of your budget.",
+                                title = if (searchQuery.isNotBlank()) "No expenses match \"$searchQuery\"" else "No expenses yet",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Track your farm expenses to stay on top of your budget.",
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Outlined.Payments,
-                                        contentDescription = null,
+                                        contentDescription = "Finances",
                                         tint = TextTertiary,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -230,7 +349,7 @@ fun FinanceListScreen(
                     } else {
                         item(key = "expense_panel") {
                             Panel(contentPadding = PaddingValues(0.dp)) {
-                                expenses.forEachIndexed { index, expense ->
+                                filteredExpenses.forEachIndexed { index, expense ->
                                     ListRow(
                                         title = expense.category?.displayFormat() ?: "Expense",
                                         subtitle = listOfNotNull(
@@ -258,7 +377,7 @@ fun FinanceListScreen(
                                             onClick = { onEditItem("expense", expense.id) },
                                             onLongClick = { expenseForAction = expense },
                                         ),
-                                        showDivider = index != expenses.lastIndex,
+                                        showDivider = index != filteredExpenses.lastIndex,
                                     )
                                 }
                             }
@@ -267,15 +386,15 @@ fun FinanceListScreen(
                 }
 
                 FinanceTab.REVENUE -> {
-                    if (revenues.isEmpty()) {
+                    if (filteredRevenues.isEmpty()) {
                         item(key = "empty_revenue") {
                             EmptyState(
-                                title = "No revenue yet",
-                                subtitle = "Record sales and income from your homestead.",
+                                title = if (searchQuery.isNotBlank()) "No revenue matches \"$searchQuery\"" else "No revenue yet",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Record sales and income from your homestead.",
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Outlined.Payments,
-                                        contentDescription = null,
+                                        contentDescription = "Finances",
                                         tint = TextTertiary,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -287,7 +406,7 @@ fun FinanceListScreen(
                     } else {
                         item(key = "revenue_panel") {
                             Panel(contentPadding = PaddingValues(0.dp)) {
-                                revenues.forEachIndexed { index, revenue ->
+                                filteredRevenues.forEachIndexed { index, revenue ->
                                     ListRow(
                                         title = revenue.product ?: "Revenue",
                                         subtitle = listOfNotNull(
@@ -315,7 +434,7 @@ fun FinanceListScreen(
                                             onClick = { onEditItem("revenue", revenue.id) },
                                             onLongClick = { revenueForAction = revenue },
                                         ),
-                                        showDivider = index != revenues.lastIndex,
+                                        showDivider = index != filteredRevenues.lastIndex,
                                     )
                                 }
                             }
@@ -324,15 +443,15 @@ fun FinanceListScreen(
                 }
 
                 FinanceTab.MILEAGE -> {
-                    if (mileageLogs.isEmpty()) {
+                    if (filteredMileage.isEmpty()) {
                         item(key = "empty_mileage") {
                             EmptyState(
-                                title = "No mileage logs yet",
-                                subtitle = "Track farm-related trips for tax deductions.",
+                                title = if (searchQuery.isNotBlank()) "No mileage matches \"$searchQuery\"" else "No mileage logs yet",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Track farm-related trips for tax deductions.",
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Outlined.Payments,
-                                        contentDescription = null,
+                                        contentDescription = "Finances",
                                         tint = TextTertiary,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -344,7 +463,7 @@ fun FinanceListScreen(
                     } else {
                         item(key = "mileage_panel") {
                             Panel(contentPadding = PaddingValues(0.dp)) {
-                                mileageLogs.forEachIndexed { index, log ->
+                                filteredMileage.forEachIndexed { index, log ->
                                     ListRow(
                                         title = buildString {
                                             append("${log.miles ?: 0.0} mi")
@@ -374,7 +493,7 @@ fun FinanceListScreen(
                                             onClick = { onEditItem("mileage", log.id) },
                                             onLongClick = { mileageForAction = log },
                                         ),
-                                        showDivider = index != mileageLogs.lastIndex,
+                                        showDivider = index != filteredMileage.lastIndex,
                                     )
                                 }
                             }
@@ -383,15 +502,15 @@ fun FinanceListScreen(
                 }
 
                 FinanceTab.BARTER -> {
-                    if (barterTrades.isEmpty()) {
+                    if (filteredBarter.isEmpty()) {
                         item(key = "empty_barter") {
                             EmptyState(
-                                title = "No barter trades yet",
-                                subtitle = "Log trades with neighbors and other homesteaders.",
+                                title = if (searchQuery.isNotBlank()) "No trades match \"$searchQuery\"" else "No barter trades yet",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Log trades with neighbors and other homesteaders.",
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Outlined.Payments,
-                                        contentDescription = null,
+                                        contentDescription = "Finances",
                                         tint = TextTertiary,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -403,7 +522,7 @@ fun FinanceListScreen(
                     } else {
                         item(key = "barter_panel") {
                             Panel(contentPadding = PaddingValues(0.dp)) {
-                                barterTrades.forEachIndexed { index, trade ->
+                                filteredBarter.forEachIndexed { index, trade ->
                                     ListRow(
                                         title = trade.partner ?: "Trade",
                                         subtitle = buildString {
@@ -415,7 +534,7 @@ fun FinanceListScreen(
                                             onClick = { onEditItem("barter", trade.id) },
                                             onLongClick = { barterForAction = trade },
                                         ),
-                                        showDivider = index != barterTrades.lastIndex,
+                                        showDivider = index != filteredBarter.lastIndex,
                                     )
                                 }
                             }
@@ -424,15 +543,15 @@ fun FinanceListScreen(
                 }
 
                 FinanceTab.GRANTS -> {
-                    if (grantRecords.isEmpty()) {
+                    if (filteredGrants.isEmpty()) {
                         item(key = "empty_grants") {
                             EmptyState(
-                                title = "No grants yet",
-                                subtitle = "Track grant applications and awards for your operation.",
+                                title = if (searchQuery.isNotBlank()) "No grants match \"$searchQuery\"" else "No grants yet",
+                                subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "Track grant applications and awards for your operation.",
                                 icon = {
                                     Icon(
                                         imageVector = Icons.Outlined.Payments,
-                                        contentDescription = null,
+                                        contentDescription = "Finances",
                                         tint = TextTertiary,
                                         modifier = Modifier.size(28.dp),
                                     )
@@ -444,7 +563,7 @@ fun FinanceListScreen(
                     } else {
                         item(key = "grants_panel") {
                             Panel(contentPadding = PaddingValues(0.dp)) {
-                                grantRecords.forEachIndexed { index, grant ->
+                                filteredGrants.forEachIndexed { index, grant ->
                                     ListRow(
                                         title = grant.program ?: "Grant",
                                         subtitle = listOfNotNull(
@@ -476,7 +595,7 @@ fun FinanceListScreen(
                                             onClick = { onEditItem("grant", grant.id) },
                                             onLongClick = { grantForAction = grant },
                                         ),
-                                        showDivider = index != grantRecords.lastIndex,
+                                        showDivider = index != filteredGrants.lastIndex,
                                     )
                                 }
                             }

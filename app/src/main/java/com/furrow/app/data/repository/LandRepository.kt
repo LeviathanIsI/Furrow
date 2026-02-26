@@ -1,5 +1,6 @@
 package com.furrow.app.data.repository
 
+import com.furrow.app.data.local.dao.BinLastInput
 import com.furrow.app.data.local.dao.CompostBinDao
 import com.furrow.app.data.local.dao.CompostInputLogDao
 import com.furrow.app.data.local.dao.FenceDao
@@ -202,6 +203,9 @@ class LandRepository @Inject constructor(
 
     suspend fun deleteCompostInputLog(log: CompostInputLog) =
         compostInputLogDao.delete(log)
+
+    fun getLastCompostInputDatePerBin(): Flow<List<BinLastInput>> =
+        compostInputLogDao.getLastInputDatePerBin()
 
     // --- Weather Logs ---
 

@@ -9,6 +9,8 @@ import com.furrow.app.data.PlantDatabaseSeeder
 import com.furrow.app.data.local.FurrowDatabase
 import com.furrow.app.data.local.MIGRATION_12_13
 import com.furrow.app.data.local.MIGRATION_16_17
+import com.furrow.app.data.local.MIGRATION_17_18
+import com.furrow.app.data.local.MIGRATION_18_19
 import com.furrow.app.data.local.MIGRATION_3_7
 import com.furrow.app.data.local.dao.AnimalBreedInfoDao
 import com.furrow.app.data.local.dao.AnimalDao
@@ -108,10 +110,10 @@ object AppModule {
             context,
             FurrowDatabase::class.java,
             "furrow_database"
-        ).addMigrations(MIGRATION_3_7, MIGRATION_12_13, MIGRATION_16_17)
-            .fallbackToDestructiveMigration(dropAllTables = true)
+        ).addMigrations(MIGRATION_3_7, MIGRATION_12_13, MIGRATION_16_17, MIGRATION_17_18, MIGRATION_18_19)
             .addCallback(PlantDatabaseSeeder)
             .build()
+            .also { FurrowDatabase.setInstance(it) }
     }
 
     // ── Bees ──

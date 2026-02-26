@@ -3,6 +3,8 @@ package com.furrow.app.ui.garden
 import androidx.lifecycle.viewModelScope
 import com.furrow.app.data.local.entity.GardenBed
 import com.furrow.app.data.local.entity.HarvestLog
+import com.furrow.app.data.local.dao.PlantingExport
+import com.furrow.app.data.local.dao.PlantYield
 import com.furrow.app.data.local.entity.PlantInfo
 import com.furrow.app.data.local.entity.PlantVariety
 import com.furrow.app.data.local.entity.Planting
@@ -12,12 +14,14 @@ import com.furrow.app.data.repository.GardenRepository
 import com.furrow.app.data.repository.PlantRepository
 import com.furrow.app.data.repository.UserProfileRepository
 import com.furrow.app.ui.FurrowViewModel
+import com.furrow.app.util.WidgetRefreshUtil
+import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -28,7 +32,6 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 data class PlantingSummary(
@@ -92,14 +95,13 @@ sealed class GardenAlert(val priority: Int) {
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class GardenViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: GardenRepository,
     private val plantRepository: PlantRepository,
     private val userProfileRepository: UserProfileRepository,
 ) : FurrowViewModel() {
 
-    internal val zone: ZoneId = runBlocking {
-        DateUtil.profileZone(userProfileRepository.getProfile().firstOrNull())
-    }
+    internal val zone: ZoneId = ZoneId.systemDefault()
     private val today = LocalDate.now(zone)
     private val thirtyDaysAgo = today.minusDays(29)
     private val rangeStartMillis = thirtyDaysAgo.atStartOfDay(zone).toInstant().toEpochMilli()
@@ -129,8 +131,8 @@ class GardenViewModel @Inject constructor(
 
     // -- List screen --
 
-    val activeBeds: StateFlow<List<GardenBed>> = repository.getActiveBeds()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val activeBeds: StateFlow<List<GardenBed>?> = repository.getActiveBeds()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val activePlantingCounts: StateFlow<Map<Long, Int>> =
         repository.getActivePlantingCountPerBed()
@@ -188,7 +190,7 @@ class GardenViewModel @Inject constructor(
             harvestPredictions,
             activeBeds,
         ) { plantings, predictions, beds ->
-            val bedMap = beds.associateBy { it.id }
+            val bedMap = beds.orEmpty().associateBy { it.id }
             plantings.filter { planting ->
                 planting.status.lowercase() in listOf("growing", "producing") &&
                     predictions[planting.id]?.isReady == true
@@ -228,7 +230,7 @@ class GardenViewModel @Inject constructor(
             activeBeds,
             userProfile,
         ) { plantings, infoMap, beds, profile ->
-            val bedMap = beds.associateBy { it.id }
+            val bedMap = beds.orEmpty().associateBy { it.id }
             val frostDateStr = profile?.firstFrostDate
             val frostDate = frostDateStr?.let { parseFrostDate(it, today.year) }
             plantings.filter { planting ->
@@ -261,7 +263,7 @@ class GardenViewModel @Inject constructor(
             plantInfoMap,
             activeBeds,
         ) { plantings, infoMap, beds ->
-            val bedMap = beds.associateBy { it.id }
+            val bedMap = beds.orEmpty().associateBy { it.id }
             plantings.filter { it.source.equals("seed", ignoreCase = true) && it.germinationDate == null && it.status.equals("growing", ignoreCase = true) }
                 .mapNotNull { planting ->
                     val plantInfo = infoMap[planting.plantName] ?: return@mapNotNull null
@@ -301,7 +303,7 @@ class GardenViewModel @Inject constructor(
             }
 
             // Priority 2: Watering alerts (beds not watered in 3+ days)
-            val bedMap = beds.associateBy { it.id }
+            val bedMap = beds.orEmpty().associateBy { it.id }
             watered.forEach { (bedId, status) ->
                 val days = status.daysSinceWatered
                 if (days != null && days >= 3) {
@@ -327,6 +329,14 @@ class GardenViewModel @Inject constructor(
         repository.getHarvestsForDateRange(rangeStartMillis, rangeEndMillis)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val yieldByPlant: StateFlow<List<PlantYield>> =
+        repository.getYieldByPlant(rangeStartMillis, rangeEndMillis)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val plantingsForExport: StateFlow<List<PlantingExport>> =
+        repository.getPlantingsForExport()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val dailyHarvests: StateFlow<List<DailyHarvest>> = recentHarvests.map { logs ->
         val byDay = logs.groupBy { log ->
             Instant.ofEpochMilli(log.date).atZone(zone).toLocalDate()
@@ -342,14 +352,31 @@ class GardenViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    // -- Planned plantings --
+
+    val plannedPlantings: StateFlow<List<Planting>> = repository.getPlannedPlantings()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun plantNow(planting: Planting) = safeLaunchWithSuccess("Planting started") {
+        val todayMillis = LocalDate.now(zone).atStartOfDay(zone).toInstant().toEpochMilli()
+        repository.updatePlanting(
+            planting.copy(
+                datePlanted = todayMillis,
+                status = "Growing",
+                targetPlantDate = null,
+            ),
+        )
+        WidgetRefreshUtil.refresh(context)
+    }
+
     // -- Bed actions --
 
     fun addBed(bed: GardenBed) {
-        safeLaunch { repository.insertBed(bed) }
+        safeLaunchWithSuccess("Bed saved") { repository.insertBed(bed) }
     }
 
     fun updateBed(bed: GardenBed) {
-        safeLaunch { repository.updateBed(bed) }
+        safeLaunchWithSuccess("Bed updated") { repository.updateBed(bed) }
     }
 
     fun deleteBed(bed: GardenBed) {

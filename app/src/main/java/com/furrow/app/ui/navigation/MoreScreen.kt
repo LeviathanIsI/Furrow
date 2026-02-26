@@ -32,7 +32,7 @@ fun MoreScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(AppSpacing.md),
+                .padding(start = AppSpacing.md, top = AppSpacing.md, end = AppSpacing.md, bottom = AppSpacing.bottomListPadding),
             verticalArrangement = Arrangement.spacedBy(AppSpacing.md),
         ) {
             Panel(contentPadding = PaddingValues(0.dp)) {
@@ -50,7 +50,7 @@ fun MoreScreen(
                         leadingIcon = {
                             Icon(
                                 imageVector = module.unselectedIcon,
-                                contentDescription = null,
+                                contentDescription = module.displayName,
                                 modifier = Modifier.size(18.dp),
                                 tint = TextSecondary,
                             )

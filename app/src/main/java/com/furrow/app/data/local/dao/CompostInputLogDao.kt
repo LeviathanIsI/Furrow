@@ -26,4 +26,9 @@ interface CompostInputLogDao {
 
     @Query("SELECT * FROM compost_input_logs WHERE id = :id")
     fun getById(id: Long): Flow<CompostInputLog?>
+
+    @Query("SELECT bin_id AS binId, MAX(date) AS lastDate FROM compost_input_logs GROUP BY bin_id")
+    fun getLastInputDatePerBin(): Flow<List<BinLastInput>>
 }
+
+data class BinLastInput(val binId: Long, val lastDate: Long)

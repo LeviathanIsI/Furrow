@@ -28,6 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +49,7 @@ import com.furrow.app.ui.components.InlineStat
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.LandGlow
 import com.furrow.app.ui.theme.TextSecondary
@@ -79,8 +82,9 @@ fun LandListScreen(
     onEditItem: (String, Long) -> Unit,
     viewModel: LandViewModel = hiltViewModel(),
 ) {
-    val properties by viewModel.properties.collectAsState()
+    val propertiesOrNull by viewModel.properties.collectAsState()
     val totalAcreage by viewModel.totalAcreage.collectAsState()
+    val properties = propertiesOrNull.orEmpty()
     val structures by viewModel.structures.collectAsState()
     val fences by viewModel.fences.collectAsState()
     val paddocks by viewModel.paddocks.collectAsState()
@@ -97,9 +101,60 @@ fun LandListScreen(
     var paddocksExpanded by remember { mutableStateOf(true) }
     var waterSourcesExpanded by remember { mutableStateOf(true) }
     var compostExpanded by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val allEmpty = properties.isEmpty() && structures.isEmpty() && fences.isEmpty() &&
         paddocks.isEmpty() && waterSources.isEmpty() && compostBins.isEmpty()
+
+    val totalItemCount = properties.size + structures.size + fences.size +
+        paddocks.size + waterSources.size + compostBins.size
+
+    val filteredProperties = remember(properties, searchQuery) {
+        if (searchQuery.isBlank()) properties
+        else properties.filter {
+            it.name.contains(searchQuery, ignoreCase = true) ||
+                (it.county ?: "").contains(searchQuery, ignoreCase = true) ||
+                (it.zoning ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredStructures = remember(structures, searchQuery) {
+        if (searchQuery.isBlank()) structures
+        else structures.filter {
+            it.name.contains(searchQuery, ignoreCase = true) ||
+                (it.type ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredFences = remember(fences, searchQuery) {
+        if (searchQuery.isBlank()) fences
+        else fences.filter {
+            it.type.contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredPaddocks = remember(paddocks, searchQuery) {
+        if (searchQuery.isBlank()) paddocks
+        else paddocks.filter {
+            it.name.contains(searchQuery, ignoreCase = true) ||
+                (it.forageType ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredWaterSources = remember(waterSources, searchQuery) {
+        if (searchQuery.isBlank()) waterSources
+        else waterSources.filter {
+            it.type.contains(searchQuery, ignoreCase = true) ||
+                (it.pumpType ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredCompostBins = remember(compostBins, searchQuery) {
+        if (searchQuery.isBlank()) compostBins
+        else compostBins.filter {
+            it.type.contains(searchQuery, ignoreCase = true) ||
+                (it.location ?: "").contains(searchQuery, ignoreCase = true)
+        }
+    }
+    val filteredEmpty = searchQuery.isNotBlank() && filteredProperties.isEmpty() &&
+        filteredStructures.isEmpty() && filteredFences.isEmpty() &&
+        filteredPaddocks.isEmpty() && filteredWaterSources.isEmpty() &&
+        filteredCompostBins.isEmpty()
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
@@ -161,6 +216,18 @@ fun LandListScreen(
             }
         },
     ) { padding ->
+        if (propertiesOrNull == null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+
         if (allEmpty) {
             Column(
                 modifier = Modifier
@@ -173,7 +240,7 @@ fun LandListScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Outlined.Landscape,
-                            contentDescription = null,
+                            contentDescription = "Property",
                             modifier = Modifier.size(28.dp),
                             tint = LandGlow,
                         )
@@ -218,14 +285,33 @@ fun LandListScreen(
                     }
                 }
 
+                if (totalItemCount > 5) {
+                    item(key = "search") {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            accentColor = LandGlow,
+                        )
+                    }
+                }
+
+                if (filteredEmpty) {
+                    item(key = "empty_search") {
+                        EmptyState(
+                            title = "No items match \"$searchQuery\"",
+                            subtitle = "Try a different search term.",
+                        )
+                    }
+                }
+
                 // ── Properties Section ───────────────────────────────────
-                if (properties.isNotEmpty()) {
+                if (filteredProperties.isNotEmpty()) {
                     item(key = "properties_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Properties",
-                                subtitle = "${properties.size} total",
-                                showDivider = propertiesExpanded && properties.isNotEmpty(),
+                                subtitle = "${filteredProperties.size} total",
+                                showDivider = propertiesExpanded && filteredProperties.isNotEmpty(),
                                 onClick = { propertiesExpanded = !propertiesExpanded },
                             )
                             AnimatedVisibility(
@@ -234,7 +320,7 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    properties.forEachIndexed { index, property ->
+                                    filteredProperties.forEachIndexed { index, property ->
                                         val subtitle = listOfNotNull(
                                             property.county,
                                             property.zoning,
@@ -244,7 +330,7 @@ fun LandListScreen(
                                             title = property.name,
                                             subtitle = subtitle.ifEmpty { null },
                                             metadata = property.totalAcreage?.let { "%.1f ac".format(it) },
-                                            showDivider = index != properties.lastIndex,
+                                            showDivider = index != filteredProperties.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("property", property.id) },
                                                 onLongClick = { selectedItem = SelectedItem.PropertyItem(property) },
@@ -258,13 +344,13 @@ fun LandListScreen(
                 }
 
                 // ── Structures Section ───────────────────────────────────
-                if (structures.isNotEmpty()) {
+                if (filteredStructures.isNotEmpty()) {
                     item(key = "structures_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Structures",
-                                subtitle = "${structures.size} total",
-                                showDivider = structuresExpanded && structures.isNotEmpty(),
+                                subtitle = "${filteredStructures.size} total",
+                                showDivider = structuresExpanded && filteredStructures.isNotEmpty(),
                                 onClick = { structuresExpanded = !structuresExpanded },
                             )
                             AnimatedVisibility(
@@ -273,7 +359,7 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    structures.forEachIndexed { index, structure ->
+                                    filteredStructures.forEachIndexed { index, structure ->
                                         val subtitle = listOfNotNull(
                                             structure.type,
                                             structure.dimensions,
@@ -283,7 +369,7 @@ fun LandListScreen(
                                             title = structure.name,
                                             subtitle = subtitle.ifEmpty { null },
                                             metadata = structure.conditionRating?.let { "\u2605 $it" },
-                                            showDivider = index != structures.lastIndex,
+                                            showDivider = index != filteredStructures.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("structure", structure.id) },
                                                 onLongClick = { selectedItem = SelectedItem.StructureItem(structure) },
@@ -297,13 +383,13 @@ fun LandListScreen(
                 }
 
                 // ── Fences Section ───────────────────────────────────────
-                if (fences.isNotEmpty()) {
+                if (filteredFences.isNotEmpty()) {
                     item(key = "fences_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Fences",
-                                subtitle = "${fences.size} total",
-                                showDivider = fencesExpanded && fences.isNotEmpty(),
+                                subtitle = "${filteredFences.size} total",
+                                showDivider = fencesExpanded && filteredFences.isNotEmpty(),
                                 onClick = { fencesExpanded = !fencesExpanded },
                             )
                             AnimatedVisibility(
@@ -312,7 +398,7 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    fences.forEachIndexed { index, fence ->
+                                    filteredFences.forEachIndexed { index, fence ->
                                         val lengthStr = fence.lengthFt?.let { "%.0f".format(it) } ?: "?"
                                         val heightStr = fence.heightFt?.let { "%.0f".format(it) } ?: "?"
                                         val subtitle = "${lengthStr} ft \u00D7 ${heightStr} ft"
@@ -321,7 +407,7 @@ fun LandListScreen(
                                             title = fence.type,
                                             subtitle = subtitle,
                                             metadata = fence.conditionRating?.let { "\u2605 $it" },
-                                            showDivider = index != fences.lastIndex,
+                                            showDivider = index != filteredFences.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("fence", fence.id) },
                                                 onLongClick = { selectedItem = SelectedItem.FenceItem(fence) },
@@ -335,13 +421,13 @@ fun LandListScreen(
                 }
 
                 // ── Paddocks Section ─────────────────────────────────────
-                if (paddocks.isNotEmpty()) {
+                if (filteredPaddocks.isNotEmpty()) {
                     item(key = "paddocks_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Paddocks",
-                                subtitle = "${paddocks.size} total",
-                                showDivider = paddocksExpanded && paddocks.isNotEmpty(),
+                                subtitle = "${filteredPaddocks.size} total",
+                                showDivider = paddocksExpanded && filteredPaddocks.isNotEmpty(),
                                 onClick = { paddocksExpanded = !paddocksExpanded },
                             )
                             AnimatedVisibility(
@@ -350,7 +436,7 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    paddocks.forEachIndexed { index, paddock ->
+                                    filteredPaddocks.forEachIndexed { index, paddock ->
                                         val subtitle = listOfNotNull(
                                             paddock.acreage?.let { "%.1f ac".format(it) },
                                             paddock.forageType,
@@ -359,7 +445,7 @@ fun LandListScreen(
                                         ListRow(
                                             title = paddock.name,
                                             subtitle = subtitle.ifEmpty { null },
-                                            showDivider = index != paddocks.lastIndex,
+                                            showDivider = index != filteredPaddocks.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("paddock", paddock.id) },
                                                 onLongClick = { selectedItem = SelectedItem.PaddockItem(paddock) },
@@ -373,13 +459,13 @@ fun LandListScreen(
                 }
 
                 // ── Water Sources Section ────────────────────────────────
-                if (waterSources.isNotEmpty()) {
+                if (filteredWaterSources.isNotEmpty()) {
                     item(key = "water_sources_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Water Sources",
-                                subtitle = "${waterSources.size} total",
-                                showDivider = waterSourcesExpanded && waterSources.isNotEmpty(),
+                                subtitle = "${filteredWaterSources.size} total",
+                                showDivider = waterSourcesExpanded && filteredWaterSources.isNotEmpty(),
                                 onClick = { waterSourcesExpanded = !waterSourcesExpanded },
                             )
                             AnimatedVisibility(
@@ -388,14 +474,14 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    waterSources.forEachIndexed { index, ws ->
+                                    filteredWaterSources.forEachIndexed { index, ws ->
                                         val subtitle = ws.capacityGal?.let { "%.0f gal".format(it) }
 
                                         ListRow(
                                             title = ws.type,
                                             subtitle = subtitle,
                                             metadata = ws.pumpType,
-                                            showDivider = index != waterSources.lastIndex,
+                                            showDivider = index != filteredWaterSources.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("water_source", ws.id) },
                                                 onLongClick = { selectedItem = SelectedItem.WaterSourceItem(ws) },
@@ -409,13 +495,13 @@ fun LandListScreen(
                 }
 
                 // ── Compost Section ──────────────────────────────────────
-                if (compostBins.isNotEmpty()) {
+                if (filteredCompostBins.isNotEmpty()) {
                     item(key = "compost_header") {
                         Panel(contentPadding = PaddingValues(0.dp)) {
                             ListRow(
                                 title = "Compost",
-                                subtitle = "${compostBins.size} total",
-                                showDivider = compostExpanded && compostBins.isNotEmpty(),
+                                subtitle = "${filteredCompostBins.size} total",
+                                showDivider = compostExpanded && filteredCompostBins.isNotEmpty(),
                                 onClick = { compostExpanded = !compostExpanded },
                             )
                             AnimatedVisibility(
@@ -424,7 +510,7 @@ fun LandListScreen(
                                 exit = shrinkVertically(),
                             ) {
                                 Column {
-                                    compostBins.forEachIndexed { index, bin ->
+                                    filteredCompostBins.forEachIndexed { index, bin ->
                                         val subtitle = listOfNotNull(
                                             bin.location,
                                             bin.maturityStage,
@@ -433,7 +519,7 @@ fun LandListScreen(
                                         ListRow(
                                             title = bin.type,
                                             subtitle = subtitle.ifEmpty { null },
-                                            showDivider = index != compostBins.lastIndex,
+                                            showDivider = index != filteredCompostBins.lastIndex,
                                             modifier = Modifier.combinedClickable(
                                                 onClick = { onEditItem("compost_bin", bin.id) },
                                                 onLongClick = { selectedItem = SelectedItem.CompostBinItem(bin) },

@@ -4,6 +4,7 @@ import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Forest
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
@@ -24,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
@@ -39,6 +42,7 @@ import com.furrow.app.ui.components.InlineStat
 import com.furrow.app.ui.components.ItemActionSheet
 import com.furrow.app.ui.components.ListRow
 import com.furrow.app.ui.components.Panel
+import com.furrow.app.ui.components.SearchField
 import com.furrow.app.ui.components.Tag
 import com.furrow.app.ui.theme.AppSpacing
 import com.furrow.app.ui.theme.OrchardGlow
@@ -63,6 +67,7 @@ fun OrchardListScreen(
 
     var plantForAction by remember { mutableStateOf<OrchardPlant?>(null) }
     var plantToDelete by remember { mutableStateOf<OrchardPlant?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
@@ -83,6 +88,21 @@ fun OrchardListScreen(
             }
         },
     ) { padding ->
+        if (plants == null) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@AppScaffold
+        }
+        val plantList = plants!!
+        val searchedPlants = remember(plantList, searchQuery) {
+            if (searchQuery.isBlank()) plantList
+            else plantList.filter { plant ->
+                plant.species.contains(searchQuery, ignoreCase = true) ||
+                    (plant.variety ?: "").contains(searchQuery, ignoreCase = true) ||
+                    (plant.rootstock ?: "").contains(searchQuery, ignoreCase = true)
+            }
+        }
         if (allPlants.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -95,7 +115,7 @@ fun OrchardListScreen(
                     icon = {
                         Icon(
                             Icons.Outlined.Forest,
-                            contentDescription = null,
+                            contentDescription = "Orchard plant",
                             tint = OrchardGlow,
                         )
                     },
@@ -141,6 +161,16 @@ fun OrchardListScreen(
                     }
                 }
 
+                if (allPlants.size > 5) {
+                    item(key = "search") {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = { searchQuery = it },
+                            accentColor = OrchardGlow,
+                        )
+                    }
+                }
+
                 // Summary stats
                 item(key = "summary_stats") {
                     Panel {
@@ -156,30 +186,39 @@ fun OrchardListScreen(
                 }
 
                 // Plant list
-                item(key = "plant_list") {
-                    Panel(contentPadding = PaddingValues(0.dp)) {
-                        plants.forEachIndexed { index, plant ->
-                            val title = buildString {
-                                append(plant.species)
-                                plant.variety?.let { append(" - $it") }
+                if (searchedPlants.isEmpty()) {
+                    item(key = "empty_search") {
+                        EmptyState(
+                            title = if (searchQuery.isNotBlank()) "No plants match \"$searchQuery\"" else "No plants match the selected filter.",
+                            subtitle = if (searchQuery.isNotBlank()) "Try a different search term." else "",
+                        )
+                    }
+                } else {
+                    item(key = "plant_list") {
+                        Panel(contentPadding = PaddingValues(0.dp)) {
+                            searchedPlants.forEachIndexed { index, plant ->
+                                val title = buildString {
+                                    append(plant.species)
+                                    plant.variety?.let { append(" - $it") }
+                                }
+                                val subtitle = buildString {
+                                    append(plant.category.displayFormat())
+                                    plant.rootstock?.let { append(" | $it") }
+                                }
+                                ListRow(
+                                    modifier = Modifier.combinedClickable(
+                                        onClick = { onPlantClick(plant.id) },
+                                        onLongClick = {
+                                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                            plantForAction = plant
+                                        },
+                                    ),
+                                    title = title,
+                                    subtitle = subtitle,
+                                    metadata = plant.status.displayFormat(),
+                                    showDivider = index != searchedPlants.lastIndex,
+                                )
                             }
-                            val subtitle = buildString {
-                                append(plant.category.displayFormat())
-                                plant.rootstock?.let { append(" | $it") }
-                            }
-                            ListRow(
-                                modifier = Modifier.combinedClickable(
-                                    onClick = { onPlantClick(plant.id) },
-                                    onLongClick = {
-                                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                        plantForAction = plant
-                                    },
-                                ),
-                                title = title,
-                                subtitle = subtitle,
-                                metadata = plant.status.displayFormat(),
-                                showDivider = index != plants.lastIndex,
-                            )
                         }
                     }
                 }

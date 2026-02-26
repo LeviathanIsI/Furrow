@@ -100,6 +100,24 @@ val MIGRATION_16_17 = object : Migration(16, 17) {
     }
 }
 
+val MIGRATION_17_18 = object : Migration(17, 18) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE inspections ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE harvest_logs ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE watering_logs ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE pest_disease_logs ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE health_records ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE soil_tests ADD COLUMN photoUri TEXT DEFAULT NULL")
+        db.execSQL("ALTER TABLE compliance_inspections ADD COLUMN photoUri TEXT DEFAULT NULL")
+    }
+}
+
+val MIGRATION_18_19 = object : Migration(18, 19) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE plantings ADD COLUMN targetPlantDate INTEGER DEFAULT NULL")
+    }
+}
+
 val MIGRATION_12_13 = object : Migration(12, 13) {
     override fun migrate(db: SupportSQLiteDatabase) {
         val stats = NACatalogImporter.seed(PlantDatabaseSeeder.appContext, db)

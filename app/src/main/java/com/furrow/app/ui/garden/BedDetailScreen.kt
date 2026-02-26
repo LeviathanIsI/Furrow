@@ -65,9 +65,11 @@ import com.furrow.app.ui.components.AppTextFieldDefaults
 import com.furrow.app.ui.components.DateFieldWithToggle
 import com.furrow.app.ui.components.DeleteConfirmationDialog
 import com.furrow.app.ui.components.ErrorSnackbarEffect
+import com.furrow.app.ui.components.SuccessSnackbarEffect
 import com.furrow.app.ui.components.ExtraAction
 import com.furrow.app.ui.components.FurrowBottomSheet
 import com.furrow.app.ui.components.ItemActionSheet
+import com.furrow.app.ui.components.PhotoAttachment
 import com.furrow.app.ui.garden.tabs.CareLogTab
 import com.furrow.app.ui.garden.tabs.HarvestTotal
 import com.furrow.app.ui.garden.tabs.HarvestsTab
@@ -83,6 +85,8 @@ import com.furrow.app.ui.theme.TextPrimary
 import com.furrow.app.ui.theme.TextSecondary
 import com.furrow.app.ui.theme.TextTertiary
 import com.furrow.app.ui.theme.Void
+import com.furrow.app.util.filterDecimal
+import com.furrow.app.util.filterInteger
 import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,6 +140,11 @@ fun BedDetailScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     ErrorSnackbarEffect(viewModel.errorMessage, viewModel::clearError, snackbarHostState)
+    SuccessSnackbarEffect(
+        message = viewModel.successMessage,
+        onClear = viewModel::clearSuccess,
+        snackbarHostState = snackbarHostState,
+    )
 
     AppScaffold(
         snackbarHostState = snackbarHostState,
@@ -252,12 +261,16 @@ fun BedDetailScreen(
                     onLongPress = { plantingForAction = it },
                     onPlantingClick = { bed?.let { b -> onViewPlanting(b.id, it.id) } },
                     onMarkSprouted = { plantingToMarkSprouted = it },
+                    onPlantNow = { viewModel.plantNow(it) },
+                    onAddPlanting = { bed?.let { b -> onAddPlanting(b.id) } },
                     zone = bedZone,
                     modifier = Modifier.weight(1f),
                 )
                 1 -> HarvestsTab(
                     harvests, plantingNames, harvestTotals,
                     onLongPress = { harvestForAction = it },
+                    onDelete = { viewModel.deleteHarvest(it) },
+                    onLogHarvest = { bed?.let { b -> onAddHarvest(b.id) } },
                     zone = bedZone,
                     modifier = Modifier.weight(1f),
                 )
@@ -268,6 +281,9 @@ fun BedDetailScreen(
                     plantInfoMap = plantInfoMap,
                     onWateringLongPress = { wateringToDelete = it },
                     onFertilizerLongPress = { fertilizerToDelete = it },
+                    onDeleteWatering = { viewModel.deleteWateringLog(it) },
+                    onDeleteFertilizer = { viewModel.deleteFertilizerLog(it) },
+                    onLogCare = { showCareLogPicker = true },
                     zone = bedZone,
                     modifier = Modifier.weight(1f),
                 )
@@ -305,7 +321,7 @@ fun BedDetailScreen(
                     icon = {
                         Icon(
                             Icons.Outlined.BugReport,
-                            contentDescription = null,
+                            contentDescription = "Pest report",
                             tint = StatusBad,
                         )
                     },
@@ -351,7 +367,7 @@ fun BedDetailScreen(
         WateringFormSheet(
             onDismiss = { showWateringForm = false },
             zone = viewModel.zone,
-            onSave = { date, amount, method, notes ->
+            onSave = { date, amount, method, notes, photo ->
                 bed?.let { b ->
                     viewModel.addWateringLog(
                         WateringLog(
@@ -360,6 +376,7 @@ fun BedDetailScreen(
                             amountGallons = amount,
                             method = method,
                             notes = notes,
+                            photoUri = photo,
                         )
                     )
                 }
@@ -413,7 +430,7 @@ fun BedDetailScreen(
             commonPests = plantInfo?.commonPests,
             commonDiseases = plantInfo?.commonDiseases,
             onDismiss = { plantingForPestReport = null },
-            onSave = { type, name, severity, treatment, notes ->
+            onSave = { type, name, severity, treatment, notes, photoUri ->
                 bed?.let { b ->
                     viewModel.addPestLog(
                         PestDiseaseLog(
@@ -425,6 +442,7 @@ fun BedDetailScreen(
                             severity = severity,
                             treatment = treatment,
                             notes = notes,
+                            photoUri = photoUri,
                         )
                     )
                 }
@@ -478,7 +496,7 @@ private fun CareLogPickerSheet(
             ) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = null,
+                    contentDescription = "Add planting",
                     tint = GardenGlow,
                 )
                 Text(
@@ -497,7 +515,7 @@ private fun CareLogPickerSheet(
             ) {
                 Icon(
                     Icons.Default.Add,
-                    contentDescription = null,
+                    contentDescription = "Add care log",
                     tint = StatusWarn,
                 )
                 Text(
@@ -513,13 +531,14 @@ private fun CareLogPickerSheet(
 @Composable
 private fun WateringFormSheet(
     onDismiss: () -> Unit,
-    onSave: (date: Long, amount: Float?, method: String?, notes: String?) -> Unit,
+    onSave: (date: Long, amount: Float?, method: String?, notes: String?, photoUri: String?) -> Unit,
     zone: ZoneId,
 ) {
     var date by remember { mutableStateOf(System.currentTimeMillis()) }
     var amount by remember { mutableStateOf("") }
     var method by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
@@ -534,6 +553,7 @@ private fun WateringFormSheet(
                 amount.toFloatOrNull(),
                 method.ifBlank { null },
                 notes.ifBlank { null },
+                photoUri,
             )
         },
         content = {
@@ -547,7 +567,7 @@ private fun WateringFormSheet(
             )
             AppTextField(
                 value = amount,
-                onValueChange = { amount = it.filter { c -> c.isDigit() || c == '.' } },
+                onValueChange = { amount = it.filterDecimal() },
                 label = { Text("Amount (gallons, optional)") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true,
@@ -568,6 +588,10 @@ private fun WateringFormSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
+            )
+            PhotoAttachment(
+                photoUri = photoUri,
+                onPhotoChanged = { photoUri = it },
             )
         },
     )
@@ -614,7 +638,7 @@ private fun SproutedFormSheet(
             if (planting.seedsPlanted != null) {
                 AppTextField(
                     value = seedsSprouted,
-                    onValueChange = { seedsSprouted = it.filter { c -> c.isDigit() } },
+                    onValueChange = { seedsSprouted = it.filterInteger() },
                     label = { Text("Seeds Sprouted (of ${planting.seedsPlanted})") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -696,13 +720,14 @@ private fun PestDiseaseFormSheet(
     commonPests: String?,
     commonDiseases: String?,
     onDismiss: () -> Unit,
-    onSave: (type: String, name: String, severity: String, treatment: String?, notes: String?) -> Unit,
+    onSave: (type: String, name: String, severity: String, treatment: String?, notes: String?, photoUri: String?) -> Unit,
 ) {
     var type by remember { mutableStateOf("Pest") }
     var name by remember { mutableStateOf("") }
     var severity by remember { mutableStateOf("Moderate") }
     var treatment by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
+    var photoUri by remember { mutableStateOf<String?>(null) }
 
     val suggestions = remember(type, commonPests, commonDiseases) {
         val source = if (type == "Pest") commonPests else commonDiseases
@@ -719,7 +744,7 @@ private fun PestDiseaseFormSheet(
         glowColor = GardenGlow,
         onConfirm = {
             if (name.isNotBlank()) {
-                onSave(type, name.trim(), severity, treatment.ifBlank { null }, notes.ifBlank { null })
+                onSave(type, name.trim(), severity, treatment.ifBlank { null }, notes.ifBlank { null }, photoUri)
             }
         },
         content = {
@@ -792,6 +817,10 @@ private fun PestDiseaseFormSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
                 colors = fieldColors,
+            )
+            PhotoAttachment(
+                photoUri = photoUri,
+                onPhotoChanged = { photoUri = it },
             )
         },
     )
