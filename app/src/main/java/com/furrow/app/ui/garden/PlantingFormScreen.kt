@@ -154,10 +154,8 @@ fun PlantingFormScreen(
         }
     }
 
-    val filteredPlants = remember(allPlants, plantQuery, userZoneNumber, activeWindowNames) {
-        val query = plantQuery.lowercase()
+    val filteredPlants = remember(allPlants, userZoneNumber, activeWindowNames) {
         allPlants
-            .filter { query.isEmpty() || it.name.lowercase().contains(query) }
             .sortedWith(
                 compareBy<PlantInfo> { plant ->
                     val zone = userZoneNumber
@@ -182,11 +180,7 @@ fun PlantingFormScreen(
     val plantVarieties = remember(selectedPlantId, varietiesByPlantId) {
         selectedPlantId?.let { varietiesByPlantId[it] } ?: emptyList()
     }
-    val filteredVarieties = remember(plantVarieties, varietyQuery) {
-        val query = varietyQuery.lowercase()
-        if (query.isEmpty()) plantVarieties
-        else plantVarieties.filter { it.name.lowercase().contains(query) }
-    }
+    val filteredVarieties = plantVarieties
 
     // -- Companion / Incompatible planting checks --
     val existingPlantings by viewModel.plantings.collectAsState()
@@ -249,7 +243,7 @@ fun PlantingFormScreen(
             DropdownSelector(
                 label = "Plant Name",
                 options = filteredPlants.map { it.name },
-                selected = plantQuery,
+                selected = plantName,
                 onSelect = { selectedName ->
                     plantName = selectedName
                     plantQuery = selectedName
@@ -308,7 +302,7 @@ fun PlantingFormScreen(
                 DropdownSelector(
                     label = "Variety (optional)",
                     options = filteredVarieties.map { it.name },
-                    selected = varietyQuery,
+                    selected = variety,
                     onSelect = { selectedName ->
                         variety = selectedName
                         varietyQuery = selectedName

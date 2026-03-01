@@ -164,68 +164,258 @@ private val wisps = listOf(
     ),
 )
 
-// ── Leaf-shaped wipe edge ──
+// ── Scatter leaf system (wipe-in and wipe-out) ──
 
-private val leafBumpSizes = listOf(0.7f, 1.0f, 0.5f, 0.9f, 0.6f, 1.0f, 0.4f, 0.8f, 0.7f, 0.95f, 0.55f, 0.85f)
+private enum class ReactionType { BOUNCE, SLIDE_DOWN, DEFLECT_UP, NONE }
+
+private data class ScatterLeaf(
+    val startYFrac: Float,   // where on the edge it originates (0=top, 1=bottom)
+    val sizeDp: Float,       // leaf width in dp
+    val heightRatio: Float,  // height as fraction of width (0.4-0.6)
+    val rotationDeg: Float,  // total rotation during flight phase
+    val yWaveDp: Float,      // Y-axis wave amplitude in dp during flight
+    val delayFrac: Float,    // delay as fraction of wipe progress (0-0.25)
+    val alpha: Float,        // starting alpha
+    val reaction: ReactionType = ReactionType.NONE,
+    val hitFrac: Float = 1f,    // fraction of leaf progress when it hits the wall
+    val hitXFrac: Float = 0.92f, // X fraction of screen where it hits
+)
+
+// Fly right, hit the right edge, then bounce/slide/deflect
+private val wipeInScatter = listOf(
+    ScatterLeaf(0.25f, 35f, 0.50f, 270f, 20f, 0.00f,  0.6f, ReactionType.BOUNCE,      0.55f, 0.93f),
+    ScatterLeaf(0.45f, 45f, 0.45f, 200f, 30f, 0.075f, 0.5f, ReactionType.SLIDE_DOWN,   0.50f, 0.92f),
+    ScatterLeaf(0.65f, 30f, 0.55f, 320f, 15f, 0.16f,  0.7f, ReactionType.DEFLECT_UP,   0.50f, 0.88f),
+    ScatterLeaf(0.80f, 40f, 0.48f, 250f, 25f, 0.25f,  0.55f, ReactionType.BOUNCE,      0.55f, 0.95f),
+)
+
+// Fly left, blown backward as curtain opens (no reactions — just exit left edge)
+private val wipeOutScatter = listOf(
+    ScatterLeaf(0.20f, 40f, 0.48f, -300f, 25f, 0.00f, 0.6f),
+    ScatterLeaf(0.40f, 32f, 0.52f, -220f, 18f, 0.09f, 0.7f),
+    ScatterLeaf(0.60f, 48f, 0.45f, -280f, 30f, 0.18f, 0.5f),
+    ScatterLeaf(0.85f, 36f, 0.50f, -260f, 22f, 0.25f, 0.6f),
+)
+
+/** Draws a single almond-shaped scatter leaf at [cx],[cy] with given size, rotation, and alpha. */
+private fun DrawScope.drawScatterLeaf(
+    leafPath: Path,
+    cx: Float,
+    cy: Float,
+    widthPx: Float,
+    heightPx: Float,
+    rotation: Float,
+    alpha: Float,
+) {
+    if (alpha <= 0f) return
+    rotate(degrees = rotation, pivot = Offset(cx, cy)) {
+        val halfW = widthPx / 2f
+        val halfH = heightPx / 2f
+
+        leafPath.reset()
+        leafPath.moveTo(cx - halfW, cy)
+        leafPath.cubicTo(
+            cx - halfW * 0.3f, cy - halfH,
+            cx + halfW * 0.3f, cy - halfH,
+            cx + halfW, cy,
+        )
+        leafPath.cubicTo(
+            cx + halfW * 0.3f, cy + halfH,
+            cx - halfW * 0.3f, cy + halfH,
+            cx - halfW, cy,
+        )
+        leafPath.close()
+        drawPath(leafPath, GardenGlow.copy(alpha = alpha))
+    }
+}
 
 /**
- * Builds a closed Path whose one edge is a series of leaf-shaped silhouette bumps.
- * [direction] = +1 → bumps extend RIGHT of [baseX] (wipe-in leading edge).
- * [direction] = -1 → bumps extend LEFT  of [baseX] (wipe-out trailing edge).
- * The path fills everything on the solid-black side of the edge.
+ * Wipe-in scatter: leaves fly LEFT→RIGHT, then hit the right edge and react
+ * (bounce & tumble down, slam & slide, or deflect upward).
  */
-private fun buildLeafEdgePath(
-    baseX: Float,
-    screenHeight: Float,
-    screenWidth: Float,
-    direction: Int,
-    bumpDepth: Float,
-): Path {
-    val path = Path()
-    val leafCount = 12
-    val segmentHeight = screenHeight / leafCount
+private fun DrawScope.drawWipeInScatter(
+    leaves: List<ScatterLeaf>,
+    progress: Float,
+    h: Float,
+) {
+    val w = size.width
+    val leafPath = Path()
 
-    // Start corner on the solid-black side
-    if (direction > 0) {
-        path.moveTo(0f, 0f)
-        path.lineTo(baseX, 0f)
-    } else {
-        path.moveTo(screenWidth, 0f)
-        path.lineTo(baseX, 0f)
+    leaves.forEach { leaf ->
+        val leafP = ((progress - leaf.delayFrac) / (1f - leaf.delayFrac)).coerceIn(0f, 1f)
+        if (leafP <= 0f) return@forEach
+
+        val widthPx = leaf.sizeDp.dp.toPx()
+        val heightPx = widthPx * leaf.heightRatio
+        val wavePx = leaf.yWaveDp.dp.toPx()
+
+        val startX = w * 0.08f
+        val hitX = w * leaf.hitXFrac
+        val startY = h * leaf.startYFrac
+
+        val cx: Float
+        val cy: Float
+        val rotation: Float
+        val currentAlpha: Float
+
+        if (leafP < leaf.hitFrac) {
+            // ── FLIGHT PHASE: gentle arc from left toward the wall ──
+            val fp = leafP / leaf.hitFrac
+            cx = startX + (hitX - startX) * fp
+            cy = startY + sin(fp * Math.PI).toFloat() * wavePx
+            rotation = leaf.rotationDeg * fp
+            currentAlpha = leaf.alpha * if (fp < 0.15f) fp / 0.15f else 1f
+        } else {
+            // ── REACTION PHASE: floaty physics after hitting the right edge ──
+            val rp = (leafP - leaf.hitFrac) / (1f - leaf.hitFrac)
+            val hitRotation = leaf.rotationDeg
+
+            // Alpha stays strong for 70% of reaction, fades only in last 30%
+            val alphaFade = if (rp < 0.7f) 1f else (1f - (rp - 0.7f) / 0.3f)
+
+            when (leaf.reaction) {
+                ReactionType.BOUNCE -> {
+                    val pause = 0.15f // brief stun after impact
+                    if (rp < pause) {
+                        // Stunned — barely moves, selling the moment of contact
+                        val pp = rp / pause
+                        cx = hitX - 3.dp.toPx() * pp
+                        cy = startY + 2.dp.toPx() * pp
+                        rotation = hitRotation + pp * 5f
+                    } else {
+                        val fallP = ((rp - pause) / (1f - pause)).coerceIn(0f, 1f)
+
+                        // Small bounce-back that decelerates smoothly
+                        val bounceBack = w * 0.06f
+                        val bounceCurve = if (fallP < 0.25f) {
+                            sin(fallP / 0.25f * Math.PI).toFloat()
+                        } else {
+                            0f
+                        }
+
+                        // Terminal velocity fall — starts slow, caps gently (NOT quadratic)
+                        val maxFall = h * 0.35f
+                        val easedFall = sin(fallP * Math.PI / 2.0).toFloat()
+
+                        // Pendulum sway — left-right oscillation, dampened over time
+                        val swayPx = 15.dp.toPx()
+                        val swayPhase = fallP * 2.5 * 2.0 * Math.PI
+                        val sway = sin(swayPhase).toFloat() * swayPx * (1f - fallP * 0.5f)
+
+                        // Flutter — rotation rocks back and forth, synced with sway
+                        val flutter = sin(swayPhase * 1.1).toFloat() * 45f * (1f - fallP * 0.3f)
+
+                        cx = hitX - bounceBack * bounceCurve + sway
+                        cy = startY + 2.dp.toPx() + easedFall * maxFall
+                        rotation = hitRotation + flutter
+                    }
+                    currentAlpha = leaf.alpha * alphaFade
+                }
+                ReactionType.SLIDE_DOWN -> {
+                    val pause = 0.12f // flatten against wall moment
+                    if (rp < pause) {
+                        // Impact — sticks to wall, barely moves
+                        val pp = rp / pause
+                        cx = hitX
+                        cy = startY + 1.dp.toPx() * pp
+                        rotation = hitRotation + pp * 3f
+                    } else {
+                        val slideP = ((rp - pause) / (1f - pause)).coerceIn(0f, 1f)
+
+                        // Slow slide with terminal velocity curve
+                        val maxSlide = h * 0.25f
+                        val easedSlide = sin(slideP * Math.PI / 2.0).toFloat()
+
+                        // Gentle wobble against the wall
+                        val wobblePx = 4.dp.toPx()
+                        val wobblePhase = slideP * 3.0 * 2.0 * Math.PI
+                        val wobble = sin(wobblePhase).toFloat() * wobblePx * (1f - slideP * 0.4f)
+
+                        // Flutter rotation while sliding
+                        val flutter = sin(wobblePhase * 1.1).toFloat() * 25f * (1f - slideP * 0.3f)
+
+                        cx = hitX + wobble
+                        cy = startY + 1.dp.toPx() + easedSlide * maxSlide
+                        rotation = hitRotation + flutter
+                    }
+                    currentAlpha = leaf.alpha * alphaFade
+                }
+                ReactionType.DEFLECT_UP -> {
+                    val arcFrac = 0.30f // first 30% = upward deflection arc
+                    if (rp < arcFrac) {
+                        // Upward arc from glancing blow
+                        val ap = rp / arcFrac
+                        val arcUpPx = 60.dp.toPx()
+                        cx = hitX - ap * w * 0.08f
+                        cy = startY - sin(ap * Math.PI).toFloat() * arcUpPx
+                        rotation = hitRotation - ap * 120f
+                    } else {
+                        // Sway + flutter fall after arc peaks
+                        val fallP = ((rp - arcFrac) / (1f - arcFrac)).coerceIn(0f, 1f)
+                        val arcEndX = hitX - w * 0.08f
+                        val arcEndRot = hitRotation - 120f
+
+                        // Terminal velocity fall
+                        val maxFall = h * 0.30f
+                        val easedFall = sin(fallP * Math.PI / 2.0).toFloat()
+
+                        // Pendulum sway
+                        val swayPx = 12.dp.toPx()
+                        val swayPhase = fallP * 2.0 * 2.0 * Math.PI
+                        val sway = sin(swayPhase).toFloat() * swayPx * (1f - fallP * 0.5f)
+
+                        // Flutter synced with sway
+                        val flutter = sin(swayPhase * 1.1).toFloat() * 40f * (1f - fallP * 0.3f)
+
+                        cx = arcEndX - fallP * w * 0.05f + sway
+                        cy = startY + easedFall * maxFall
+                        rotation = arcEndRot + flutter
+                    }
+                    currentAlpha = leaf.alpha * alphaFade
+                }
+                ReactionType.NONE -> {
+                    cx = hitX; cy = startY; rotation = hitRotation; currentAlpha = 0f
+                }
+            }
+        }
+
+        drawScatterLeaf(leafPath, cx, cy, widthPx, heightPx, rotation, currentAlpha)
     }
+}
 
-    // Draw leaf bumps down the edge
-    for (i in 0 until leafCount) {
-        val y1 = i * segmentHeight
-        val yMid = y1 + segmentHeight * 0.5f
-        val y2 = y1 + segmentHeight
-        val bumpSize = bumpDepth * (0.5f + 0.5f * leafBumpSizes[i % leafBumpSizes.size])
-        val tipX = baseX + bumpSize * direction
+/**
+ * Wipe-out scatter: leaves fly RIGHT→LEFT from the trailing edge and exit the screen.
+ * No reactions — they just fly off and fade.
+ */
+private fun DrawScope.drawWipeOutScatter(
+    leaves: List<ScatterLeaf>,
+    progress: Float,
+    edgeX: Float,
+    h: Float,
+) {
+    val travelPx = size.width * 0.15f
+    val leafPath = Path()
 
-        // Upper half: gentle curve to pointed tip
-        path.cubicTo(
-            baseX + bumpSize * 0.3f * direction, y1 + segmentHeight * 0.1f,
-            tipX, y1 + segmentHeight * 0.3f,
-            tipX, yMid,
-        )
-        // Lower half: pointed tip back to base
-        path.cubicTo(
-            tipX, y2 - segmentHeight * 0.3f,
-            baseX + bumpSize * 0.3f * direction, y2 - segmentHeight * 0.1f,
-            baseX, y2,
-        )
+    leaves.forEach { leaf ->
+        val leafP = ((progress - leaf.delayFrac) / (1f - leaf.delayFrac)).coerceIn(0f, 1f)
+        if (leafP <= 0f) return@forEach
+
+        val widthPx = leaf.sizeDp.dp.toPx()
+        val heightPx = widthPx * leaf.heightRatio
+        val wavePx = leaf.yWaveDp.dp.toPx()
+
+        val cx = edgeX - leafP * travelPx
+        val cy = h * leaf.startYFrac + sin(leafP * Math.PI * 2).toFloat() * wavePx
+        val rotation = leaf.rotationDeg * leafP
+
+        val alphaFade = when {
+            leafP < 0.1f -> leafP / 0.1f
+            leafP > 0.7f -> (1f - leafP) / 0.3f
+            else -> 1f
+        }
+
+        drawScatterLeaf(leafPath, cx, cy, widthPx, heightPx, rotation, leaf.alpha * alphaFade)
     }
-
-    // Close back to the starting corner
-    if (direction > 0) {
-        path.lineTo(0f, screenHeight)
-        path.close()
-    } else {
-        path.lineTo(screenWidth, screenHeight)
-        path.close()
-    }
-
-    return path
 }
 
 // ── Transition composable ──
@@ -274,60 +464,69 @@ fun FurrowTransition(controller: TransitionController) {
 
             when (phase) {
                 1 -> {
-                    // Black grows from left with leaf-silhouette leading edge
-                    val bumpDepth = with(density) { 50.dp.toPx() }
-                    val fadeZone = with(density) { 25.dp.toPx() }
-                    // Overshoot: at progress=1.0, baseX=w → bumps past screen → fully covered
-                    val baseX = (w + bumpDepth) * wipeProgress.value - bumpDepth
+                    // Black curtain grows from left with soft gradient leading edge
+                    val fadeWidthPx = with(density) { 80.dp.toPx() }
+                    val edgeX = (w + fadeWidthPx) * wipeProgress.value
 
-                    // Shadow gradient beyond the leaf tips
-                    val shadowStart = (baseX + bumpDepth).coerceIn(0f, w)
-                    val shadowEnd = (shadowStart + fadeZone).coerceAtMost(w)
-                    if (shadowEnd > shadowStart) {
+                    // Solid black: left edge to start of gradient
+                    val solidEnd = (edgeX - fadeWidthPx).coerceAtLeast(0f)
+                    if (solidEnd > 0f) {
+                        drawRect(color = Void, topLeft = Offset.Zero, size = Size(solidEnd, h))
+                    }
+
+                    // Gradient fade: solid black → transparent
+                    val gradEnd = edgeX.coerceAtMost(w)
+                    if (gradEnd > solidEnd) {
                         drawRect(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(Void.copy(alpha = 0.5f), Color.Transparent),
-                                startX = shadowStart,
-                                endX = shadowEnd,
+                                colors = listOf(Void, Color.Transparent),
+                                startX = solidEnd,
+                                endX = gradEnd,
                             ),
-                            topLeft = Offset(shadowStart, 0f),
-                            size = Size(shadowEnd - shadowStart, h),
+                            topLeft = Offset(solidEnd, 0f),
+                            size = Size(gradEnd - solidEnd, h),
                         )
                     }
 
-                    // Solid black with leafy right edge
-                    val leafPath = buildLeafEdgePath(baseX, h, w, +1, bumpDepth)
-                    drawPath(path = leafPath, color = Void)
+                    // Scatter leaves fly right, hit the right edge, then react
+                    drawWipeInScatter(wipeInScatter, wipeProgress.value, h)
                 }
                 2 -> {
                     // Full black background
                     drawRect(color = Void, size = size)
                 }
                 3 -> {
-                    // Black shrinks — trailing edge moves right with leaf-silhouette edge
-                    val bumpDepth = with(density) { 50.dp.toPx() }
-                    val fadeZone = with(density) { 25.dp.toPx() }
-                    // Overshoot: at progress=1.0, baseX past w+bumpDepth → fully revealed
-                    val baseX = (w + 2 * bumpDepth) * wipeProgress.value
+                    // Black curtain reveals from left with soft gradient trailing edge
+                    val fadeWidthPx = with(density) { 80.dp.toPx() }
+                    val edgeX = (w + fadeWidthPx) * wipeProgress.value - fadeWidthPx
 
-                    // Shadow gradient extending LEFT of the leaf tips
-                    val shadowEnd = (baseX - bumpDepth).coerceIn(0f, w)
-                    val shadowStart = (shadowEnd - fadeZone).coerceAtLeast(0f)
-                    if (shadowEnd > shadowStart) {
+                    // Gradient fade: transparent → solid black
+                    val gradStart = edgeX.coerceAtLeast(0f)
+                    val gradEnd = (edgeX + fadeWidthPx).coerceAtMost(w)
+                    if (gradEnd > gradStart) {
                         drawRect(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(Color.Transparent, Void.copy(alpha = 0.5f)),
-                                startX = shadowStart,
-                                endX = shadowEnd,
+                                colors = listOf(Color.Transparent, Void),
+                                startX = gradStart,
+                                endX = gradEnd,
                             ),
-                            topLeft = Offset(shadowStart, 0f),
-                            size = Size(shadowEnd - shadowStart, h),
+                            topLeft = Offset(gradStart, 0f),
+                            size = Size(gradEnd - gradStart, h),
                         )
                     }
 
-                    // Solid black with leafy left edge
-                    val leafPath = buildLeafEdgePath(baseX, h, w, -1, bumpDepth)
-                    drawPath(path = leafPath, color = Void)
+                    // Solid black: end of gradient to right edge
+                    val solidStart = (edgeX + fadeWidthPx).coerceIn(0f, w)
+                    if (solidStart < w) {
+                        drawRect(
+                            color = Void,
+                            topLeft = Offset(solidStart, 0f),
+                            size = Size(w - solidStart, h),
+                        )
+                    }
+
+                    // Scatter leaves fly left, blown backward (no reactions)
+                    drawWipeOutScatter(wipeOutScatter, wipeProgress.value, edgeX, h)
                 }
             }
         }

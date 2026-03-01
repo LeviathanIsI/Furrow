@@ -280,11 +280,9 @@ private fun AddHiveSheet(
     var raceToEdit by remember { mutableStateOf<BeeRaceInfo?>(null) }
     var raceToDelete by remember { mutableStateOf<BeeRaceInfo?>(null) }
 
-    val filteredRaces = remember(allRaces, raceQuery, zoneGroup) {
-        val query = raceQuery.lowercase()
-        val filtered = allRaces.filter { query.isEmpty() || it.name.lowercase().contains(query) }
-        if (zoneGroup == null) filtered
-        else filtered.sortedWith(
+    val filteredRaces = remember(allRaces, zoneGroup) {
+        if (zoneGroup == null) allRaces
+        else allRaces.sortedWith(
             compareBy<BeeRaceInfo> {
                 when (climateBadgeFor(it, zoneGroup)) {
                     ClimateBadge.GREAT -> 0
@@ -331,7 +329,7 @@ private fun AddHiveSheet(
             DropdownSelector(
                 label = "Bee Race (optional)",
                 options = filteredRaces.map { it.name },
-                selected = raceQuery,
+                selected = selectedRace ?: "",
                 onSelect = {
                     selectedRace = it.ifBlank { null }
                     raceQuery = it

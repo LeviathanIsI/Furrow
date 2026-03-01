@@ -1,7 +1,8 @@
 package com.furrow.app.ui.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Balance
 import androidx.compose.material.icons.filled.BugReport
@@ -65,7 +66,6 @@ import com.furrow.app.ui.preservation.PantryScreen
 import com.furrow.app.ui.preservation.PreservationFormScreen
 import com.furrow.app.ui.preservation.PreservationListScreen
 import com.furrow.app.ui.settings.SettingsScreen
-import com.furrow.app.ui.transition.LocalTransitionController
 import android.net.Uri
 
 sealed class Screen(
@@ -127,17 +127,13 @@ fun FurrowNavGraph(
     enabledModules: Set<String> = emptySet(),
     deepLinkAction: String? = null,
 ) {
-    val tc = LocalTransitionController.current
-
     val navigateToBottomTab: (Screen) -> Unit = { screen ->
-        tc.navigateWithTransition {
-            navController.navigate(screen.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
+        navController.navigate(screen.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
             }
+            launchSingleTop = true
+            restoreState = true
         }
     }
 
@@ -145,17 +141,17 @@ fun FurrowNavGraph(
         navController = navController,
         startDestination = Screen.Home.route,
         modifier = modifier,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None },
+        enterTransition = { fadeIn(tween(200)) },
+        exitTransition = { fadeOut(tween(200)) },
+        popEnterTransition = { fadeIn(tween(200)) },
+        popExitTransition = { fadeOut(tween(200)) },
     ) {
         composable(Screen.Home.route) {
             HomeScreen(
-                onSettingsClick = { tc.navigateWithTransition { navController.navigate("settings") } },
+                onSettingsClick = { navController.navigate("settings") },
                 onNavigateToBees = { navigateToBottomTab(Screen.Bees) },
                 onNavigateToGarden = { navigateToBottomTab(Screen.Garden) },
-                onNavigateToEggLog = { tc.navigateWithTransition { navController.navigate("animals/egg-log") } },
+                onNavigateToEggLog = { navController.navigate("animals/egg-log") },
                 onNavigateToInspection = { navigateToBottomTab(Screen.Bees) },
                 onNavigateToHarvest = { navigateToBottomTab(Screen.Garden) },
                 onNavigateToAnimals = { navigateToBottomTab(Screen.Animals) },
@@ -164,7 +160,7 @@ fun FurrowNavGraph(
                 onNavigateToLand = { navigateToBottomTab(Screen.Land) },
                 onNavigateToFinances = { navigateToBottomTab(Screen.Finances) },
                 onNavigateToCompliance = { navigateToBottomTab(Screen.Compliance) },
-                onNavigateToRoute = { route -> tc.navigateWithTransition { navController.navigate(route) } },
+                onNavigateToRoute = { route -> navController.navigate(route) },
                 enabledModules = enabledModules,
                 deepLinkAction = deepLinkAction,
             )
@@ -172,7 +168,7 @@ fun FurrowNavGraph(
 
         composable("settings") {
             SettingsScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -180,14 +176,14 @@ fun FurrowNavGraph(
 
         composable(Screen.Bees.route) {
             HiveListScreen(
-                onHiveClick = { hiveId -> tc.navigateWithTransition { navController.navigate("bees/$hiveId") } },
-                onReportsClick = { tc.navigateWithTransition { navController.navigate("bees/reports") } },
+                onHiveClick = { hiveId -> navController.navigate("bees/$hiveId") },
+                onReportsClick = { navController.navigate("bees/reports") },
             )
         }
 
         composable("bees/reports") {
             BeeReportsScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -196,11 +192,11 @@ fun FurrowNavGraph(
             arguments = listOf(navArgument("hiveId") { type = NavType.LongType })
         ) {
             HiveDetailScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onAddInspection = { hiveId -> tc.navigateWithTransition { navController.navigate("bees/$hiveId/add-inspection") } },
-                onAddTreatment = { hiveId -> tc.navigateWithTransition { navController.navigate("bees/$hiveId/add-treatment") } },
-                onEditInspection = { hiveId, editId -> tc.navigateWithTransition { navController.navigate("bees/$hiveId/add-inspection?editId=$editId") } },
-                onEditTreatment = { hiveId, editId -> tc.navigateWithTransition { navController.navigate("bees/$hiveId/add-treatment?editId=$editId") } },
+                onBack = { navController.popBackStack() },
+                onAddInspection = { hiveId -> navController.navigate("bees/$hiveId/add-inspection") },
+                onAddTreatment = { hiveId -> navController.navigate("bees/$hiveId/add-treatment") },
+                onEditInspection = { hiveId, editId -> navController.navigate("bees/$hiveId/add-inspection?editId=$editId") },
+                onEditTreatment = { hiveId, editId -> navController.navigate("bees/$hiveId/add-treatment?editId=$editId") },
             )
         }
 
@@ -216,7 +212,7 @@ fun FurrowNavGraph(
             InspectionFormScreen(
                 hiveId = hiveId,
                 editId = editId,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -232,7 +228,7 @@ fun FurrowNavGraph(
             TreatmentFormScreen(
                 hiveId = hiveId,
                 editId = editId,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -240,30 +236,30 @@ fun FurrowNavGraph(
 
         composable(Screen.Garden.route) {
             GardenBedListScreen(
-                onBedClick = { bedId -> tc.navigateWithTransition { navController.navigate("garden/$bedId") } },
-                onReportsClick = { tc.navigateWithTransition { navController.navigate("garden/reports") } },
-                onCalendarClick = { tc.navigateWithTransition { navController.navigate("garden/calendar") } },
-                onSeasonPlannerClick = { tc.navigateWithTransition { navController.navigate("garden/season-planner") } },
+                onBedClick = { bedId -> navController.navigate("garden/$bedId") },
+                onReportsClick = { navController.navigate("garden/reports") },
+                onCalendarClick = { navController.navigate("garden/calendar") },
+                onSeasonPlannerClick = { navController.navigate("garden/season-planner") },
             )
         }
 
         composable("garden/season-planner") {
             SeasonPlannerScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onFinished = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
+                onFinished = { navController.popBackStack() },
             )
         }
 
         composable("garden/calendar") {
             PlantingCalendarScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onBedClick = { bedId -> tc.navigateWithTransition { navController.navigate("garden/$bedId") } },
+                onBack = { navController.popBackStack() },
+                onBedClick = { bedId -> navController.navigate("garden/$bedId") },
             )
         }
 
         composable("garden/reports") {
             GardenReportsScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -272,12 +268,12 @@ fun FurrowNavGraph(
             arguments = listOf(navArgument("bedId") { type = NavType.LongType })
         ) {
             BedDetailScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onAddPlanting = { bedId -> tc.navigateWithTransition { navController.navigate("garden/$bedId/add-planting") } },
-                onAddHarvest = { bedId -> tc.navigateWithTransition { navController.navigate("garden/$bedId/add-harvest") } },
-                onEditPlanting = { bedId, editId -> tc.navigateWithTransition { navController.navigate("garden/$bedId/add-planting?editId=$editId") } },
-                onEditHarvest = { bedId, editId -> tc.navigateWithTransition { navController.navigate("garden/$bedId/add-harvest?editId=$editId") } },
-                onViewPlanting = { bedId, plantingId -> tc.navigateWithTransition { navController.navigate("garden/$bedId/planting/$plantingId") } },
+                onBack = { navController.popBackStack() },
+                onAddPlanting = { bedId -> navController.navigate("garden/$bedId/add-planting") },
+                onAddHarvest = { bedId -> navController.navigate("garden/$bedId/add-harvest") },
+                onEditPlanting = { bedId, editId -> navController.navigate("garden/$bedId/add-planting?editId=$editId") },
+                onEditHarvest = { bedId, editId -> navController.navigate("garden/$bedId/add-harvest?editId=$editId") },
+                onViewPlanting = { bedId, plantingId -> navController.navigate("garden/$bedId/planting/$plantingId") },
             )
         }
 
@@ -293,7 +289,7 @@ fun FurrowNavGraph(
             PlantingFormScreen(
                 bedId = bedId,
                 editId = editId,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -309,13 +305,11 @@ fun FurrowNavGraph(
             HarvestLogScreen(
                 bedId = bedId,
                 editId = editId,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
                 onNavigateToPreservation = if ("preservation" in enabledModules) {
                     { type, itemName ->
-                        tc.navigateWithTransition {
-                            navController.popBackStack()
-                            navController.navigate("preservation/add?type=$type&editId=0&itemName=${Uri.encode(itemName)}")
-                        }
+                        navController.popBackStack()
+                        navController.navigate("preservation/add?type=$type&editId=0&itemName=${Uri.encode(itemName)}")
                     }
                 } else null,
             )
@@ -329,7 +323,7 @@ fun FurrowNavGraph(
             )
         ) {
             PlantDetailScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -337,11 +331,11 @@ fun FurrowNavGraph(
 
         composable(Screen.Animals.route) {
             AnimalListScreen(
-                onAnimalClick = { animalId -> tc.navigateWithTransition { navController.navigate("animals/$animalId") } },
-                onAddAnimal = { tc.navigateWithTransition { navController.navigate("animals/add?type=animal") } },
-                onAddEgg = { tc.navigateWithTransition { navController.navigate("animals/egg-log") } },
-                onEditEgg = { editId -> tc.navigateWithTransition { navController.navigate("animals/egg-log?editId=$editId") } },
-                onReportsClick = { tc.navigateWithTransition { navController.navigate("animals/reports") } },
+                onAnimalClick = { animalId -> navController.navigate("animals/$animalId") },
+                onAddAnimal = { navController.navigate("animals/add?type=animal") },
+                onAddEgg = { navController.navigate("animals/egg-log") },
+                onEditEgg = { editId -> navController.navigate("animals/egg-log?editId=$editId") },
+                onReportsClick = { navController.navigate("animals/reports") },
             )
         }
 
@@ -350,9 +344,9 @@ fun FurrowNavGraph(
             arguments = listOf(navArgument("animalId") { type = NavType.LongType }),
         ) {
             AnimalDetailScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onAddLog = { animalId, logType -> tc.navigateWithTransition { navController.navigate("animals/$animalId/add?type=$logType") } },
-                onEditLog = { animalId, logType, editId -> tc.navigateWithTransition { navController.navigate("animals/$animalId/add?type=$logType&editId=$editId") } },
+                onBack = { navController.popBackStack() },
+                onAddLog = { animalId, logType -> navController.navigate("animals/$animalId/add?type=$logType") },
+                onEditLog = { animalId, logType, editId -> navController.navigate("animals/$animalId/add?type=$logType&editId=$editId") },
             )
         }
 
@@ -366,7 +360,7 @@ fun FurrowNavGraph(
             AnimalFormScreen(
                 type = backStackEntry.arguments?.getString("type") ?: "animal",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -382,7 +376,7 @@ fun FurrowNavGraph(
                 type = backStackEntry.arguments?.getString("type") ?: "health",
                 animalId = backStackEntry.arguments?.getLong("animalId") ?: 0L,
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -395,13 +389,13 @@ fun FurrowNavGraph(
             val editId = backStackEntry.arguments?.getLong("editId") ?: 0L
             EggLogScreen(
                 editId = editId,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
         composable("animals/reports") {
             AnimalReportsScreen(
-                onNavigateBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -409,8 +403,8 @@ fun FurrowNavGraph(
 
         composable(Screen.Orchard.route) {
             OrchardListScreen(
-                onPlantClick = { plantId -> tc.navigateWithTransition { navController.navigate("orchard/$plantId") } },
-                onAddPlant = { tc.navigateWithTransition { navController.navigate("orchard/add?type=plant") } },
+                onPlantClick = { plantId -> navController.navigate("orchard/$plantId") },
+                onAddPlant = { navController.navigate("orchard/add?type=plant") },
             )
         }
 
@@ -419,9 +413,9 @@ fun FurrowNavGraph(
             arguments = listOf(navArgument("plantId") { type = NavType.LongType }),
         ) {
             OrchardPlantDetailScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onAddLog = { plantId, logType -> tc.navigateWithTransition { navController.navigate("orchard/$plantId/add?type=$logType") } },
-                onEditLog = { plantId, logType, editId -> tc.navigateWithTransition { navController.navigate("orchard/$plantId/add?type=$logType&editId=$editId") } },
+                onBack = { navController.popBackStack() },
+                onAddLog = { plantId, logType -> navController.navigate("orchard/$plantId/add?type=$logType") },
+                onEditLog = { plantId, logType, editId -> navController.navigate("orchard/$plantId/add?type=$logType&editId=$editId") },
             )
         }
 
@@ -435,7 +429,7 @@ fun FurrowNavGraph(
             OrchardFormScreen(
                 type = backStackEntry.arguments?.getString("type") ?: "plant",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -451,7 +445,7 @@ fun FurrowNavGraph(
                 type = backStackEntry.arguments?.getString("type") ?: "harvest",
                 plantId = backStackEntry.arguments?.getLong("plantId") ?: 0L,
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -459,17 +453,17 @@ fun FurrowNavGraph(
 
         composable(Screen.Preservation.route) {
             PreservationListScreen(
-                onNavigateToPantry = { tc.navigateWithTransition { navController.navigate("preservation/pantry") } },
-                onAddBatch = { batchType -> tc.navigateWithTransition { navController.navigate("preservation/add?type=$batchType") } },
-                onEditBatch = { batchType, editId -> tc.navigateWithTransition { navController.navigate("preservation/add?type=$batchType&editId=$editId") } },
+                onNavigateToPantry = { navController.navigate("preservation/pantry") },
+                onAddBatch = { batchType -> navController.navigate("preservation/add?type=$batchType") },
+                onEditBatch = { batchType, editId -> navController.navigate("preservation/add?type=$batchType&editId=$editId") },
             )
         }
 
         composable("preservation/pantry") {
             PantryScreen(
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
-                onAddPantryItem = { tc.navigateWithTransition { navController.navigate("preservation/add?type=pantry") } },
-                onEditPantryItem = { editId -> tc.navigateWithTransition { navController.navigate("preservation/add?type=pantry&editId=$editId") } },
+                onBack = { navController.popBackStack() },
+                onAddPantryItem = { navController.navigate("preservation/add?type=pantry") },
+                onEditPantryItem = { editId -> navController.navigate("preservation/add?type=pantry&editId=$editId") },
             )
         }
 
@@ -485,7 +479,7 @@ fun FurrowNavGraph(
                 type = backStackEntry.arguments?.getString("type") ?: "canning",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
                 initialItemName = backStackEntry.arguments?.getString("itemName") ?: "",
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -493,8 +487,8 @@ fun FurrowNavGraph(
 
         composable(Screen.Land.route) {
             LandListScreen(
-                onAddItem = { itemType -> tc.navigateWithTransition { navController.navigate("land/add?type=$itemType") } },
-                onEditItem = { itemType, editId -> tc.navigateWithTransition { navController.navigate("land/add?type=$itemType&editId=$editId") } },
+                onAddItem = { itemType -> navController.navigate("land/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("land/add?type=$itemType&editId=$editId") },
             )
         }
 
@@ -508,7 +502,7 @@ fun FurrowNavGraph(
             LandFormScreen(
                 type = backStackEntry.arguments?.getString("type") ?: "property",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -516,8 +510,8 @@ fun FurrowNavGraph(
 
         composable(Screen.Finances.route) {
             FinanceListScreen(
-                onAddItem = { itemType -> tc.navigateWithTransition { navController.navigate("finances/add?type=$itemType") } },
-                onEditItem = { itemType, editId -> tc.navigateWithTransition { navController.navigate("finances/add?type=$itemType&editId=$editId") } },
+                onAddItem = { itemType -> navController.navigate("finances/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("finances/add?type=$itemType&editId=$editId") },
             )
         }
 
@@ -531,7 +525,7 @@ fun FurrowNavGraph(
             FinanceFormScreen(
                 type = backStackEntry.arguments?.getString("type") ?: "expense",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
@@ -539,8 +533,8 @@ fun FurrowNavGraph(
 
         composable(Screen.Compliance.route) {
             ComplianceListScreen(
-                onAddItem = { itemType -> tc.navigateWithTransition { navController.navigate("compliance/add?type=$itemType") } },
-                onEditItem = { itemType, editId -> tc.navigateWithTransition { navController.navigate("compliance/add?type=$itemType&editId=$editId") } },
+                onAddItem = { itemType -> navController.navigate("compliance/add?type=$itemType") },
+                onEditItem = { itemType, editId -> navController.navigate("compliance/add?type=$itemType&editId=$editId") },
             )
         }
 
@@ -554,7 +548,7 @@ fun FurrowNavGraph(
             ComplianceFormScreen(
                 type = backStackEntry.arguments?.getString("type") ?: "permit",
                 editId = backStackEntry.arguments?.getLong("editId") ?: 0L,
-                onBack = { tc.navigateWithTransition { navController.popBackStack() } },
+                onBack = { navController.popBackStack() },
             )
         }
 
