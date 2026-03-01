@@ -183,6 +183,8 @@ fun PlantingFormScreen(
     val filteredVarieties = plantVarieties
 
     // -- Companion / Incompatible planting checks --
+    val bed by viewModel.selectedBed.collectAsState()
+    val checkCompanion = bed?.checkCompanionPlanting ?: true
     val existingPlantings by viewModel.plantings.collectAsState()
     val selectedPlantInfo = remember(plantName, allPlants) {
         allPlants.firstOrNull { it.name.equals(plantName, ignoreCase = true) }
@@ -190,13 +192,15 @@ fun PlantingFormScreen(
     val existingPlantNames = remember(existingPlantings) {
         existingPlantings.map { it.plantName.lowercase() }.toSet()
     }
-    val incompatibleInBed = remember(selectedPlantInfo, existingPlantNames) {
-        selectedPlantInfo?.incompatiblePlants
+    val incompatibleInBed = remember(selectedPlantInfo, existingPlantNames, checkCompanion) {
+        if (!checkCompanion) emptyList()
+        else selectedPlantInfo?.incompatiblePlants
             ?.split(",")?.map { it.trim().lowercase() }?.filter { it.isNotBlank() && it in existingPlantNames }
             ?: emptyList()
     }
-    val companionsInBed = remember(selectedPlantInfo, existingPlantNames) {
-        selectedPlantInfo?.companionPlants
+    val companionsInBed = remember(selectedPlantInfo, existingPlantNames, checkCompanion) {
+        if (!checkCompanion) emptyList()
+        else selectedPlantInfo?.companionPlants
             ?.split(",")?.map { it.trim().lowercase() }?.filter { it.isNotBlank() && it in existingPlantNames }
             ?: emptyList()
     }

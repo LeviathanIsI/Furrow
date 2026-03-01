@@ -234,7 +234,7 @@ import com.furrow.app.data.local.entity.WeightLog
         ComplianceDocument::class,
         UserModulePreference::class,
     ],
-    version = 19,
+    version = 20,
     exportSchema = false,
 )
 abstract class FurrowDatabase : RoomDatabase() {
@@ -250,6 +250,7 @@ abstract class FurrowDatabase : RoomDatabase() {
                     "furrow_database",
                 ).addMigrations(
                     MIGRATION_3_7, MIGRATION_12_13, MIGRATION_16_17, MIGRATION_17_18, MIGRATION_18_19,
+                    MIGRATION_19_20,
                 ).build().also { INSTANCE = it }
             }
 

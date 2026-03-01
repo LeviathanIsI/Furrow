@@ -118,6 +118,12 @@ val MIGRATION_18_19 = object : Migration(18, 19) {
     }
 }
 
+val MIGRATION_19_20 = object : Migration(19, 20) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE garden_beds ADD COLUMN checkCompanionPlanting INTEGER NOT NULL DEFAULT 1")
+    }
+}
+
 val MIGRATION_12_13 = object : Migration(12, 13) {
     override fun migrate(db: SupportSQLiteDatabase) {
         val stats = NACatalogImporter.seed(PlantDatabaseSeeder.appContext, db)

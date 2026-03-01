@@ -15,4 +15,5 @@ data class GardenBed(
     val sunExposure: String? = null,
     val notes: String? = null,
     val isActive: Boolean = true,
+    val checkCompanionPlanting: Boolean = true,
 )

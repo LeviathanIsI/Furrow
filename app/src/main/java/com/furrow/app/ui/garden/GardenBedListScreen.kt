@@ -41,6 +41,7 @@ import com.furrow.app.util.displayFormat
 import com.furrow.app.util.filterDecimal
 import com.furrow.app.util.filterInteger
 import com.furrow.app.ui.components.DropdownSelector
+import com.furrow.app.ui.components.ToggleRow
 import com.furrow.app.ui.components.AppScaffold
 import com.furrow.app.ui.components.AppTextField
 import com.furrow.app.ui.components.AppTextFieldDefaults
@@ -193,6 +194,9 @@ fun GardenBedListScreen(
                                             append(" • ")
                                             append(it.displayFormat())
                                         }
+                                        if (!bed.checkCompanionPlanting) {
+                                            append(" • No companion checks")
+                                        }
                                     },
                                     leadingIcon = {
                                         Icon(
@@ -316,6 +320,7 @@ private fun AddBedSheet(
     var sunExposure by remember { mutableStateOf(existingBed?.sunExposure ?: "Full Sun") }
     var soilType by remember { mutableStateOf(existingBed?.soilType ?: "") }
     var notes by remember { mutableStateOf(existingBed?.notes ?: "") }
+    var checkCompanionPlanting by remember { mutableStateOf(existingBed?.checkCompanionPlanting ?: true) }
 
     val fieldColors = AppTextFieldDefaults.colors(accentColor = GardenGlow)
 
@@ -337,6 +342,7 @@ private fun AddBedSheet(
                         sunExposure = sunExposure,
                         soilType = soilType.ifBlank { null },
                         notes = notes.ifBlank { null },
+                        checkCompanionPlanting = checkCompanionPlanting,
                     ),
                 )
             }
@@ -357,6 +363,20 @@ private fun AddBedSheet(
                 onSelect = { type = it },
                 accentColor = GardenGlow,
             )
+            Column {
+                ToggleRow(
+                    label = "Check companion planting",
+                    checked = checkCompanionPlanting,
+                    onCheckedChange = { checkCompanionPlanting = it },
+                    accentColor = GardenGlow,
+                )
+                Text(
+                    text = "Disable for large areas where plants aren't next to each other",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextTertiary,
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                )
+            }
             if (type == "Grow Bag" || type == "Container") {
                 AppTextField(
                     value = sizeGallons,

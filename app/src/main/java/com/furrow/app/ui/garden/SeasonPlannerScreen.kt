@@ -433,12 +433,14 @@ private fun BedAssignmentStep(
                 }
 
                 // Companion/incompatible warnings
+                val assignedBed = activeBeds.firstOrNull { it.id == sel.assignedBedId }
+                val checkCompanion = assignedBed?.checkCompanionPlanting ?: true
                 val sameBedSelections = selections.filter {
                     it.assignedBedId == sel.assignedBedId && it.assignedBedId != null && it.plantInfo.name != sel.plantInfo.name
                 }
                 val incompatible = sel.plantInfo.incompatiblePlants.split(",").map { it.trim().lowercase() }.filter { it.isNotBlank() }
                 sameBedSelections.forEach { other ->
-                    if (other.plantInfo.name.lowercase() in incompatible) {
+                    if (checkCompanion && other.plantInfo.name.lowercase() in incompatible) {
                         Row(
                             modifier = Modifier.padding(top = AppSpacing.xxs),
                             verticalAlignment = Alignment.CenterVertically,
